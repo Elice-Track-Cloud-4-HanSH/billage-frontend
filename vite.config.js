@@ -11,6 +11,7 @@ export default defineConfig({
       '/api': {
         target: "http://localhost:8080",
         changeOrigin: true,
+        // rewrite: (path) => path.replace(/^\/api/, '')  // /api prefix를 제거, 필요할 경우 다른 것으로 대체
       }
     }
   },

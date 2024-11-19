@@ -2,6 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './Easteregg.css'
+import {Button} from 'react-bootstrap';
 
 function Easteregg() {
   const [count, setCount] = useState(0)
@@ -28,6 +29,7 @@ function Easteregg() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+      <Button as="input" value="Inpt?" />
     </>
   )
 }
