@@ -1,0 +1,59 @@
+:root {
+  --mobile-max-width: 500px;
+}
+
+.layout-container {
+  width: 100%;
+  min-height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+.layout-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  background-color: #ffffff;
+  position: relative;
+}
+
+.layout-content {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+}
+
+.layout-footer {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* 모바일 스타일 */
+@media (max-width: 768px) {
+  .layout-container {
+    background-color: #ffffff;
+    padding: 0;
+  }
+
+  .layout-wrapper {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* 데스크톱 스타일 */
+@media (min-width: 768px) {
+  .layout-container {
+    padding: 0;
+    background-color: rgb(74, 122, 122);
+  }
+
+  .layout-wrapper {
+    width: 768px;
+    height: 100h;
+  }
+}
