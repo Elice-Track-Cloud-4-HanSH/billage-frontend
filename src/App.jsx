@@ -3,6 +3,7 @@ import Easteregg from '@/pages/Easteregg.jsx';
 import ChatroomList from '@/pages/ChatroomList.jsx';
 import '@/styles/global.css';
 import Layout from '@/layouts/Layout.jsx';
+import MyReview from '@/pages/MyReview';
 
 const App = () => {
   return (
@@ -11,6 +12,7 @@ const App = () => {
         <Route path='/' element={<Layout />}>
           <Route path='/easter-egg' element={<Easteregg />} />
           <Route path='/chat' element={<ChatroomList />} />
+          <Route path='/myreview' element={<MyReview />} />
         </Route>
       </Routes>
     </BrowserRouter>
