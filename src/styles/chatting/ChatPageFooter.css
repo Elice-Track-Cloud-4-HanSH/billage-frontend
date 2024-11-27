@@ -1,0 +1,12 @@
+.footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  position: sticky;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.form-control:focus {
+  box-shadow: none;
+  border-color: #ced4da;
+}
