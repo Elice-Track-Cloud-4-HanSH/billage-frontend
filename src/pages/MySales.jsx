@@ -3,6 +3,7 @@ import RecordList from '../components/rental-record/RecordList';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Tab from '../components/common/Tab';
+import TabContext from '../hooks/TabContext';
 
 const MySales = () => {
   const [records, setRecords] = useState([]);
@@ -32,9 +33,11 @@ const MySales = () => {
 
   return (
     <>
-      <Header title='내가 빌려주는 물건' />
-      <Tab tabs={tabs} onChangeTab={handleTabChange} defaultTab={defaultTab} />
-      <RecordList records={records} activeTab={activeTab} />
+      <TabContext.Provider value={{ activeTab }}>
+        <Header title='내가 빌려주는 물건' />
+        <Tab tabs={tabs} onChangeTab={handleTabChange} defaultTab={defaultTab} />
+        <RecordList records={records} activeTab={activeTab} />
+      </TabContext.Provider>
     </>
   );
 };
