@@ -6,6 +6,7 @@ import Layout from '@/layouts/Layout.jsx';
 import MyReview from '@/pages/MyReview';
 import MySales from './pages/MySales';
 import MyPurchase from './pages/MyPurchase';
+import ProductRegister from '@/pages/product/ProductRegister';
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
           <Route path='/myreview' element={<MyReview />} />
           <Route path='/mysales' element={<MySales />} />
           <Route path='/mypurchase' element={<MyPurchase />} />
+          <Route path='/product-register' element={<ProductRegister />} />
         </Route>
       </Routes>
     </BrowserRouter>
