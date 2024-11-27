@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
+import ButtonSection from './ButtonSection';
 
-const Record = ({ record, actions }) => {
+const Record = ({ record }) => {
   return (
     <div>
       <div>
@@ -20,7 +21,7 @@ const Record = ({ record, actions }) => {
           <p>{record.nickname}</p>
         </div>
       </div>
-      <div>{actions}</div>
+      <ButtonSection record={record} />
     </div>
   );
 };
@@ -37,7 +38,6 @@ Record.propTypes = {
     userImageUrl: PropTypes.string,
     nickname: PropTypes.string,
   }).isRequired,
-  actions: PropTypes.node.isRequired,
 };
 
 export default Record;
