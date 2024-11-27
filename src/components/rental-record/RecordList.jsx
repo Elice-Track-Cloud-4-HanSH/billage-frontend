@@ -3,7 +3,7 @@ import Record from './Record';
 
 const RecordList = ({ records, activeTab }) => {
   const renderActions = (tab) => {
-    if (tab === 'products-on-sale') {
+    if (tab === 'products/on-sale') {
       return (
         <>
           <button>대여 중으로 변경</button>

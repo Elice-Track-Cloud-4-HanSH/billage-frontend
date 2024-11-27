@@ -9,7 +9,7 @@ const MySales = () => {
   const [activeTab, setActiveTab] = useState('');
 
   const tabs = [
-    { name: '판매 중', value: 'products-on-sale' },
+    { name: '판매 중', value: 'products/on-sale' },
     { name: '대여 중', value: 'rental-record?type=대여중/판매' },
     { name: '대여 내역', value: 'rental-record?type=대여내역/판매' },
   ];
@@ -24,7 +24,7 @@ const MySales = () => {
     }
   };
 
-  const defaultTab = 'products-on-sale';
+  const defaultTab = 'products/on-sale';
 
   useEffect(() => {
     handleTabChange(defaultTab);

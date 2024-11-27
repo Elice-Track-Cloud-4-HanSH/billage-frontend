@@ -6,6 +6,8 @@ import Layout from '@/layouts/Layout.jsx';
 import MyReview from '@/pages/MyReview';
 import MySales from './pages/MySales';
 import MyPurchase from './pages/MyPurchase';
+import WriteProductReview from './pages/WriteProductReview';
+import WriteUserReview from './pages/WriteUserReview';
 
 const App = () => {
   return (
@@ -17,6 +19,8 @@ const App = () => {
           <Route path='/myreview' element={<MyReview />} />
           <Route path='/mysales' element={<MySales />} />
           <Route path='/mypurchase' element={<MyPurchase />} />
+          <Route path='/product-review/:id' element={<WriteProductReview />} />
+          <Route path='user-review/:id' element={<WriteUserReview />} />
         </Route>
       </Routes>
     </BrowserRouter>
