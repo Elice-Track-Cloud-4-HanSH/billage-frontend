@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
+import { timeDiffFormat } from '@/utils';
 
-const ChatroomItem = ({ chatroom, currentTime, myId }) => {
+const ChatroomItem = ({ chatroom, currentTime, myId, onClick }) => {
   const [chatText, setChatText] = useState(chatroom.lastChat.message);
 
   useEffect(() => {
@@ -12,26 +13,6 @@ const ChatroomItem = ({ chatroom, currentTime, myId }) => {
       window.removeEventListener('resize', adjustChatText);
     };
   });
-
-  const timeDiffFormat = (lastSentTime) => {
-    const lastSentTimeToDate = new Date(lastSentTime);
-    const diffMs = currentTime - lastSentTimeToDate;
-
-    const diffMinutes = Math.floor(diffMs / (1000 * 60));
-    const diffHours = Math.floor(diffMinutes / 60);
-    const diffDays = Math.floor(diffHours / 24);
-    const diffMonths = Math.floor(diffDays / 30);
-
-    if (diffMinutes < 60) {
-      return `${diffMinutes}분 전`;
-    } else if (diffHours < 24) {
-      return `${diffHours}시간 전`;
-    } else if (diffDays < 31) {
-      return `${diffDays}일 전`;
-    } else {
-      return `${diffMonths}달 전`;
-    }
-  };
 
   function adjustChatText() {
     const width = window.innerWidth;
@@ -59,7 +40,10 @@ const ChatroomItem = ({ chatroom, currentTime, myId }) => {
   };
 
   return (
-    <div className='card border-0 border-bottom p-1'>
+    <div
+      className='card border-0 border-bottom p-1 cursor-pointer shadow-sm hover-shadow'
+      onClick={onClick}
+    >
       <div className='card-body d-flex align-items-center justify-content-between p-3 w-100'>
         <div className='d-flex align-items-center w-100'>
           <div className='rounded-circle bg-secondary me-3' style={{ width: 40, height: 40 }}></div>
@@ -70,7 +54,9 @@ const ChatroomItem = ({ chatroom, currentTime, myId }) => {
             </div>
             <div className='d-flex align-items-center justify-content-between'>
               <p className='card-text mb-1 me-3 chat-content'>{chatText}</p>
-              <small className='text-muted'>{timeDiffFormat(chatroom.lastChat.lastSentTime)}</small>
+              <small className='text-muted'>
+                {timeDiffFormat(chatroom.lastChat.lastSentTime, currentTime)}
+              </small>
             </div>
           </div>
         </div>
@@ -100,6 +86,7 @@ ChatroomItem.propTypes = {
   }),
   currentTime: PropTypes.number.isRequired,
   myId: PropTypes.number,
+  onClick: PropTypes.func.isRequired,
 };
 
 export default ChatroomItem;
