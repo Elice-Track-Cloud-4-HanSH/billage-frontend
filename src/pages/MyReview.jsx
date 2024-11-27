@@ -1,35 +1,37 @@
-import Header from "../components/common/Header";
-import ReviewTab from "../components/review/Reviewtab";
-import ReviewList from "../components/review/ReviewList";
-import Navbar from "../components/common/Navbar";
-import axios from "axios";
-import { useState, useEffect } from "react";
+import Header from '../components/common/Header';
+import Tab from '../components/common/Tab';
+import ReviewList from '../components/review/ReviewList';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
 
 const MyReview = () => {
   const [reviews, setReviews] = useState([]);
-  const [activeTab, setActiveTab] = useState("product");
 
-  const fetchReviews = async (tab) => {
+  const tabs = [
+    { name: '상품 후기', value: 'product-review' },
+    { name: '거래자 후기', value: 'user-review' },
+  ];
+
+  const handleTabChange = async (value) => {
     try {
-      const url =
-        tab === "product" ? "/api/product-review" : "/api/user-review";
-      const response = await axios.get(url);
+      const response = await axios.get(`/api/${value}`);
       setReviews(response.data);
     } catch (error) {
-      console.error("리뷰를 가져오는 데 실패했습니다.", error);
+      console.error('리뷰를 가져오는 데 실패했습니다.', error);
     }
   };
 
+  const defaultTab = 'product-review';
+
   useEffect(() => {
-    fetchReviews(activeTab);
-  }, [activeTab]);
+    handleTabChange(defaultTab);
+  }, []);
 
   return (
     <>
-      <Header title="작성한 리뷰" />
-      <ReviewTab activeTab={activeTab} onTabChange={setActiveTab} />
+      <Header title='작성한 리뷰' />
+      <Tab tabs={tabs} onChangeTab={handleTabChange} defaultTab={defaultTab} />
       <ReviewList reviews={reviews} />
-      <Navbar />
     </>
   );
 };
