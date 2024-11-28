@@ -2,9 +2,12 @@ import React from "react";
 import Header from "../../components/common/Header";
 import ProductForm from "../../components/product/ProductForm";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // 리다이렉트를 위해 필요
 import "@/styles/product/ProductForm.css";
 
 const ProductRegister = () => {
+    const navigate = useNavigate(); // 리다이렉트를 위한 useNavigate 훅 사용
+
     const handleSubmit = async (formData) => {
         const data = new FormData();
 
@@ -30,6 +33,12 @@ const ProductRegister = () => {
                 },
             });
             console.log("등록 성공:", response.data);
+
+            // 반환된 productId로 상세 페이지로 이동
+            const { productId } = response.data;
+            if (productId) {
+                navigate(`/product/${productId}`);
+            }
         } catch (error) {
             console.error("등록 실패:", error);
         }
