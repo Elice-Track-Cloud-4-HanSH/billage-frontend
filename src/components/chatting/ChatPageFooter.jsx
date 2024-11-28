@@ -21,7 +21,6 @@ const ChatItemFooter = ({ messageSendHandler }) => {
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
-      console.log(message);
       e.preventDefault();
       handleSendMessage();
     }
@@ -36,6 +35,7 @@ const ChatItemFooter = ({ messageSendHandler }) => {
           className='me-2'
           onKeyDown={handleKeyDown}
           onChange={handleMessageChange}
+          value={message}
         />
         <Button variant='primary' className='ms-2' onClick={handleSendMessage}>
           <i className='bi bi-arrow-right'></i>
