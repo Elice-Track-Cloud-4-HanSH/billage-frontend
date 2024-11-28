@@ -19,17 +19,25 @@ const ChatPage = () => {
   const [chats, setChats] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLastPage, setIsLastPage] = useState(false);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [canLoadMore, setCanLoadMore] = useState(false);
+  const [isInitialLoadComplete, setIsInitialLoadComplete] = useState(false);
 
   const loadMoreMessageRef = useRef(null);
   const endOfMessageRef = useRef(null);
-  const isFirstLoad = useRef(true);
+  const isFirstRenderRef = useRef(true);
 
   const { chatroomId } = useParams();
 
   const location = useLocation(); // 현재 위치 정보 가져오기
   const queryParams = queryString.parse(location.search); // 쿼리 파라미터 파싱
-  console.log(location.search, queryParams);
   const myId = queryParams.token;
+
+  useEffect(() => {
+    if (!isFirstLoad) {
+      setCanLoadMore(true);
+    }
+  }, [isFirstLoad]);
 
   // SockJS 연결 후 STOMP 프로토콜 사용
   useEffect(() => {
@@ -44,7 +52,17 @@ const ChatPage = () => {
         setIsConnected(true);
 
         stompClient.subscribe(`/sub/chat/${chatroomId}`, (message) => {
-          console.log('메세지 송신: ' + message.body);
+          const stompMessage = JSON.parse(message.body);
+          setChats((prev) => [...prev, stompMessage]);
+          if (stompMessage.sender.id == myId) {
+            scrollToBottom();
+          }
+          if (stompMessage.sender.id != myId) {
+            // ACK 보내기
+            stompClient.publish({
+              destination: `/ack/chat/chatting/${stompMessage.chatId}`,
+            });
+          }
         });
       },
       onDisconnect: () => {
@@ -59,73 +77,90 @@ const ChatPage = () => {
     return () => {
       stompClient.deactivate();
     };
-  }, [chatroomId]);
+  }, []);
 
   useEffect(() => {
     setIsLoading(true);
-    axios({
-      baseURL: `/api/chatroom/${chatroomId}`,
-      method: 'GET',
-      params: {
-        page: page,
-      },
-      headers: {
-        token: myId,
-      },
-    })
-      .then((data) => {
-        setChats((prev) => [...data.data.reverse(), ...prev]);
-        if (data.data.length < 50) {
-          setIsLastPage(true);
-        }
-        if (isFirstLoad.current) {
-          setTimeout(() => {
-            scrollToBottom();
-            isFirstLoad.current = false;
-          }, 0); // 최소 지연 시간으로 DOM 업데이트를 기다림
-        }
-        console.log(data.data);
+    if (!isLastPage) {
+      axios({
+        baseURL: `/api/chatroom/${chatroomId}`,
+        method: 'GET',
+        params: {
+          page: page,
+          lastLoadChatId: page === 0 ? Number.MAX_SAFE_INTEGER : chats[0].chatId,
+        },
+        headers: {
+          token: myId,
+        },
       })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [chatroomId, page]);
+        .then((data) => {
+          console.log(chats[0]);
+          setChats((prev) => [...data.data.reverse(), ...prev]);
+          if (data.data.length < 50) {
+            setIsLastPage(true);
+          }
+          if (page === 0) {
+            setTimeout(() => {
+              scrollToBottom();
+              isFirstRenderRef.current = false;
+            }, 0);
+          }
+        })
+        .catch(() => {
+          setIsLastPage(true);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [page]);
 
   useEffect(() => {
     if (!loadMoreMessageRef.current) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
+        if (entries[0].isIntersecting && !isFirstRenderRef.current && !isLoading && !isLastPage) {
           handleIncreasePage();
         }
       },
-      { threshold: 0.1 } // 불러와지지 않는다면 threshold 값을 수정해보자
+      {
+        root: document.querySelector('.messages-container'),
+        threshold: 0.1,
+      } // 불러와지지 않는다면 threshold 값을 수정해보자
     );
 
-    observer.observe(loadMoreMessageRef.current);
+    if (!isFirstRenderRef.current) {
+      observer.observe(loadMoreMessageRef.current);
+    }
 
     return () => observer.disconnect(); // 컴포넌트 언마운트 시 해제
-  }, []);
+  }, [isLoading, isLastPage]);
 
   const scrollToBottom = () => {
-    endOfMessageRef.current?.scrollIntoView({ behavior: 'auto' });
+    setTimeout(() => {
+      endOfMessageRef.current?.scrollIntoView({ behavior: 'auto' });
+    }, 0);
   };
 
   const handleIncreasePage = () => {
-    if (!isLoading) {
+    if (!isLoading && !isLastPage) {
       setPage((prev) => prev + 1);
     }
   };
 
   const handleSendMessage = (message) => {
     if (client && isConnected) {
-      client.publish({
-        destination: `/pub/chat/${chatroomId}`,
-        body: {
-          message: message,
-        },
-      });
+      try {
+        client.publish({
+          destination: `/pub/chat/${chatroomId}`,
+          body: JSON.stringify({
+            message: message,
+          }),
+        });
+      } catch (error) {
+        console.error('Fail to send message: ', error);
+      }
     }
   };
 
@@ -159,10 +194,15 @@ const ChatPage = () => {
         <Col>
           <div className='messages-container'>
             {isLastPage && <p>첫 채팅입니다</p>}
-            {!isLastPage && <div ref={loadMoreMessageRef} style={{ height: '1px' }} />}
+            {!isLastPage && (
+              <div
+                ref={loadMoreMessageRef}
+                className='load-more-chats'
+                style={{ height: isFirstLoad ? '0px' : '10px' }}
+              />
+            )}
             {chats.map((message, key) => {
               const isMine = message.sender.id == myId;
-              console.log(message);
               return (
                 <ChatItem
                   message={message.message}
@@ -172,14 +212,11 @@ const ChatPage = () => {
                 />
               );
             })}
-            <div ref={endOfMessageRef} style={{ height: '1px' }} />
+            <div ref={endOfMessageRef} className='chat-bottom' style={{ height: '1px' }} />
           </div>
         </Col>
       </Row>
 
-      {/* <button onClick={scrollToBottom} className='scroll-to-bottom-btn'>
-        <i className='bi bi-arrow-down'></i>
-      </button> */}
       <ChatPageFooter messageSendHandler={handleSendMessage} />
     </Container>
   );
