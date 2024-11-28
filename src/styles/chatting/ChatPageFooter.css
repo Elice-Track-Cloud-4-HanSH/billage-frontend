@@ -6,7 +6,7 @@
   z-index: 1000;
 }
 
-.form-control:focus {
+input.form-control:focus {
   box-shadow: none;
   border-color: #ced4da;
 }
