@@ -7,9 +7,8 @@ import { Client } from '@stomp/stompjs';
 import { useParams, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import SockJS from 'sockjs-client';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Container, Button } from 'react-bootstrap';
 import queryString from 'query-string'; // query-string 라이브러리 사용
-import { timeDiffFormat } from '@/utils';
 
 // 사용 예시
 const ChatPage = () => {
@@ -17,27 +16,19 @@ const ChatPage = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [page, setPage] = useState(0);
   const [chats, setChats] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isLastPage, setIsLastPage] = useState(false);
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
-  const [canLoadMore, setCanLoadMore] = useState(false);
-  const [isInitialLoadComplete, setIsInitialLoadComplete] = useState(false);
+  const [isNewMessageAvailable, setIsNewMessageAvailable] = useState(false);
+  const [isScrollToDownBtnAvailable, setIsScrollToDownBtnAvailable] = useState(false);
 
   const loadMoreMessageRef = useRef(null);
   const endOfMessageRef = useRef(null);
-  const isFirstRenderRef = useRef(true);
+  const messageContainerRef = useRef(null);
 
   const { chatroomId } = useParams();
 
   const location = useLocation(); // 현재 위치 정보 가져오기
   const queryParams = queryString.parse(location.search); // 쿼리 파라미터 파싱
   const myId = queryParams.token;
-
-  useEffect(() => {
-    if (!isFirstLoad) {
-      setCanLoadMore(true);
-    }
-  }, [isFirstLoad]);
 
   // SockJS 연결 후 STOMP 프로토콜 사용
   useEffect(() => {
@@ -48,17 +39,18 @@ const ChatPage = () => {
         Authorization: myId,
       },
       onConnect: () => {
-        console.log('STOMP 연결 성공');
         setIsConnected(true);
 
         stompClient.subscribe(`/sub/chat/${chatroomId}`, (message) => {
           const stompMessage = JSON.parse(message.body);
-          setChats((prev) => [...prev, stompMessage]);
+
+          setChats((prev) => [stompMessage, ...prev]);
           if (stompMessage.sender.id == myId) {
             scrollToBottom();
-          }
-          if (stompMessage.sender.id != myId) {
-            // ACK 보내기
+          } else {
+            lockCurrentPosition('WS');
+            setIsNewMessageAvailable(true);
+
             stompClient.publish({
               destination: `/ack/chat/chatting/${stompMessage.chatId}`,
             });
@@ -66,7 +58,6 @@ const ChatPage = () => {
         });
       },
       onDisconnect: () => {
-        console.log('STOMP 연결 종료');
         setIsConnected(false);
       },
     });
@@ -80,7 +71,81 @@ const ChatPage = () => {
   }, []);
 
   useEffect(() => {
-    setIsLoading(true);
+    if (!loadMoreMessageRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchChatData();
+        }
+      },
+      {
+        threshold: 0.1,
+      }
+    );
+
+    observer.observe(loadMoreMessageRef.current);
+
+    return () => observer.disconnect(); // 컴포넌트 언마운트 시 해제
+  }, [page]);
+
+  useEffect(() => {
+    if (!endOfMessageRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsNewMessageAvailable(false);
+        }
+      },
+      {
+        threshold: 0.1,
+      }
+    );
+
+    observer.observe(endOfMessageRef.current);
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const container = messageContainerRef.current;
+    const handleScroll = () => {
+      if (messageContainerRef.current) {
+        if (container.scrollTop < 0.8) setIsScrollToDownBtnAvailable(true);
+        else setIsScrollToDownBtnAvailable(false);
+      }
+    };
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener('scroll', handleScroll);
+      }
+    };
+  });
+
+  const lockCurrentPosition = (getPrevFlag) => {
+    if (!['DB', 'WS'].includes(getPrevFlag)) return;
+    const container = messageContainerRef.current;
+    const prevScrollHeight = container.scrollHeight;
+    const prevScrollTop = container.scrollTop;
+
+    setTimeout(() => {
+      const afterScrollHeight = container.scrollHeight;
+      const diff = afterScrollHeight - prevScrollHeight;
+
+      if (prevScrollTop > 0.8) {
+        setIsNewMessageAvailable(false);
+      } else {
+        container.scrollTop = prevScrollTop + (getPrevFlag === 'DB' ? diff : -diff);
+      }
+    }, 0);
+  };
+
+  const fetchChatData = () => {
     if (!isLastPage) {
       axios({
         baseURL: `/api/chatroom/${chatroomId}`,
@@ -94,59 +159,34 @@ const ChatPage = () => {
         },
       })
         .then((data) => {
-          console.log(chats[0]);
-          setChats((prev) => [...data.data.reverse(), ...prev]);
+          if (!data.data.length) {
+            return;
+          }
+          setPage((prev) => prev + 1);
+          setChats((prev) => [...prev, ...data.data]);
+          return data;
+        })
+        .then((data) => {
           if (data.data.length < 50) {
             setIsLastPage(true);
           }
           if (page === 0) {
-            setTimeout(() => {
-              scrollToBottom();
-              isFirstRenderRef.current = false;
-            }, 0);
+            scrollToBottom();
+          } else {
+            lockCurrentPosition('DB');
           }
         })
         .catch(() => {
           setIsLastPage(true);
-        })
-        .finally(() => {
-          setIsLoading(false);
         });
     }
-  }, [page]);
-
-  useEffect(() => {
-    if (!loadMoreMessageRef.current) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !isFirstRenderRef.current && !isLoading && !isLastPage) {
-          handleIncreasePage();
-        }
-      },
-      {
-        root: document.querySelector('.messages-container'),
-        threshold: 0.1,
-      } // 불러와지지 않는다면 threshold 값을 수정해보자
-    );
-
-    if (!isFirstRenderRef.current) {
-      observer.observe(loadMoreMessageRef.current);
-    }
-
-    return () => observer.disconnect(); // 컴포넌트 언마운트 시 해제
-  }, [isLoading, isLastPage]);
+  };
 
   const scrollToBottom = () => {
+    setIsNewMessageAvailable(false);
     setTimeout(() => {
       endOfMessageRef.current?.scrollIntoView({ behavior: 'auto' });
     }, 0);
-  };
-
-  const handleIncreasePage = () => {
-    if (!isLoading && !isLastPage) {
-      setPage((prev) => prev + 1);
-    }
   };
 
   const handleSendMessage = (message) => {
@@ -188,35 +228,44 @@ const ChatPage = () => {
 
   return (
     <Container>
-      <ChatPageHeader otherNickname='test' />
+      <ChatPageHeader otherNickname='test' exitButtonHandler={() => console.log('clicked!')} />
 
-      <Row className='chat-body flex-grow-1'>
-        <Col>
-          <div className='messages-container'>
-            {isLastPage && <p>첫 채팅입니다</p>}
-            {!isLastPage && (
-              <div
-                ref={loadMoreMessageRef}
-                className='load-more-chats'
-                style={{ height: isFirstLoad ? '0px' : '10px' }}
-              />
-            )}
-            {chats.map((message, key) => {
-              const isMine = message.sender.id == myId;
-              return (
-                <ChatItem
-                  message={message.message}
-                  createdAt={formatDate(message.createdAt)}
-                  isMine={isMine}
-                  key={key}
-                />
-              );
-            })}
-            <div ref={endOfMessageRef} className='chat-bottom' style={{ height: '1px' }} />
-          </div>
-        </Col>
-      </Row>
+      <div ref={messageContainerRef} className='messages-container flex-grow-1'>
+        <div ref={endOfMessageRef} className='chat-bottom' style={{ height: '1px' }} />
 
+        {chats.map((message, key) => {
+          const isMine = message.sender.id == myId;
+          return (
+            <ChatItem
+              message={message.message}
+              createdAt={formatDate(message.createdAt)}
+              isMine={isMine}
+              key={key}
+            />
+          );
+        })}
+        {isLastPage && <p>첫 채팅입니다</p>}
+      </div>
+
+      {!isLastPage && (
+        <div
+          ref={loadMoreMessageRef}
+          className='load-more-chats'
+          style={{ height: '1px', margin: '1px' }}
+        />
+      )}
+
+      {isNewMessageAvailable && (
+        <Button className='new-message-btn' onClick={scrollToBottom}>
+          {'새 메시지'}
+          <i className='bi bi-arrow-down'></i>
+        </Button>
+      )}
+      {isScrollToDownBtnAvailable && !isNewMessageAvailable && (
+        <Button className='scroll-to-bottom-btn p-0' onClick={scrollToBottom}>
+          <i className='bi bi-arrow-down'></i>
+        </Button>
+      )}
       <ChatPageFooter messageSendHandler={handleSendMessage} />
     </Container>
   );
