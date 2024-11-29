@@ -9,9 +9,11 @@ import MyPurchase from './pages/MyPurchase';
 import ProductRegister from '@/pages/product/ProductRegister';
 import WriteProductReview from './pages/WriteProductReview';
 import WriteUserReview from './pages/WriteUserReview.jsx';
-import Login from '@/pages/Login.jsx';  // 로그인 페이지 경로
-import Signup from '@/pages/Signup.jsx'; // 회원가입 페이지 경로
+import Login from '@/pages/Login.jsx';  
+import Signup from '@/pages/Signup.jsx'; 
 import ProductDetail from '@/pages/product/ProductDetail';
+import Logout from '@/pages/Logout.jsx';
+import ProfileEdit from '@/pages/ProfileEdit.jsx';
 
 const App = () => {
   return (
@@ -29,6 +31,8 @@ const App = () => {
           <Route path="/signup" element={<Signup/>} />
           <Route path='/product/register' element={<ProductRegister />} /> {/* 상품 등록 페이지 */}
           <Route path='/product/:productId' element={<ProductDetail />} /> {/* 상품 상세 페이지 */}
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/profile-edit" element={<ProfileEdit />} />
 
         </Route>
       </Routes>
