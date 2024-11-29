@@ -1,0 +1,146 @@
+.profile-edit {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    background-color: white;
+    min-height: 100vh;
+  }
+  
+  .profile-header {
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .back-button {
+    margin-right: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 9999px;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .back-button:hover {
+    background-color: #f3f4f6;
+  }
+  
+  .profile-header h1 {
+    font-size: 1.125rem;
+    font-weight: 500;
+  }
+  
+  .profile-image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2rem;
+  }
+  
+  .profile-image-wrapper {
+    position: relative;
+  }
+  
+  .profile-image {
+    width: 6rem;
+    height: 6rem;
+    border-radius: 9999px;
+    background-color: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  
+  .profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .profile-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .upload-button {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: #3b82f6;
+    border-radius: 9999px;
+    padding: 0.5rem;
+    cursor: pointer;
+  }
+  
+  .input-container {
+    padding: 1rem;
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;  /* 입력 박스 사이 간격 늘림 */
+  }
+  
+  .name-input,
+  .bio-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+  }
+  
+  .name-input:focus,
+  .bio-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  }
+  
+  .bio-input {
+    min-height: 150px;  /* textarea 높이 늘림 */
+    resize: vertical;
+  }
+  
+  .button-container {
+    width: 90%; /* 버튼 컨테이너 너비 줄임 */
+    max-width: 450px;
+    margin: 2rem auto; /* 상하 여백 추가하고 중앙 정렬 */
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+  }
+  
+  .complete-button,
+  .cancel-button {
+    width: 40%; /* 버튼 너비 줄임 */
+    padding: 0.75rem;
+    border-radius: 30px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    color: white;
+  }
+  
+  .complete-button {
+    background-color: #AA48E7;
+  }
+  
+  .complete-button:hover {
+    opacity: 0.9;
+  }
+  
+  .cancel-button {
+    background-color: #E55959;
+  }
+  
+  .cancel-button:hover {
+    opacity: 0.9;
+  }
+  
+  .hidden {
+    display: none;
+  }
