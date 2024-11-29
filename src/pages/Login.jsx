@@ -38,41 +38,116 @@ const Login = () => {
     }
   };
 
+  const handleGoogleLogin = () => {
+    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+  };
+
   return (
     <>
       <Header title="로그인" />
-      <form onSubmit={handleLogin} style={styles.form}>
-        <div>
-          <label>이메일</label>
-          <input 
-            type="email" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            required 
-          />
+      <div style={styles.container}>
+        <form onSubmit={handleLogin} style={styles.form}>
+          <div style={styles.inputGroup}>
+            <label>이메일</label>
+            <input 
+              type="email" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+              required 
+              style={styles.input}
+            />
+          </div>
+          <div style={styles.inputGroup}>
+            <label>비밀번호</label>
+            <input 
+              type="password" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              required 
+              style={styles.input}
+            />
+          </div>
+          <button type="submit" style={styles.loginButton}>로그인</button>
+        </form>
+        
+        <div style={styles.divider}>
+          <span>또는</span>
         </div>
-        <div>
-          <label>비밀번호</label>
-          <input 
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            required 
+
+        <button 
+          onClick={handleGoogleLogin} 
+          style={styles.googleButton}
+        >
+          <img 
+            src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" 
+            alt="Google logo" 
+            style={styles.googleLogo} 
           />
-        </div>
-        <button type="submit">로그인</button>
-      </form>
+          Google로 로그인
+        </button>
+      </div>
     </>
   );
 };
 
 const styles = {
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    maxWidth: '400px',
+    margin: '2rem auto',
+    padding: '0 1rem',
+  },
   form: {
+    width: '100%',
     display: 'flex',
     flexDirection: 'column',
     gap: '1rem',
-    maxWidth: '400px',
-    margin: '2rem auto',
+  },
+  inputGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.5rem',
+  },
+  input: {
+    padding: '0.75rem',
+    borderRadius: '4px',
+    border: '1px solid #ddd',
+    fontSize: '1rem',
+  },
+  loginButton: {
+    padding: '0.75rem',
+    backgroundColor: '#007bff',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    fontSize: '1rem',
+    cursor: 'pointer',
+  },
+  divider: {
+    width: '100%',
+    textAlign: 'center',
+    borderBottom: '1px solid #ddd',
+    lineHeight: '0.1em',
+    margin: '2rem 0',
+  },
+  googleButton: {
+    width: '100%',
+    padding: '0.75rem',
+    backgroundColor: 'white',
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    fontSize: '1rem',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '0.5rem',
+  },
+  googleLogo: {
+    width: '18px',
+    height: '18px',
   },
 };
 
