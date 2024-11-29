@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '@/styles/chatting/ChatroomList.css';
 import ChatroomItem from '@/components/chatting/ChatroomItem.jsx';
 import ChatroomTypeButtons from '@/components/chatting/ChatroomTypeButtons';
@@ -14,6 +15,7 @@ const ChatroomList = () => {
   const myToken = 1;
 
   const observerRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!observerRef.current) return;
@@ -24,7 +26,7 @@ const ChatroomList = () => {
           pageHandler(); // 페이지 증가
         }
       },
-      { threshold: 0.5 } // 불러와지지 않는다면 threshold 값을 수정해보자
+      { threshold: 0.1 } // 불러와지지 않는다면 threshold 값을 수정해보자
     );
 
     observer.observe(observerRef.current);
@@ -72,6 +74,10 @@ const ChatroomList = () => {
     setCurrentTime(Date.now());
   };
 
+  const navigateToChatroom = (chatroomId) => {
+    navigate(`/chat/${chatroomId}`);
+  };
+
   return (
     <div className='chatroom-list-container'>
       <ChatroomTypeButtons handleTypeChange={changeChatTypeHandler} />
@@ -82,6 +88,7 @@ const ChatroomList = () => {
             chatroom={chatroom}
             currentTime={currentTime}
             myId={myToken}
+            onClick={() => navigateToChatroom(chatroom.chatroomId)}
           />
         ))}
         <div ref={observerRef} style={{ height: '1px' }} />
