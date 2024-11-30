@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "../../components/common/Header"; // Header 컴포넌트 import
 
 const ProductDetail = () => {
     const { productId } = useParams(); // URL에서 productId 가져오기
+    const navigate = useNavigate(); // navigate 초기화
     const [product, setProduct] = useState(null); // 상품 데이터 상태 관리
     const [loading, setLoading] = useState(true); // 로딩 상태 관리
     const [error, setError] = useState(null); // 에러 상태 관리
@@ -41,9 +42,17 @@ const ProductDetail = () => {
     return (
         <>
             <Header title="상품 상세 정보" />
+
+            <button
+                className="btn btn-primary"
+                onClick={() => navigate(`/products/${productId}/edit`)}
+            >
+                수정
+            </button>
+
             <div className="product-detail">
                 <h1>{product.title}</h1>
-                <p>카테고리: {product.categoryName}</p>
+                <p>카테고리: {product.category.categoryName}</p>
                 <p>설명: {product.description}</p>
                 <p>상태: {product.rentalStatus}</p>
                 <p>일일 대여 가격: {product.dayPrice}원</p>
