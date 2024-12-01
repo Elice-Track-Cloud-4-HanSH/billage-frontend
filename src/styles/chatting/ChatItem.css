@@ -15,6 +15,9 @@
   border: 1px solid #ddd;
   padding: 8px;
   border-radius: 5px;
+  word-break: break-word;
+  white-space: normal;
+  text-align: start;
 }
 
 .my-message {

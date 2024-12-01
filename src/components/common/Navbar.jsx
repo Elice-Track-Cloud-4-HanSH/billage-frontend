@@ -20,7 +20,7 @@ const Navbar = () => {
         </button>
         <button
           className={`btn btn-link ${location.pathname === '/chat' ? 'text-primary' : 'text-dark'}`}
-          onClick={() => navigate('/chat')}
+          onClick={() => navigate('/chats')}
         >
           <i className='bi bi-chat'></i>
           <div className='small'>채팅</div>
