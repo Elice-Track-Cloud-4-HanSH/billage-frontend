@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import CategoryPopup from '@/components/category/CategoryPopup';
+import '@/styles/product/ProductList.css';
 
 const ProductList = () => {
     const [products, setProducts] = useState([]);
+    const [isCategoryPopupOpen, setIsCategoryPopupOpen] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState({ id: 1, name: '전체' });
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await axios.get('/api/products');
+                const response = await axios.get('/api/products', {
+                    params: { categoryId: selectedCategory.id }
+                });
                 setProducts(response.data);
             } catch (error) {
                 console.error('Error fetching products:', error);
@@ -17,11 +23,23 @@ const ProductList = () => {
         };
 
         fetchProducts();
-    }, []);
+    }, [selectedCategory]);
 
     const handleProductClick = (productId) => {
         navigate(`/products/${productId}`);
     }
+
+    const handleOpenPopup = () => {
+        setIsCategoryPopupOpen(true);
+    };
+
+    const handleClosePopup = () => {
+        setIsCategoryPopupOpen(false);
+    };
+
+    const handleSelectCategory = (categoryId, categoryName) => {
+        setSelectedCategory({ id: categoryId, name: categoryName });
+    };
 
     return (
         <div className='product-list-container'>
@@ -39,6 +57,9 @@ const ProductList = () => {
                 />
             </div>
             <div className='sorting-criteria p-2 d-flex bg-light'>
+                <button className='btn btn-outline-secondary flex-grow-1' onClick={handleOpenPopup}>
+                    {selectedCategory.name}
+                </button>
                 <button className='btn btn-outline-secondary flex-grow-1'>정렬 기준 1</button>
                 <button className='btn btn-outline-secondary flex-grow-1 ml-2'>정렬 기준 2</button>
             </div>
@@ -78,6 +99,12 @@ const ProductList = () => {
                     </div>
                 ))}
             </div>
+
+            <CategoryPopup
+                isOpen={isCategoryPopupOpen}
+                onClose={handleClosePopup}
+                onSelectCategory={handleSelectCategory}
+            />
         </div>
     );
 };
