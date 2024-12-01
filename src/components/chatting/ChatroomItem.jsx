@@ -49,7 +49,7 @@ const ChatroomItem = ({ chatroom, currentTime, myId, onClick }) => {
           <div className='rounded-circle bg-secondary me-3' style={{ width: 40, height: 40 }}></div>
           <div className='flex-grow-1'>
             <div className='text-start'>
-              <h6 className='card-title mb-1'>{chatroom.product.productName}</h6>
+              <h6 className='card-title mb-1'>{chatroom.product.name}</h6>
               <p className='card-text mb-1'>{checkOpponent(chatroom.seller, chatroom.buyer)}</p>
             </div>
             <div className='d-flex align-items-center justify-content-between'>
@@ -81,7 +81,7 @@ ChatroomItem.propTypes = {
     }),
     product: PropTypes.shape({
       id: PropTypes.number,
-      productName: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
     }),
   }),
   currentTime: PropTypes.number.isRequired,
