@@ -1,0 +1,24 @@
+/* 3. 채팅 목록을 세로로 나열하기 위한 스타일 */
+
+.chatroom-list {
+  display: flex;
+  flex-direction: column; /* 세로로 나열 */
+  gap: 16px; /* 각 아이템 간의 간격 */
+  width: 100%; /* 가로 너비는 100% */
+
+  overflow-y: scroll;
+  scrollbar-width: none;
+}
+
+.chatroom-list::-webkit-scrollbar {
+  display: none;
+}
+
+.d-flex {
+  overflow-x: auto; /* 가로로 넘칠 경우 스크롤 가능 */
+  scrollbar-width: none; /* Firefox에서 스크롤바 숨기기 */
+}
+
+.d-flex::-webkit-scrollbar {
+  display: none; /* Webkit 기반 브라우저에서 스크롤바 숨기기 */
+}
