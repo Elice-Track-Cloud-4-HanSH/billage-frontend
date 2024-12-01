@@ -75,9 +75,9 @@ const ChatroomList = () => {
     setCurrentTime(Date.now());
   };
 
-  const navigateToChatroom = ({ opponent, sellerId, buyerId, productId }) => {
+  const navigateToChatroom = ({ opponentName, sellerId, buyerId, productId }) => {
     navigate(`/chat`, {
-      state: { opponent, sellerId, buyerId, productId },
+      state: { opponentName, sellerId, buyerId, productId },
     });
   };
 
