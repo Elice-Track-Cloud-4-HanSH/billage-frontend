@@ -9,7 +9,7 @@ import ChatExitModal from './ChatExitModal';
 
 const ChatPageHeader = ({ otherNickname, exitButtonHandler }) => {
   const [showExitModal, setShowExitModal] = useState(false);
-  const navigator = useNavigate();
+  const navigate = useNavigate();
 
   const handleExitButtonClick = () => {
     setShowExitModal(true);
@@ -19,11 +19,11 @@ const ChatPageHeader = ({ otherNickname, exitButtonHandler }) => {
     setShowExitModal(false);
   };
 
-  const handleConfirmExit = () => {
+  const handleConfirmExit = async () => {
     // 실제 채팅방 나가기 로직
-    exitButtonHandler();
+    await exitButtonHandler();
     setShowExitModal(false);
-    navigator('/chat');
+    navigate('/chats');
   };
 
   return (
@@ -31,7 +31,7 @@ const ChatPageHeader = ({ otherNickname, exitButtonHandler }) => {
       <Row className='header py-1'>
         <Col xs={2}>
           <Button variant='link'>
-            <Link to='/chat'>
+            <Link to='/chats'>
               <i className='bi bi-arrow-left'></i>
             </Link>
           </Button>

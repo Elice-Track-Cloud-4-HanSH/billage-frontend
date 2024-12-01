@@ -24,9 +24,8 @@ const App = () => {
         <Route path='/' element={<Layout />}>
           {/* 채팅 */}
           <Route path='/easter-egg' element={<Easteregg />} />
-          <Route path='/chat' element={<ChatroomList />} />
-          <Route path='/chat/:chatroomId' element={<ChatPage />} />
-          
+          <Route path='/chats' element={<ChatroomList />} />
+          <Route path='/chat' element={<ChatPage />} />
           {/* 리뷰, 대여기록 */}
           <Route path='/myreview' element={<MyReview />} />
           <Route path='/mysales' element={<MySales />} />
@@ -34,17 +33,16 @@ const App = () => {
           <Route path='/product-review/:id' element={<WriteProductReview />} />
           <Route path='user-review/:id' element={<WriteUserReview />} />
           <Route path='/set-to-rented' element={<SetToRented />} />
-
           {/* 회원 */}
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/logout' element={<Logout />} />
           <Route path='/profile-edit' element={<ProfileEdit />} />
-
           {/* 상품 */}
           <Route path='/products/register' element={<ProductRegister />} /> {/* 상품 등록 페이지 */}
           <Route path='/products/:productId' element={<ProductDetail />} /> {/* 상품 상세 페이지 */}
-          <Route path='/products/:productId/edit' element={<ProductEdit />} />{/* 상품 수정 페이지 */}
+          <Route path='/products/:productId/edit' element={<ProductEdit />} />
+          {/* 상품 수정 페이지 */}
         </Route>
       </Routes>
     </BrowserRouter>
