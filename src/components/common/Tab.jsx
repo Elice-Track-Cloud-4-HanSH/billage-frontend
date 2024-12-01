@@ -1,8 +1,15 @@
-import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useTab } from '../../hooks/userTab';
+import { useEffect } from 'react';
 
 const Tab = ({ tabs, defaultTab, onChangeTab }) => {
-  const [activeTab, setActiveTab] = useState(defaultTab || tabs[0].value);
+  const { activeTab, setActiveTab } = useTab();
+
+  useEffect(() => {
+    if (!activeTab && defaultTab) {
+      setActiveTab(defaultTab);
+    }
+  }, [defaultTab, activeTab, setActiveTab]);
 
   const handleTabClick = (value) => {
     setActiveTab(value);

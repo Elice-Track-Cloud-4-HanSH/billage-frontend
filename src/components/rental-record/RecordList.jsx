@@ -19,7 +19,6 @@ const RecordList = ({ records }) => {
 
 RecordList.propTypes = {
   records: PropTypes.array.isRequired,
-  activeTab: PropTypes.string.isRequired,
 };
 
 export default RecordList;

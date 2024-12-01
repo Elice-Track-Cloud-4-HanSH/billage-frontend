@@ -2,22 +2,20 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 const WriteReviewForm = ({ onSubmit }) => {
-  const [rating, setRating] = useState(0);
-  const [review, setReview] = useState('');
+  const [score, setScore] = useState(0);
+  const [content, setContent] = useState('');
 
-  const handleRatingChange = (newRating) => {
-    setRating(newRating);
+  const handleScoreChange = (newScore) => {
+    setScore(newScore);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (rating === 0 || review.trim() === '') {
+    if (score === 0 || content.trim() === '') {
       alert('별점과 리뷰를 모두 입력해주세요.');
       return;
     }
-    onSubmit({ rating, review });
-    setRating(0);
-    setReview('');
+    onSubmit({ score, content });
   };
 
   return (
@@ -27,10 +25,10 @@ const WriteReviewForm = ({ onSubmit }) => {
         {[1, 2, 3, 4, 5].map((star) => (
           <span
             key={star}
-            onClick={() => handleRatingChange(star)}
+            onClick={() => handleScoreChange(star)}
             style={{
               cursor: 'pointer',
-              color: star <= rating ? 'gold' : 'gray',
+              color: star <= score ? 'gold' : 'gray',
               fontSize: '24px',
             }}
           >
@@ -41,9 +39,9 @@ const WriteReviewForm = ({ onSubmit }) => {
       <div className='textarea'>
         <label htmlFor='review'>리뷰:</label>
         <textarea
-          id='review'
-          value={review}
-          onChange={(e) => setReview(e.target.value)}
+          id='content'
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
           placeholder='리뷰를 작성해주세요'
           rows='5'
           style={{ width: '100%', padding: '8px' }}
