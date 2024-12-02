@@ -22,14 +22,21 @@
 }
 
 .close-button {
-    background-color: red;
+    background-color: #6c63ff;
     color: white;
     border: none;
-    padding: 8px 16px;
+    padding: 12px;
     cursor: pointer;
     border-radius: 5px;
-    font-size: 14px;
+    font-size: 16px;
     margin-bottom: 20px;
+    width: 100%;
+    font-weight: bold;
+    text-align: center;
+}
+
+.close-button:hover {
+    background-color: #5a53cc;
 }
 
 .categories-grid {
