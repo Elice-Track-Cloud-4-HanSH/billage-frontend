@@ -32,8 +32,9 @@ const App = () => {
           <Route path='/mysales' element={<MySales />} />
           <Route path='/mypurchase' element={<MyPurchase />} />
           <Route path='/product-review/:id' element={<WriteProductReview />} />
-          <Route path='user-review/:id' element={<WriteUserReview />} />
-          <Route path='/set-to-rented' element={<SetToRented />} />
+          <Route path='/user-review/:id' element={<WriteUserReview />} />
+          <Route path='/set-to-rented/:id' element={<SetToRented />} />
+
           {/* 회원 */}
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
