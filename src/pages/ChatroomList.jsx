@@ -1,10 +1,10 @@
-import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '@/styles/chatting/ChatroomList.css';
 import ChatroomItem from '@/components/chatting/ChatroomItem.jsx';
 import { useCookies } from 'react-cookie';
 import ChatroomListHeader from '../components/chatting/ChatroomListHeader';
+import axiosCredential from '../utils/axiosCredential';
 
 const ChatroomList = () => {
   const [chatroomList, setChatroomList] = useState([]);
@@ -53,14 +53,13 @@ const ChatroomList = () => {
   const loadMoreChatroom = () => {
     if (isLast) return;
     setIsLoading(true);
-    axios({
-      method: 'GET',
-      url: 'http://localhost:8080/api/chatroom',
-      params: {
-        type: chatType,
-        page: page,
-      },
-    })
+    axiosCredential
+      .get('/api/chatroom', {
+        params: {
+          type: chatType,
+          page: page,
+        },
+      })
       .then((response) => {
         const data = response.data;
         if (data.length < 20) setIsLast(true);

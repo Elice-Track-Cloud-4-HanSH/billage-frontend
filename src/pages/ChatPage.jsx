@@ -5,10 +5,9 @@ import ChatPageHeader from '@/components/chatting/ChatPageHeader';
 import ChatItem from '@/components/chatting/ChatItem';
 import { Client } from '@stomp/stompjs';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios';
 import SockJS from 'sockjs-client';
 import { Container, Button } from 'react-bootstrap';
-import { useCookies } from 'react-cookie';
+import axiosCredential from '../utils/axiosCredential';
 
 // 사용 예시
 const ChatPage = () => {
@@ -158,16 +157,12 @@ const ChatPage = () => {
   const validateChatroom = () => {
     if (!sellerId || !buyerId || !productId) return;
 
-    axios({
-      // sellerId, buyerId, productId
-      baseURL: '/api/chatroom/valid',
-      data: {
+    axiosCredential
+      .post('/api/chatroom/valid', {
         productId: productId,
         sellerId: sellerId,
         buyerId: buyerId,
-      },
-      method: 'POST',
-    })
+      })
       .then((data) => {
         setChatroomId(data.data.chatroomId);
       })
@@ -199,26 +194,23 @@ const ChatPage = () => {
   const fetchChatData = () => {
     setIsLoading(true);
     if (!isLastPage) {
-      axios({
-        baseURL: `/api/chatroom/${chatroomId}`,
-        method: 'GET',
-        params: {
-          page: page,
-          lastLoadChatId: page === 0 ? Number.MAX_SAFE_INTEGER : chats[0].chatId,
-        },
-      })
+      axiosCredential
+        .get(`/api/chatroom/${chatroomId}`, {
+          params: {
+            page: page,
+            lastLoadChatId: page === 0 ? Number.MAX_SAFE_INTEGER : chats[0].chatId,
+          },
+        })
         .then((data) => {
           if (!data.data.length) {
             return;
-          }
-          setPage((prev) => prev + 1);
-          setChats((prev) => [...prev, ...data.data]);
-          return data;
-        })
-        .then((data) => {
-          if (data.data.length < 50) {
+          } else if (data.data.length < 50) {
             setIsLastPage(true);
           }
+
+          setPage((prev) => prev + 1);
+          setChats((prev) => [...prev, ...data.data]);
+
           if (page === 0) {
             scrollToBottom();
           } else {
@@ -281,11 +273,10 @@ const ChatPage = () => {
 
   const onExitChatroom = async () => {
     try {
-      const response = await axios({
-        baseURL: `/api/chatroom/${chatroomId}`,
-        method: 'DELETE',
-      });
-      console.log(response.data);
+      axiosCredential
+        .delete(`/api/chatroom/${chatroomId}`)
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err));
     } catch (error) {
       console.log(error);
     }
