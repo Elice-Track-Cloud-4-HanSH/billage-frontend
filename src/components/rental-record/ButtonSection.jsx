@@ -14,7 +14,7 @@ const ButtonSection = ({ record }) => {
     if (tab === 'products/on-sale') {
       return (
         <>
-          <button onClick={() => nav('/set-to-rented')}>대여 중으로 변경</button>
+          <button onClick={() => nav(`/set-to-rented/${record.productId}`)}>대여 중으로 변경</button>
           <button onClick={() => nav()}>수정</button>
           <button onClick={() => setShowModal(true)}>삭제</button>
         </>
