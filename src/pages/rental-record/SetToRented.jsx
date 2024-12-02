@@ -1,28 +1,37 @@
 import { useEffect, useState } from 'react';
 import Header from '../../components/common/Header';
-import RentalForm from './RentalForm';
+import RentalForm from '../../components/rental-record/RentalForm'
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 const SetToRented = () => {
   const [purchasers, setPurchasers] = useState();
-
-  const loadPurchasers = async () => {
-    try {
-      const response = await axios.get('/api/rental-record/set-to-rented');
-      setPurchasers(response.data);
-    } catch (error) {
-      console.error('구매 희망자 정보를 가져오는 데 실패했습니다.', error);
-    }
-  };
+  const { id } = useParams();
 
   useEffect(() => {
-    loadPurchasers();
-  }, []);
+    const loadPurchasers = async () => {
+      try {
+        const response = await axios.get(`/api/rental-record/set-to-rented/${id}`);
+        setPurchasers(response.data);
+      } catch (error) {
+        console.error('구매 희망자 정보를 가져오는 데 실패했습니다.', error);
+      }
+    };
+
+    if (id) {
+      loadPurchasers();
+    }
+  }, [id]);
 
   return (
     <>
       <Header title='대여 중으로 변경' />
-      <RentalForm purchasers={purchasers} />
+      {purchasers ? (
+        <RentalForm purchasers={purchasers} />
+      )
+       : (
+        <div>정보를 불러오는 중입니다.</div>
+       )}
     </>
   );
 };

@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const RentalForm = ({ purchasers }) => {
   const [selectedPurchaser, setSelectedPurchaser] = useState(null);
   const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [expectedReturnDate, setExpectedReturnDate] = useState('');
 
   const nav = useNavigate();
 
@@ -18,15 +18,15 @@ const RentalForm = ({ purchasers }) => {
       return;
     }
 
-    if (!startDate || !endDate) {
+    if (!startDate || !expectedReturnDate) {
       alert('대여 시작일과 반납 예정일을 입력해주세요.');
       return;
     }
 
     const requestData = {
-      purchaserId: selectedPurchaser,
-      rentalStartDate: startDate,
-      rentalEndDate: endDate,
+      id: selectedPurchaser,
+      startDate: startDate,
+      expectedReturnDate: expectedReturnDate,
     };
 
     try {
@@ -53,26 +53,26 @@ const RentalForm = ({ purchasers }) => {
                 onChange={() => setSelectedPurchaser(purchaser.id)}
                 checked={selectedPurchaser === purchaser.id}
               />
-              <label htmlFor={`purchaser-${purchaser.id}`}>{purchaser.nickname}</label>
+              <label htmlFor='id'>{purchaser.nickname}</label>
             </div>
           ))}
         </div>
         <div>
-          <label htmlFor='rental-start'>대여 시작일: </label>
+          <label htmlFor='start'>대여 시작일: </label>
           <input
             type='date'
-            id='rental-start'
+            id='startDate'
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
           />
         </div>
         <div>
-          <label htmlFor='rental-end'>반납 예정일: </label>
+          <label htmlFor='expected_eturn'>반납 예정일: </label>
           <input
             type='date'
-            id='rental-end'
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
+            id='expectedReturnDate'
+            value={expectedReturnDate}
+            onChange={(e) => setExpectedReturnDate(e.target.value)}
           />
         </div>
         <button type='submit'>대여</button>
