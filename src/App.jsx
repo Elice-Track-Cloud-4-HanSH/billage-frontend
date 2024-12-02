@@ -16,6 +16,7 @@ import ProductDetail from '@/pages/product/ProductDetail';
 import Logout from '@/pages/Logout.jsx';
 import ProfileEdit from '@/pages/ProfileEdit.jsx';
 import SetToRented from '@/pages/rental-record/SetToRented';
+import ProductList from '@/pages/product/ProductList';
 
 const App = () => {
   return (
@@ -24,9 +25,8 @@ const App = () => {
         <Route path='/' element={<Layout />}>
           {/* 채팅 */}
           <Route path='/easter-egg' element={<Easteregg />} />
-          <Route path='/chat' element={<ChatroomList />} />
-          <Route path='/chat/:chatroomId' element={<ChatPage />} />
-          
+          <Route path='/chats' element={<ChatroomList />} />
+          <Route path='/chat' element={<ChatPage />} />
           {/* 리뷰, 대여기록 */}
           <Route path='/myreview' element={<MyReview />} />
           <Route path='/mysales' element={<MySales />} />
@@ -40,11 +40,11 @@ const App = () => {
           <Route path='/signup' element={<Signup />} />
           <Route path='/logout' element={<Logout />} />
           <Route path='/profile-edit' element={<ProfileEdit />} />
-
           {/* 상품 */}
           <Route path='/products/register' element={<ProductRegister />} /> {/* 상품 등록 페이지 */}
           <Route path='/products/:productId' element={<ProductDetail />} /> {/* 상품 상세 페이지 */}
-          <Route path='/products/:productId/edit' element={<ProductEdit />} />{/* 상품 수정 페이지 */}
+          <Route path='/products/:productId/edit' element={<ProductEdit />} /> {/* 상품 수정 페이지 */}
+          <Route path='/products' element={<ProductList />} /> {/* 상품 목록 페이지 */}
         </Route>
       </Routes>
     </BrowserRouter>
