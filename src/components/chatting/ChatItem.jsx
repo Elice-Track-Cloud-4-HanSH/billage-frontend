@@ -5,9 +5,8 @@ import '@/styles/chatting/ChatItem.css';
 const ChatItem = ({ message, createdAt, isMine }) => {
   return (
     <div className={`message ${isMine ? 'my-message' : 'other-message'}`}>
-      {!isMine && <span>{message}</span>}
       <div className='message-time'>{createdAt}</div>
-      {isMine && <span>{message}</span>}
+      <span>{message}</span>
     </div>
   );
 };
