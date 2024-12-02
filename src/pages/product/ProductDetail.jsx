@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import Header from "../../components/common/Header"; // Header 컴포넌트 import
+import Header from "@/components/common/Header"; // Header 컴포넌트 import
+import ReviewList from "@/components/review/ReviewList";
 
 const ProductDetail = () => {
     const { productId } = useParams(); // URL에서 productId 가져오기
     const navigate = useNavigate(); // navigate 초기화
     const [product, setProduct] = useState(null); // 상품 데이터 상태 관리
+    const [reviews, setReviews] = useState([]); // 리뷰 데이터 상태 관리
     const [loading, setLoading] = useState(true); // 로딩 상태 관리
     const [error, setError] = useState(null); // 에러 상태 관리
 
@@ -16,15 +18,26 @@ const ProductDetail = () => {
             try {
                 const response = await axios.get(`/api/products/${productId}`);
                 setProduct(response.data); // 데이터 설정
-                setLoading(false); // 로딩 완료
             } catch (err) {
                 console.error("상품 정보를 가져오는 중 오류 발생:", err);
                 setError("상품 정보를 불러오지 못했습니다.");
+            } finally {
                 setLoading(false);
             }
         };
 
+        const fetchReviews = async () => {
+            try {
+                const response = await axios.get(`/api/product-review/product-details/${productId}`);
+                setReviews(response.data); // 리뷰 데이터 설정
+            } catch (err) {
+                console.error("리뷰 정보를 가져오는 중 오류 발생:", err);
+                setError("리뷰 정보를 불러오지 못했습니다.");
+            }
+        };
+
         fetchProduct();
+        fetchReviews();
     }, [productId]);
 
     if (loading) {
@@ -89,28 +102,7 @@ const ProductDetail = () => {
                 </div>
 
                 <h2>리뷰</h2>
-                <div className="reviews">
-                    {product.reviews.length > 0 ? (
-                        product.reviews.map((review, index) => (
-                            <div key={index} className="review" style={{ borderBottom: "1px solid #ddd", marginBottom: "10px", paddingBottom: "10px" }}>
-                                <p>리뷰 ID: {review.reviewId}</p>
-                                <p>평점: {review.score}점</p>
-                                <p>내용: {review.content}</p>
-                                <p>작성자 ID: {review.id}</p>
-                                {review.imageUrl && (
-                                    <img
-                                        src={review.imageUrl}
-                                        alt="작성자 프로필 이미지"
-                                        style={{ width: "100px", marginTop: "10px" }}
-                                    />
-                                )}
-                                <p>내용: {review.subject}</p>
-                            </div>
-                        ))
-                    ) : (
-                        <p>리뷰가 없습니다.</p>
-                    )}
-                </div>
+                <ReviewList reviews={reviews} />
             </div>
         </>
     );
