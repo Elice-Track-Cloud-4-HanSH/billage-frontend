@@ -19,7 +19,7 @@ const Navbar = () => {
           <div className='small'>홈</div>
         </button>
         <button
-          className={`btn btn-link ${location.pathname === '/chat' ? 'text-primary' : 'text-dark'}`}
+          className={`btn btn-link ${location.pathname === '/chats' ? 'text-primary' : 'text-dark'}`}
           onClick={() => navigate('/chats')}
         >
           <i className='bi bi-chat'></i>
