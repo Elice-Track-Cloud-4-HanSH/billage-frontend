@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import {axiosCredential} from "@/utils/axiosCredential";
 import CategoryPopup from '@/components/category/CategoryPopup';
 import '@/styles/product/ProductList.css';
 
@@ -13,7 +13,7 @@ const ProductList = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await axios.get('/api/products', {
+                const response = await axiosCredential.get('/api/products', {
                     params: { categoryId: selectedCategory.id }
                 });
                 setProducts(response.data);

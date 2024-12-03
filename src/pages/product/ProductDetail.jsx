@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import {axiosCredential} from "@/utils/axiosCredential";
 import Header from "@/components/common/Header"; // Header 컴포넌트 import
 import ReviewList from "@/components/review/ReviewList";
 import ProductDetailNavbar from "@/components/product/ProductDetailNavbar";
@@ -18,7 +18,7 @@ const ProductDetail = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const response = await axios.get(`/api/products/${productId}`);
+                const response = await axiosCredential.get(`/api/products/${productId}`);
                 setProduct(response.data); // 데이터 설정
             } catch (err) {
                 console.error("상품 정보를 가져오는 중 오류 발생:", err);
@@ -30,7 +30,7 @@ const ProductDetail = () => {
 
         const fetchReviews = async () => {
             try {
-                const response = await axios.get(`/api/product-review/product-details/${productId}`);
+                const response = await axiosCredential.get(`/api/product-review/product-details/${productId}`);
                 setReviews(response.data); // 리뷰 데이터 설정
             } catch (err) {
                 console.error("리뷰 정보를 가져오는 중 오류 발생:", err);
@@ -40,7 +40,7 @@ const ProductDetail = () => {
 
         const fetchFavoriteStatus = async () => {
             try {
-                const response = await axios.get(`/api/favorites/${productId}`);
+                const response = await axiosCredential.get(`/api/favorites/${productId}`);
                 setIsFavorite(response.data.favorite); // 좋아요 상태 설정
             } catch (err) {
                 console.error("좋아요 상태를 가져오는 중 오류 발생:", err);
@@ -56,9 +56,9 @@ const ProductDetail = () => {
     const handleToggleFavorite = async (newFavoriteStatus) => {
         try {
             if (newFavoriteStatus) {
-                await axios.post(`/api/favorites/${productId}`);
+                await axiosCredential.post(`/api/favorites/${productId}`);
             } else {
-                await axios.delete(`/api/favorites/${productId}`);
+                await axiosCredential.delete(`/api/favorites/${productId}`);
             }
             setIsFavorite(newFavoriteStatus); // 상태 업데이트
         } catch (err) {
