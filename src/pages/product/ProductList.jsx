@@ -93,7 +93,11 @@ const ProductList = () => {
                                 <i className='bi bi-person'></i> {product.viewCount}
                             </p>
                             <p className='like-count mb-0'>
-                                <i className='bi bi-heart'></i> 10
+                                {product.favorite ? (
+                                    <i className='bi bi-heart-fill text-danger'></i>
+                                ) : (
+                                    <i className='bi bi-heart'></i>
+                                )} {product.favoriteCnt}
                             </p>
                         </div>
                     </div>
