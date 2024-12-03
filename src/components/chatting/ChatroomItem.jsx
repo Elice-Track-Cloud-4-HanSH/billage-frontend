@@ -45,7 +45,10 @@ const ChatroomItem = ({ chatroom, currentTime, onClick }) => {
           <div className='rounded-circle bg-secondary me-3' style={{ width: 40, height: 40 }}></div>
           <div className='flex-grow-1'>
             <div className='text-start'>
-              <h6 className='card-title mb-1'>{chatroom.product.name}</h6>
+              <div className='d-flex align-items-center justify-content-between'>
+                <h6 className='card-title mb-1'>{chatroom.product.name}</h6>
+                {chatroom.unreadCount > 0 && <small>{chatroom.unreadCount}</small>}
+              </div>
               <p className='card-text mb-1'>{chatroom.opponent.nickname}</p>
             </div>
             <div className='d-flex align-items-center justify-content-between'>
