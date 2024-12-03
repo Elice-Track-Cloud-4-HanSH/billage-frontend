@@ -36,6 +36,10 @@ const Login = () => {
     window.location.href = 'http://localhost:8080/oauth2/authorization/google';
   };
 
+  const handleGoogleLogin = () => {
+    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header title="로그인" />
@@ -94,6 +98,16 @@ const Login = () => {
       </div>
     </div>
   );
+};
+
+const styles = {
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+    maxWidth: '400px',
+    margin: '2rem auto',
+  },
 };
 
 export default Login;

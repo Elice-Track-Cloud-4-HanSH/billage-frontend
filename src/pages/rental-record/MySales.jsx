@@ -1,12 +1,13 @@
-import Header from '../components/common/Header';
-import RecordList from '../components/rental-record/RecordList';
+import Header from '../../components/common/Header';
+import RecordList from '../../components/rental-record/RecordList';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import Tab from '../components/common/Tab';
+import Tab from '../../components/common/Tab';
+import { TabProvider } from '@/hooks/TabContext';
 
 const MySales = () => {
   const [records, setRecords] = useState([]);
-  const [activeTab, setActiveTab] = useState('');
+  const [activeTab, setActiveTab] = useState('products/on-sale');
 
   const tabs = [
     { name: '판매 중', value: 'products/on-sale' },
@@ -32,9 +33,11 @@ const MySales = () => {
 
   return (
     <>
-      <Header title='내가 빌려주는 물건' />
-      <Tab tabs={tabs} onChangeTab={handleTabChange} defaultTab={defaultTab} />
-      <RecordList records={records} activeTab={activeTab} />
+      <TabProvider value={{ activeTab, setActiveTab }}>
+        <Header title='내가 빌려주는 물건' />
+        <Tab tabs={tabs} onChangeTab={handleTabChange} defaultTab={defaultTab} />
+        <RecordList records={records} />
+      </TabProvider>
     </>
   );
 };

@@ -1,0 +1,45 @@
+.message {
+  max-width: 80%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin-bottom: 10px;
+}
+
+.message span {
+  flex: 1;
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 5px;
+  word-break: break-word;
+  white-space: normal;
+  text-align: start;
+}
+
+.my-message {
+  align-self: flex-end;
+}
+
+.my-message span {
+  background-color: #6366f1;
+  color: white;
+}
+
+.other-message {
+  align-self: flex-start;
+}
+
+.other-mesage span {
+  background-color: #e9ecef;
+}
+
+.message-time {
+  font-size: 0.8rem;
+  color: #6c757d;
+  text-align: right;
+  margin-left: 10px; /* 메시지와 시간 사이에 여백을 추가 */
+}
