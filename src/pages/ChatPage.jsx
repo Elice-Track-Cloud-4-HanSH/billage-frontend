@@ -127,10 +127,12 @@ const ChatPage = () => {
         client.subscribe(`/sub/chat/${chatroomId}`, (message) => {
           const stompMessage = JSON.parse(message.body);
 
-          setChats((prev) => [stompMessage, ...prev]);
-          if (stompMessage.mine) {
+          // 닉네임이 다르다면 내꺼
+          if (stompMessage.nickname !== opponentName) {
             scrollToBottom();
           } else {
+            // 같다면 상대꺼
+            stompMessage.read = true;
             lockCurrentPosition('WS');
             setIsNewMessageAvailable(true);
 
@@ -138,6 +140,7 @@ const ChatPage = () => {
               destination: `/ack/chat/chatting/${stompMessage.chatId}`,
             });
           }
+          setChats((prev) => [stompMessage, ...prev]);
         });
       },
       onDisconnect: () => {
@@ -290,7 +293,7 @@ const ChatPage = () => {
         <div ref={endOfMessageRef} className='chat-bottom' style={{ height: '1px' }} />
 
         {chats.map((message, key) => {
-          const isMine = message.mine;
+          const isMine = message.sender.nickname !== opponentName;
           const isRead = message.read;
           return (
             <ChatItem
