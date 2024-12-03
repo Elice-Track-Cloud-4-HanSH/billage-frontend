@@ -1,0 +1,28 @@
+.chat-button {
+    background-color: #6c63ff;
+    color: white;
+    border: none;
+    padding: 12px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.chat-button:hover {
+    background-color: #5a53cc;
+}
+
+.favorite-button {
+    font-size: 24px;
+}
+
+.favorite-icon {
+    font-size: 32px; /* 하트 아이콘 크기 조정 */
+}
+
+.price-text {
+    font-size: 18px;
+    font-weight: bold;
+}
