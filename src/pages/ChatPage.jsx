@@ -123,6 +123,7 @@ const ChatPage = () => {
       debug: (str) => console.log(str),
       onConnect: () => {
         setIsConnected(true);
+        markAsReadAllChats();
 
         client.subscribe(`/sub/chat/${chatroomId}`, (message) => {
           const stompMessage = JSON.parse(message.body);
@@ -235,6 +236,13 @@ const ChatPage = () => {
     setTimeout(() => {
       endOfMessageRef.current?.scrollIntoView({ behavior: 'auto' });
     }, 0);
+  };
+
+  const markAsReadAllChats = () => {
+    axiosCredential
+      .post(`/api/chatroom/${chatroomId}`)
+      .then((data) => console.log(data))
+      .catch((err) => console.log(err));
   };
 
   const handleSendMessage = (message) => {
