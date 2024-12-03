@@ -1,8 +1,9 @@
 import axios from 'axios';
 
-const axiosCredential = axios.create({
+axios.defaults.baseURL = `${import.meta.env.VITE_AXIOS_BASE_URL}`;
+axios.defaults.withCredentials = true;
+
+export const axiosCredential = axios.create({
   baseURL: `${import.meta.env.VITE_AXIOS_BASE_URL}`,
   withCredentials: true,
 });
-
-export default axiosCredential;

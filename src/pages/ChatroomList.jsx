@@ -4,7 +4,7 @@ import '@/styles/chatting/ChatroomList.css';
 import ChatroomItem from '@/components/chatting/ChatroomItem.jsx';
 import { useCookies } from 'react-cookie';
 import ChatroomListHeader from '../components/chatting/ChatroomListHeader';
-import axiosCredential from '../utils/axiosCredential';
+import { axiosCredential } from '../utils/axiosCredential';
 
 const ChatroomList = () => {
   const [chatroomList, setChatroomList] = useState([]);
