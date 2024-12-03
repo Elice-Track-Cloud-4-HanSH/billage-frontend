@@ -7,7 +7,7 @@ import { Client } from '@stomp/stompjs';
 import { useLocation } from 'react-router-dom';
 import SockJS from 'sockjs-client';
 import { Container, Button } from 'react-bootstrap';
-import axiosCredential from '../utils/axiosCredential';
+import { axiosCredential } from '../utils/axiosCredential';
 
 // 사용 예시
 const ChatPage = () => {
@@ -291,12 +291,14 @@ const ChatPage = () => {
 
         {chats.map((message, key) => {
           const isMine = message.mine;
+          const isRead = message.read;
           return (
             <ChatItem
               message={message.message}
               createdAt={formatDate(message.createdAt)}
               isMine={isMine}
               key={key}
+              isRead={isRead}
             />
           );
         })}
