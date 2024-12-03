@@ -42,6 +42,35 @@
     font-size: 16px;
 }
 
-.product-list button:hover {
+.product-list button:hover,
+.sorting-button:hover,
+.sorting-select:hover {
     background-color: #5a53cc;
+}
+
+.sorting-criteria {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.sorting-button,
+.sorting-select {
+    background-color: #6c63ff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 12px;
+    text-align: center;
+    font-size: 16px;
+    flex-grow: 1;
+}
+
+.sorting-select {
+    appearance: none; /* 브라우저 기본 스타일 제거 */
+    -webkit-appearance: none; /* 사파리 등 브라우저 호환 */
+    padding: 10px; /* 셀렉트박스에 여유 패딩 */
 }
