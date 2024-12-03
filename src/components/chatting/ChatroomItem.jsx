@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { timeDiffFormat } from '@/utils';
 
-const ChatroomItem = ({ chatroom, currentTime, myId, onClick }) => {
+const ChatroomItem = ({ chatroom, currentTime, onClick }) => {
   const [chatText, setChatText] = useState(chatroom.lastChat.message);
 
   useEffect(() => {
@@ -35,10 +35,6 @@ const ChatroomItem = ({ chatroom, currentTime, myId, onClick }) => {
     setChatText(adjustedMessage);
   }
 
-  const checkOpponent = (seller, buyer) => {
-    return seller.id === myId ? buyer.nickname : seller.nickname;
-  };
-
   return (
     <div
       className='card border-0 border-bottom p-1 cursor-pointer shadow-sm hover-shadow'
@@ -50,7 +46,7 @@ const ChatroomItem = ({ chatroom, currentTime, myId, onClick }) => {
           <div className='flex-grow-1'>
             <div className='text-start'>
               <h6 className='card-title mb-1'>{chatroom.product.name}</h6>
-              <p className='card-text mb-1'>{checkOpponent(chatroom.seller, chatroom.buyer)}</p>
+              <p className='card-text mb-1'>{chatroom.opponent.nickname}</p>
             </div>
             <div className='d-flex align-items-center justify-content-between'>
               <p className='card-text mb-1 me-3 chat-content'>{chatText}</p>
@@ -83,9 +79,13 @@ ChatroomItem.propTypes = {
       id: PropTypes.number,
       name: PropTypes.string.isRequired,
     }),
+    opponent: PropTypes.shape({
+      id: PropTypes.number,
+      nickname: PropTypes.string,
+    }),
+    unreadCount: PropTypes.number,
   }),
   currentTime: PropTypes.number.isRequired,
-  myId: PropTypes.number,
   onClick: PropTypes.func.isRequired,
 };
 
