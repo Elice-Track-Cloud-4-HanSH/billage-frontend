@@ -14,9 +14,10 @@ import Login from '@/pages/Login.jsx';
 import Signup from '@/pages/Signup.jsx';
 import ProductDetail from '@/pages/product/ProductDetail';
 import Logout from '@/pages/Logout.jsx';
-import ProfileEdit from '@/pages/ProfileEdit.jsx';
+import EditProfile from '@/pages/EditProfile.jsx';
 import SetToRented from '@/pages/rental-record/SetToRented';
 import ProductList from '@/pages/product/ProductList';
+import ForgotPassword from './pages/user/ForgotPassword';
 
 const App = () => {
   return (
@@ -39,7 +40,9 @@ const App = () => {
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/logout' element={<Logout />} />
-          <Route path='/profile-edit' element={<ProfileEdit />} />
+          <Route path='/edit-profile' element={<EditProfile />} />
+          <Route path='/forgot-password' element={<ForgotPassword />} />
+
           {/* 상품 */}
           <Route path='/products/register' element={<ProductRegister />} /> {/* 상품 등록 페이지 */}
           <Route path='/products/:productId' element={<ProductDetail />} /> {/* 상품 상세 페이지 */}
