@@ -2,13 +2,22 @@ import PropTypes from 'prop-types';
 
 const ReviewSubject = ({ subjectInfo, comment }) => {
   return (
-    <div>
-      <div>
-        <img src={subjectInfo.imageUrl} alt='이미지' />
-        <h5>{subjectInfo.subject}</h5>
+    <div className='my-5 gap-5'>
+      <div className='mb-5'>
+        <img
+          src={subjectInfo.imageUrl}
+          alt='이미지'
+          className='img-fluid rounded'
+          style={{
+            width: '150px',
+            height: '150px',
+            objectFit: 'cover',
+          }}
+        />
+        <h4 className='mt-3'>{subjectInfo.subject}</h4>
       </div>
       <div>
-        <p>{comment}</p>
+        <p className='text-muted'>{comment}</p>
       </div>
     </div>
   );
