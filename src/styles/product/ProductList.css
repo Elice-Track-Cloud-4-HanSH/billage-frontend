@@ -42,6 +42,69 @@
     font-size: 16px;
 }
 
-.product-list button:hover {
+.product-list button:hover,
+.sorting-button:hover,
+.sorting-select:hover {
     background-color: #5a53cc;
+}
+
+.sorting-criteria {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.sorting-button,
+.sorting-select {
+    background-color: #6c63ff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 12px;
+    text-align: center;
+    font-size: 16px;
+    flex-grow: 1;
+}
+
+.sorting-select {
+    appearance: none; /* 브라우저 기본 스타일 제거 */
+    -webkit-appearance: none; /* 사파리 등 브라우저 호환 */
+    padding: 10px; /* 셀렉트박스에 여유 패딩 */
+}
+
+.product-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.product-card.rented img {
+    filter: brightness(50%);
+}
+
+.product-card .expected-return-tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.product-price.return-date {
+    color: #333;
+    font-size: 14px;
+    margin-top: 5px;
 }
