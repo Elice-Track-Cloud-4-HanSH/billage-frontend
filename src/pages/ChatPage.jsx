@@ -8,6 +8,7 @@ import { useLocation } from 'react-router-dom';
 import SockJS from 'sockjs-client';
 import { Container, Button } from 'react-bootstrap';
 import { axiosCredential } from '../utils/axiosCredential';
+import Loading from '@/components/common/Loading';
 
 // 사용 예시
 const ChatPage = () => {
@@ -196,39 +197,36 @@ const ChatPage = () => {
   };
 
   const fetchChatData = () => {
+    if (isLastPage) return;
     setIsLoading(true);
-    if (!isLastPage) {
-      axiosCredential
-        .get(`/api/chatroom/${chatroomId}`, {
-          params: {
-            page: page,
-            lastLoadChatId: page === 0 ? Number.MAX_SAFE_INTEGER : chats[0].chatId,
-          },
-        })
-        .then((data) => {
-          if (!data.data.length) {
-            return;
-          } else if (data.data.length < 50) {
-            setIsLastPage(true);
-          }
-
-          setPage((prev) => prev + 1);
-          setChats((prev) => [...prev, ...data.data]);
-
-          if (page === 0) {
-            scrollToBottom();
-          } else {
-            lockCurrentPosition('DB');
-          }
-        })
-        .catch(() => {
+    axiosCredential
+      .get(`/api/chatroom/${chatroomId}`, {
+        params: {
+          page: page,
+          lastLoadChatId: page === 0 ? Number.MAX_SAFE_INTEGER : chats[0].chatId,
+        },
+      })
+      .then((data) => {
+        if (!data.data.length) {
+          return;
+        } else if (data.data.length < 50) {
           setIsLastPage(true);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }
-    setIsLoading(false);
+        }
+
+        setPage((prev) => prev + 1);
+        setChats((prev) => [...prev, ...data.data]);
+
+        if (page === 0) {
+          scrollToBottom();
+        } else {
+          lockCurrentPosition('DB');
+        }
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsLastPage(true);
+        setIsLoading(false);
+      });
   };
 
   const scrollToBottom = () => {
@@ -332,6 +330,7 @@ const ChatPage = () => {
         </Button>
       )}
       <ChatPageFooter messageSendHandler={handleSendMessage} />
+      <Loading isLoading={isLoading} />
     </Container>
   );
 };
