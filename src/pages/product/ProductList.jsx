@@ -81,14 +81,21 @@ const ProductList = () => {
             </div>
             <div className='product-list p-3'>
                 {products.map((product) => (
-                    <div className='product-card d-flex align-items-center mb-3 p-3 bg-white border' key={product.productId}
-                    onClick={() => handleProductClick(product.productId)} style={{ cursor: 'pointer' }}>
+                    <div
+                        className={`product-card d-flex align-items-center mb-3 p-3 bg-white border ${product.expectedReturnDate ? 'rented' : ''}`}
+                        key={product.productId}
+                        onClick={() => handleProductClick(product.productId)} style={{ cursor: 'pointer' }}>
                         <img
                             src={product.thumbnailUrl || 'https://via.placeholder.com/60'}
                             alt={product.title}
                             className='product-img rounded'
                             style={{ width: '60px', height: '60px' }}
                         />
+                        {product.expectedReturnDate && (
+                            <div className='expected-return-tag'>
+                                대여 중
+                            </div>
+                        )}
                         <div className='product-info flex-grow-1 ml-3'>
                             <h5 className='product-title mb-1'>{product.title}</h5>
                             <p className='product-location text-muted mb-1'>
@@ -101,6 +108,11 @@ const ProductList = () => {
                             {product.weekPrice && (
                                 <p className='product-price mb-0'>
                                     {product.weekPrice.toLocaleString()}원 / 주
+                                </p>
+                            )}
+                            {product.expectedReturnDate && (
+                                <p className='product-price return-date'>
+                                    반납예정일: {new Date(product.expectedReturnDate).toLocaleDateString()}
                                 </p>
                             )}
                         </div>
