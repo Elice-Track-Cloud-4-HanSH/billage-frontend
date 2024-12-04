@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '@/styles/chatting/ChatroomList.css';
 import ChatroomItem from '@/components/chatting/ChatroomItem.jsx';
-import { useCookies } from 'react-cookie';
 import ChatroomListHeader from '../components/chatting/ChatroomListHeader';
 import { axiosCredential } from '../utils/axiosCredential';
 
@@ -14,14 +13,6 @@ const ChatroomList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLast, setIsLast] = useState(false);
   const [errMsg, setErrMsg] = useState('');
-  let myId;
-  try {
-    const [cookies] = useCookies('accessToken');
-    const myToken = JSON.parse(atob(cookies.accessToken.split('.')[1]));
-    myId = myToken.accountId;
-  } catch {
-    myId = -1;
-  }
 
   const observerRef = useRef(null);
   const navigate = useNavigate();
@@ -87,10 +78,6 @@ const ChatroomList = () => {
     });
   };
 
-  const checkOpponent = (seller, buyer) => {
-    return seller.id === myId ? buyer.nickname : seller.nickname;
-  };
-
   return (
     <div className='chatroom-list-container d-flex flex-column h-100'>
       <ChatroomListHeader changeChatTypeHandler={changeChatTypeHandler} />
@@ -108,10 +95,9 @@ const ChatroomList = () => {
                 key={chatroom.chatroomId}
                 chatroom={chatroom}
                 currentTime={currentTime}
-                myId={myId}
                 onClick={() =>
                   navigateToChatroom({
-                    opponentName: checkOpponent(chatroom.seller, chatroom.buyer),
+                    opponentName: chatroom.opponent.nickname,
                     sellerId: chatroom.seller.id,
                     buyerId: chatroom.buyer.id,
                     productId: chatroom.product.id,
