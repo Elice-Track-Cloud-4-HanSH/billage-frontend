@@ -8,6 +8,7 @@ import { useLocation } from 'react-router-dom';
 import SockJS from 'sockjs-client';
 import { Container, Button } from 'react-bootstrap';
 import { axiosCredential } from '../utils/axiosCredential';
+import Loading from '@/components/common/Loading';
 
 // 사용 예시
 const ChatPage = () => {
@@ -123,14 +124,17 @@ const ChatPage = () => {
       debug: (str) => console.log(str),
       onConnect: () => {
         setIsConnected(true);
+        markAsReadAllChats();
 
         client.subscribe(`/sub/chat/${chatroomId}`, (message) => {
           const stompMessage = JSON.parse(message.body);
 
-          setChats((prev) => [stompMessage, ...prev]);
-          if (stompMessage.mine) {
+          // 닉네임이 다르다면 내꺼
+          if (stompMessage.nickname !== opponentName) {
             scrollToBottom();
           } else {
+            // 같다면 상대꺼
+            stompMessage.read = true;
             lockCurrentPosition('WS');
             setIsNewMessageAvailable(true);
 
@@ -138,6 +142,7 @@ const ChatPage = () => {
               destination: `/ack/chat/chatting/${stompMessage.chatId}`,
             });
           }
+          setChats((prev) => [stompMessage, ...prev]);
         });
       },
       onDisconnect: () => {
@@ -192,39 +197,36 @@ const ChatPage = () => {
   };
 
   const fetchChatData = () => {
+    if (isLastPage) return;
     setIsLoading(true);
-    if (!isLastPage) {
-      axiosCredential
-        .get(`/api/chatroom/${chatroomId}`, {
-          params: {
-            page: page,
-            lastLoadChatId: page === 0 ? Number.MAX_SAFE_INTEGER : chats[0].chatId,
-          },
-        })
-        .then((data) => {
-          if (!data.data.length) {
-            return;
-          } else if (data.data.length < 50) {
-            setIsLastPage(true);
-          }
-
-          setPage((prev) => prev + 1);
-          setChats((prev) => [...prev, ...data.data]);
-
-          if (page === 0) {
-            scrollToBottom();
-          } else {
-            lockCurrentPosition('DB');
-          }
-        })
-        .catch(() => {
+    axiosCredential
+      .get(`/api/chatroom/${chatroomId}`, {
+        params: {
+          page: page,
+          lastLoadChatId: page === 0 ? Number.MAX_SAFE_INTEGER : chats[0].chatId,
+        },
+      })
+      .then((data) => {
+        if (!data.data.length) {
+          return;
+        } else if (data.data.length < 50) {
           setIsLastPage(true);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }
-    setIsLoading(false);
+        }
+
+        setPage((prev) => prev + 1);
+        setChats((prev) => [...prev, ...data.data]);
+
+        if (page === 0) {
+          scrollToBottom();
+        } else {
+          lockCurrentPosition('DB');
+        }
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsLastPage(true);
+        setIsLoading(false);
+      });
   };
 
   const scrollToBottom = () => {
@@ -232,6 +234,13 @@ const ChatPage = () => {
     setTimeout(() => {
       endOfMessageRef.current?.scrollIntoView({ behavior: 'auto' });
     }, 0);
+  };
+
+  const markAsReadAllChats = () => {
+    axiosCredential
+      .post(`/api/chatroom/${chatroomId}`)
+      .then((data) => console.log(data))
+      .catch((err) => console.log(err));
   };
 
   const handleSendMessage = (message) => {
@@ -290,7 +299,7 @@ const ChatPage = () => {
         <div ref={endOfMessageRef} className='chat-bottom' style={{ height: '1px' }} />
 
         {chats.map((message, key) => {
-          const isMine = message.mine;
+          const isMine = message.sender.nickname !== opponentName;
           const isRead = message.read;
           return (
             <ChatItem
@@ -321,6 +330,7 @@ const ChatPage = () => {
         </Button>
       )}
       <ChatPageFooter messageSendHandler={handleSendMessage} />
+      <Loading isLoading={isLoading} />
     </Container>
   );
 };
