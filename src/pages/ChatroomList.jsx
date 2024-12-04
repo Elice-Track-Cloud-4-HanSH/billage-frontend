@@ -4,6 +4,7 @@ import '@/styles/chatting/ChatroomList.css';
 import ChatroomItem from '@/components/chatting/ChatroomItem.jsx';
 import ChatroomListHeader from '../components/chatting/ChatroomListHeader';
 import { axiosCredential } from '../utils/axiosCredential';
+import Loading from '@/components/common/Loading';
 
 const ChatroomList = () => {
   const [chatroomList, setChatroomList] = useState([]);
@@ -56,6 +57,7 @@ const ChatroomList = () => {
         if (data.length < 20) setIsLast(true);
         setPage((prev) => prev + 1);
         setChatroomList((prev) => [...prev, ...data]);
+        setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -65,8 +67,6 @@ const ChatroomList = () => {
             console.log('로그인을 먼저 해주세요!');
             break;
         }
-      })
-      .finally(() => {
         setIsLoading(false);
       });
     setCurrentTime(Date.now());
@@ -106,6 +106,8 @@ const ChatroomList = () => {
               />
             );
           })}
+
+          <Loading isLoading={isLoading} />
           {!isLoading && <div ref={observerRef} style={{ height: '1px' }} />}
           {isLast && <p> 마지막 채팅입니다 </p>}
         </div>
