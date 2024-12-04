@@ -10,9 +10,14 @@ const Review = ({ review }) => {
   };
 
   return (
-    <div>
-      <div>
-        <img src={review.imageUrl} alt='이미지' />
+    <div className='row align-items-center my-3'>
+      <div className='col-auto'>
+        <img
+          src={review.imageUrl}
+          alt='이미지'
+          className='img-fluid rounded'
+          style={{ width: '150px', height: '150px', objectFit: 'cover' }}
+        />
       </div>
       <div>
         <div>

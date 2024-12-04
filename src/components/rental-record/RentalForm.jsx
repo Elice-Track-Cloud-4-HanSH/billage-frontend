@@ -40,44 +40,64 @@ const RentalForm = ({ purchasers }) => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <div>
-          {purchasers.map((purchaser) => (
-            <div key={purchaser.id}>
-              <input
-                type='radio'
-                id={`purchaser-${purchaser.id}`}
-                name='purchaser'
-                value={purchaser.id}
-                onChange={() => setSelectedPurchaser(purchaser.id)}
-                checked={selectedPurchaser === purchaser.id}
-              />
-              <label htmlFor='id'>{purchaser.nickname}</label>
-            </div>
-          ))}
-        </div>
-        <div>
-          <label htmlFor='start'>대여 시작일: </label>
-          <input
-            type='date'
-            id='startDate'
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor='expected_eturn'>반납 예정일: </label>
-          <input
-            type='date'
-            id='expectedReturnDate'
-            value={expectedReturnDate}
-            onChange={(e) => setExpectedReturnDate(e.target.value)}
-          />
-        </div>
-        <button type='submit'>대여</button>
-      </form>
-    </div>
+    <form
+      onSubmit={handleSubmit}
+      className='container p-4 d-flex flex-column align-items-center gap-5'
+    >
+      <div className='mb-3 w-100'>
+        {purchasers.map((purchaser) => (
+          <div key={purchaser.id} className='d-flex justify-content-center mb-3 gap-3'>
+            <input
+              type='radio'
+              id={`purchaser-${purchaser.id}`}
+              name='purchaser'
+              value={purchaser.id}
+              onChange={() => setSelectedPurchaser(purchaser.id)}
+              checked={selectedPurchaser === purchaser.id}
+              className='me-2'
+            />
+            <img
+              src={purchaser.imageUrl}
+              alt='Purchaser'
+              className='rounded-circle me-2'
+              style={{ width: '60px', height: '60px', objectFit: 'cover' }}
+            />
+            <label htmlFor={`purchaser-${purchaser.id}`} style={{ fontSize: '18px' }}>
+              {purchaser.nickname}
+            </label>
+          </div>
+        ))}
+      </div>
+      <div className='mb-3 w-100'>
+        <label htmlFor='start' style={{ fontSize: '18px' }}>
+          대여 시작일
+        </label>
+        <input
+          type='date'
+          id='startDate'
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          className='form-control'
+        />
+      </div>
+      <div className='mb-3 w-100'>
+        <label htmlFor='expectedReturnDate' style={{ fontSize: '18px' }}>
+          반납 예정일
+        </label>
+        <input
+          type='date'
+          id='expectedReturnDate'
+          value={expectedReturnDate}
+          onChange={(e) => setExpectedReturnDate(e.target.value)}
+          className='form-control'
+        />
+      </div>
+      <div className='text-end w-100'>
+        <button type='submit' className='btn btn-primary btn-lg'>
+          변경하기
+        </button>
+      </div>
+    </form>
   );
 };
 
