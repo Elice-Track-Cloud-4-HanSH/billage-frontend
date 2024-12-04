@@ -17,10 +17,9 @@ const ProfileEdit = () => {
           withCredentials: true
         });
         
-        // 백엔드에서 받아온 데이터로 상태 업데이트
         setNickname(response.data.nickname);
-        setImage(response.data.image_url);
-        // description이 null일 수 있으므로 빈 문자열로 대체
+        setImage(response.data.imageUrl || '/default-profile.png');
+        console.log(response);
         setDescription(response.data.description || '');
         
       } catch (error) {
@@ -31,7 +30,7 @@ const ProfileEdit = () => {
         setLoading(false);
       }
     };
-
+    
     fetchProfile();
   }, [navigate]);
 
@@ -54,11 +53,17 @@ const ProfileEdit = () => {
       }
 
       const formData = new FormData();
-      formData.append('nickname', nickname);
-      formData.append('description', description);
+      formData.append('request', new Blob([JSON.stringify({
+        nickname: nickname,
+        description: description,
+        imageUrl: null // 또는 기존 이미지 URL
+      })], {
+        type: 'application/json'
+      }));
+      
       if (image && image.startsWith('data:')) {
         const blob = await fetch(image).then(r => r.blob());
-        formData.append('image', blob);
+        formData.append('imageFile', blob); // 'image' 대신 'imageFile'로 변경
       }
 
       await axios.put('/api/users/update-profile', formData, {
@@ -67,6 +72,7 @@ const ProfileEdit = () => {
         },
         withCredentials: true
       });
+      alert('성공했습니다');
 
       navigate(-1);
     } catch (error) {
@@ -101,6 +107,10 @@ const ProfileEdit = () => {
     return <div>로딩 중...</div>;
   }
 
+
+
+
+  
   return (
     <div className="profile-edit">
       <div className="profile-header">
@@ -113,34 +123,33 @@ const ProfileEdit = () => {
       </div>
 
       <div className="profile-image-container">
-        <div className="profile-image-wrapper">
-          <div className="profile-image">
-            {image ? (
-              <img src={image} alt="Profile" />
-            ) : (
-              <div className="profile-image-placeholder">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                  <circle cx="12" cy="13" r="4" />
-                </svg>
-              </div>
-            )}
-          </div>
-          <input
-            type="file"
-            id="imageUpload"
-            accept="image/*"
-            className="hidden"
-            onChange={handleImageUpload}
-          />
-          <label htmlFor="imageUpload" className="upload-button">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-              <circle cx="12" cy="13" r="4" />
-            </svg>
-          </label>
-        </div>
-      </div>
+  <div className="profile-image-wrapper">
+      <div className="profile-image">
+      <img 
+        src={image} 
+        alt="Prsdfdsile" 
+        onError={(e) => {
+          console.error('이미지 로딩 실패');
+          e.target.src = '@/styles/default-profile.png';  // 이미지 로드 실패시에도 기본 프로필 이미지 사용
+        }}
+  />
+</div>
+    <input
+      type="file"
+      id="imageUpload"
+      accept="image/*"
+      className="hidden"
+      onChange={handleImageUpload}
+    />
+    <label htmlFor="imageUpload" className="upload-button">
+      {/* 연필(편집) 아이콘으로 변경 */}
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+      </svg>
+    </label>
+  </div>
+</div>
 
       <div className="input-container">
         <div>
@@ -175,7 +184,9 @@ const ProfileEdit = () => {
           회원 탈퇴
         </button>
       </div>
+      
     </div>
+    
   );
 };
 
