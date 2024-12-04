@@ -19,7 +19,7 @@ const ProductUpsert = ({ isEdit }) => {
             const fetchProduct = async () => {
                 try {
                     const response = await axiosCredential.get(`/api/products/${productId}`);
-                    const product = response.data;
+                    const product = response.data.productDetail;
                     setInitialData({
                         title: product.title,
                         categoryId: product.category.categoryId,
@@ -66,7 +66,7 @@ const ProductUpsert = ({ isEdit }) => {
                 // 먼저 삭제할 이미지 API 호출
                 console.log("받아온? 삭제할 이미지: ", deletedImages);
                 if (deletedImages.length > 0) {
-                    await axiosCredential.delete("/api/products/images", {
+                    await axiosCredential.delete(`/api/products/images?productId=${productId}`, {
                         data: deletedImages,
                     });
                 }
