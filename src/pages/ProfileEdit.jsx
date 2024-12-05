@@ -24,8 +24,8 @@ const ProfileEdit = () => {
   };
 
   const handleComplete = () => {
-    console.log('수정 완료', { name, bio, image });
-    navigate(-1);
+    alert('수정 완료!');
+    navigate("/easter-egg");
   };
 
   return (
