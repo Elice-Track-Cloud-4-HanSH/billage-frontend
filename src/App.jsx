@@ -19,6 +19,7 @@ import SetToRented from '@/pages/rental-record/SetToRented';
 import ProductList from '@/pages/product/ProductList';
 import TargetProfile from './pages/TargetProfile';
 import ForgotPassword from '@/pages/user/ForgotPassword';
+import FavoriteProductList from '@/pages/product/FavoriteProductList';
 
 const App = () => {
   return (
@@ -45,9 +46,9 @@ const App = () => {
           <Route path='/profile/:id' element={<TargetProfile />} />
           {/* 상품 */}
           <Route path='/products/register' element={<ProductRegister />} /> {/* 상품 등록 페이지 */}
-          <Route path='/products/:productId/edit' element={<ProductEdit />} />{' '}
-          {/* 상품 수정 페이지 */}
+          <Route path='/products/:productId/edit' element={<ProductEdit />} />{/* 상품 수정 페이지 */}
           <Route path='/products' element={<ProductList />} /> {/* 상품 목록 페이지 */}
+          <Route path='/myfavorites' element={<FavoriteProductList />} /> {/* 관심 상품 목록 페이지 */}
         </Route>
         <Route path='/products/:productId' element={<ProductDetail />} /> {/* 상품 상세 페이지 */}
       </Routes>
