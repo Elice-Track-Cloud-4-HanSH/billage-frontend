@@ -17,6 +17,7 @@ import Logout from '@/pages/Logout.jsx';
 import ProfileEdit from '@/pages/ProfileEdit.jsx';
 import SetToRented from '@/pages/rental-record/SetToRented';
 import ProductList from '@/pages/product/ProductList';
+import TargetProfile from './pages/TargetProfile';
 
 const App = () => {
   return (
@@ -39,6 +40,7 @@ const App = () => {
           <Route path='/signup' element={<Signup />} />
           <Route path='/logout' element={<Logout />} />
           <Route path='/profile-edit' element={<ProfileEdit />} />
+          <Route path='/profile/:id' element={<TargetProfile />} />
           {/* 상품 */}
           <Route path='/products/register' element={<ProductRegister />} /> {/* 상품 등록 페이지 */}
           {/*<Route path='/products/:productId' element={<ProductDetail />} /> /!* 상품 상세 페이지 *!/*/}
