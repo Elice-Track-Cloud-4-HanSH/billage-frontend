@@ -6,6 +6,7 @@ import '@/styles/product/ProductList.css';
 
 const ProductList = () => {
     const [products, setProducts] = useState([]);
+    const [login, setLogin] = useState([]);
     const [isCategoryPopupOpen, setIsCategoryPopupOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState({ id: 1, name: '전체' });
     const [rentalStatus, setRentalStatus] = useState('ALL');
@@ -20,7 +21,8 @@ const ProductList = () => {
                         rentalStatus: rentalStatus
                     }
                 });
-                setProducts(response.data);
+                setProducts(response.data.products);
+                setLogin(response.data.login);
             } catch (error) {
                 console.error('Error fetching products:', error);
             }
@@ -77,30 +79,38 @@ const ProductList = () => {
                     <option value="ALL">전체</option>
                     <option value="AVAILABLE">대여 판매 중</option>
                 </select>
-                <button className='sorting-button'>정렬 기준 2</button>
+                {login && (
+                    <button className='sorting-button'
+                            onClick={() => navigate('/products/register')}
+                    >
+                        + 글쓰기
+                    </button>
+                )}
             </div>
             <div className='product-list p-3'>
                 {products.map((product) => (
                     <div
-                        className={`product-card d-flex align-items-center mb-3 p-3 bg-white border ${product.expectedReturnDate ? 'rented' : ''}`}
+                        className={`product-card d-flex align-items-center p-3 bg-white ${product.expectedReturnDate ? 'rented' : ''}`}
                         key={product.productId}
                         onClick={() => handleProductClick(product.productId)} style={{ cursor: 'pointer' }}>
                         <img
                             src={product.thumbnailUrl || 'https://via.placeholder.com/60'}
                             alt={product.title}
                             className='product-img rounded'
-                            style={{ width: '60px', height: '60px' }}
                         />
                         {product.expectedReturnDate && (
                             <div className='expected-return-tag'>
                                 대여 중
+                                <p className='return-date mb-1'>
+                                    {new Date(product.expectedReturnDate).toLocaleDateString()}
+                                </p>
                             </div>
                         )}
                         <div className='product-info flex-grow-1 ml-3'>
                             <h5 className='product-title mb-1'>{product.title}</h5>
                             <p className='product-location text-muted mb-1'>
                                 서울 성북구 교동 14
-                                <span className='ml-3'>수정일자: {new Date(product.updatedAt).toLocaleDateString()}</span>
+                                <span className='ml-3' style={{ paddingLeft: '30px' }}>{new Date(product.updatedAt).toLocaleDateString()}</span>
                             </p>
                             <p className='product-price mb-0'>
                                 {product.dayPrice.toLocaleString()}원 / 일
@@ -108,11 +118,6 @@ const ProductList = () => {
                             {product.weekPrice && (
                                 <p className='product-price mb-0'>
                                     {product.weekPrice.toLocaleString()}원 / 주
-                                </p>
-                            )}
-                            {product.expectedReturnDate && (
-                                <p className='product-price return-date'>
-                                    반납예정일: {new Date(product.expectedReturnDate).toLocaleDateString()}
                                 </p>
                             )}
                         </div>
