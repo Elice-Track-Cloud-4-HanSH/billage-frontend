@@ -14,7 +14,7 @@ import Login from '@/pages/Login.jsx';
 import Signup from '@/pages/Signup.jsx';
 import ProductDetail from '@/pages/product/ProductDetail';
 import Logout from '@/pages/Logout.jsx';
-import ProfileEdit from '@/pages/ProfileEdit.jsx';
+import EditProfile from '@/pages/EditProfile.jsx';
 import SetToRented from '@/pages/rental-record/SetToRented';
 import ProductList from '@/pages/product/ProductList';
 import TargetProfile from './pages/TargetProfile';
