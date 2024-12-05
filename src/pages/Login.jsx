@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import googleLogo from '@/assets/Google__G__logo.svg';
+import useAuth from '@/hooks/useAuth';
+import { jwtDecode } from 'jwt-decode';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +15,8 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,6 +40,9 @@ const LoginPage = () => {
 
       alert('로그인 성~공');
       console.log('로그인 성공:', response.data);
+
+      const decode = jwtDecode(response.data.accessToken);
+      login(decode);
 
       navigate('/chats');
     } catch (error) {
