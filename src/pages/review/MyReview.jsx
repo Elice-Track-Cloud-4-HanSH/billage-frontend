@@ -1,6 +1,6 @@
-import Header from '../components/common/Header';
-import Tab from '../components/common/Tab';
-import ReviewList from '../components/review/ReviewList';
+import Header from '../../components/common/Header';
+import Tab from '../../components/common/Tab';
+import ReviewList from '../../components/review/ReviewList';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 

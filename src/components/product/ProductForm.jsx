@@ -1,22 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProductImages from "./ProductImages";
 import CategoryPopup from "../category/CategoryPopup";
 import "@/styles/product/ProductForm.css";
 
-const ProductForm = ({ onSubmit }) => {
-    const [formData, setFormData] = useState({
+const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpdate, onImageDelete, isEdit }) => {
+    const [formData, setFormData] = useState(initialData || {
         title: "",
         categoryId: null,
-        categoryName: "", // 선택된 카테고리 이름 저장
+        categoryName: "",
         description: "",
         dayPrice: "",
         weekPrice: "",
         latitude: 0,
         longitude: 0,
-        productImages: [], // { file, thumbnail } 형태로 저장
+        productImages: [],
     });
 
     const [isCategoryPopupOpen, setIsCategoryPopupOpen] = useState(false);
+
+    useEffect(() => {
+       if (initialData) {
+           setFormData(initialData);
+       }
+    }, [initialData]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -27,29 +33,30 @@ const ProductForm = ({ onSubmit }) => {
         setFormData({ ...formData, categoryId, categoryName });
     };
 
-    const handleImageUpload = (images) => {
-        setFormData({ ...formData, productImages: images }); // 이미지 데이터를 업데이트
+    const handleImageUpload = (newImages) => {
+        setFormData({ ...formData, productImages: newImages });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // 필수 필드 유효성 검사
         if (!formData.title || !formData.categoryId || !formData.description || !formData.dayPrice) {
             alert("모든 필수 항목을 입력하세요.");
             return;
         }
 
-        // 부모 컴포넌트로 전달
         onSubmit(formData);
     };
 
     return (
         <form className="product-form" onSubmit={handleSubmit}>
-            {/* 이미지 업로드 */}
-            <ProductImages onUpload={handleImageUpload} />
+            <ProductImages
+                initialImages={existingImages} // 부모로부터 받아온 기존 이미지
+                onExistingImageUpdate={onExistingImageUpdate} // 기존 이미지 썸네일 변경
+                onNewImageUpload={handleImageUpload} // 새로 추가된 이미지
+                onImageDelete={onImageDelete} // 삭제할 이미지
+            />
 
-            {/* 제목 */}
             <div>
                 <label>제목</label>
                 <input
@@ -62,7 +69,6 @@ const ProductForm = ({ onSubmit }) => {
                 />
             </div>
 
-            {/* 카테고리 선택 */}
             <div>
                 <label>카테고리</label>
                 <button type="button" onClick={() => setIsCategoryPopupOpen(true)}>
@@ -70,7 +76,6 @@ const ProductForm = ({ onSubmit }) => {
                 </button>
             </div>
 
-            {/* 상세 설명 */}
             <div>
                 <label>자세한 설명</label>
                 <textarea
@@ -82,7 +87,6 @@ const ProductForm = ({ onSubmit }) => {
                 />
             </div>
 
-            {/* 가격 */}
             <div>
                 <label>가격</label>
                 <input
@@ -102,15 +106,12 @@ const ProductForm = ({ onSubmit }) => {
                 />
             </div>
 
-            <button type="submit">내 물건 등록</button>
+            <button type="submit">{isEdit ? "수정" : "등록"}</button>
 
-            {/* 카테고리 팝업 */}
             <CategoryPopup
                 isOpen={isCategoryPopupOpen}
                 onClose={() => setIsCategoryPopupOpen(false)}
-                onSelectCategory={(categoryId, categoryName) =>
-                    handleCategorySelect(categoryId, categoryName)
-                }
+                onSelectCategory={handleCategorySelect}
             />
         </form>
     );

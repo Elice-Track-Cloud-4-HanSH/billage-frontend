@@ -29,6 +29,8 @@ const Review = ({ review }) => {
 
 Review.propTypes = {
   review: PropTypes.shape({
+    reviewId: PropTypes.number,
+    id: PropTypes.number,
     imageUrl: PropTypes.string,
     subject: PropTypes.string.isRequired,
     score: PropTypes.number.isRequired,
