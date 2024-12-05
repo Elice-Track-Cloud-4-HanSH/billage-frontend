@@ -1,7 +1,7 @@
 .product-list {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    /*gap: 20px;*/
     padding: 20px;
     background-color: white;
     border-radius: 10px;
@@ -42,6 +42,109 @@
     font-size: 16px;
 }
 
-.product-list button:hover {
+.product-list button:hover,
+.sorting-button:hover,
+.sorting-select:hover {
     background-color: #5a53cc;
+}
+
+.sorting-criteria {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.sorting-button,
+.sorting-select {
+    background-color: #6c63ff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 12px;
+    text-align: center;
+    font-size: 16px;
+    flex-grow: 1;
+}
+
+.sorting-select {
+    appearance: none; /* 브라우저 기본 스타일 제거 */
+    -webkit-appearance: none; /* 사파리 등 브라우저 호환 */
+    padding: 10px; /* 셀렉트박스에 여유 패딩 */
+}
+
+.product-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+    background-color: white;
+    border: none; /* 기존 보더 제거 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-bottom: 2px solid black; /* 하단 경계선 추가 */
+    height: 150px; /* 고정 높이 설정 */
+    overflow: hidden; /* 넘치는 콘텐츠 숨김 */
+}
+
+.product-card.rented img {
+    filter: brightness(50%);
+}
+
+.product-card .expected-return-tag {
+    position: absolute;
+    top: 30%;
+    left: 30px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.product-price.return-date {
+    color: #333;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.product-price {
+    color: #6c63ff;
+    font-weight: bold;
+}
+
+/* 텍스트 말줄임 처리 */
+.product-info h5,
+.product-info p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* 한 줄로 제한 */
+}
+
+/* 이미지 크기 고정 */
+.product-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover; /* 비율 유지하면서 이미지 크기 조정 */
+    border-radius: 5px;
+}
+
+/* 카드 높이 고정 */
+.product-card .product-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%; /* 카드 높이만큼 정보가 배치되도록 설정 */
+    text-align: left;
+    margin-left: 30px;
+}
+
+/* 카드 내부 텍스트 정렬 */
+.product-title {
+    /*font-size: 16px;*/
+    font-weight: bold;
 }

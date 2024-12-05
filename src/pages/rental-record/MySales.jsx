@@ -19,6 +19,7 @@ const MySales = () => {
     setActiveTab(value);
     try {
       const response = await axios.get(`/api/${value}`);
+
       setRecords(response.data);
     } catch (error) {
       console.error('대여기록을 가져오는 데 실패했습니다.', error);

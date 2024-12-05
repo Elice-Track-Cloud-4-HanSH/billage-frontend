@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../components/common/Header";
 import ProductForm from "../../components/product/ProductForm";
-import axios from "axios";
+import {axiosCredential} from "@/utils/axiosCredential";
 import { useNavigate, useParams } from "react-router-dom"; // 리다이렉트를 위해 필요
 import "@/styles/product/ProductForm.css";
 
@@ -18,8 +18,8 @@ const ProductUpsert = ({ isEdit }) => {
             // 초기 상품 정보 가져오기 (수정 시)
             const fetchProduct = async () => {
                 try {
-                    const response = await axios.get(`/api/products/${productId}`);
-                    const product = response.data;
+                    const response = await axiosCredential.get(`/api/products/${productId}`);
+                    const product = response.data.productDetail;
                     setInitialData({
                         title: product.title,
                         categoryId: product.category.categoryId,
@@ -66,7 +66,7 @@ const ProductUpsert = ({ isEdit }) => {
                 // 먼저 삭제할 이미지 API 호출
                 console.log("받아온? 삭제할 이미지: ", deletedImages);
                 if (deletedImages.length > 0) {
-                    await axios.delete("/api/products/images", {
+                    await axiosCredential.delete(`/api/products/images?productId=${productId}`, {
                         data: deletedImages,
                     });
                 }
@@ -95,7 +95,7 @@ const ProductUpsert = ({ isEdit }) => {
                 });
 
 
-                await axios.put(`/api/products/${productId}`, updateData, {
+                await axiosCredential.put(`/api/products/${productId}`, updateData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },
@@ -119,7 +119,7 @@ const ProductUpsert = ({ isEdit }) => {
                     data.append(`productImages[${index}].thumbnail`, image.thumbnail);
                 });
 
-                const response = await axios.post("/api/products", data, {
+                const response = await axiosCredential.post("/api/products", data, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },

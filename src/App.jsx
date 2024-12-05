@@ -17,7 +17,7 @@ import Logout from '@/pages/Logout.jsx';
 import EditProfile from '@/pages/EditProfile.jsx';
 import SetToRented from '@/pages/rental-record/SetToRented';
 import ProductList from '@/pages/product/ProductList';
-import ForgotPassword from './pages/user/ForgotPassword';
+import TargetProfile from './pages/TargetProfile';
 
 const App = () => {
   return (
@@ -35,20 +35,19 @@ const App = () => {
           <Route path='/product-review/:id' element={<WriteProductReview />} />
           <Route path='/user-review/:id' element={<WriteUserReview />} />
           <Route path='/set-to-rented/:id' element={<SetToRented />} />
-
           {/* 회원 */}
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/logout' element={<Logout />} />
-          <Route path='/edit-profile' element={<EditProfile />} />
-          <Route path='/forgot-password' element={<ForgotPassword />} />
-
+          <Route path='/profile-edit' element={<ProfileEdit />} />
+          <Route path='/profile/:id' element={<TargetProfile />} />
           {/* 상품 */}
           <Route path='/products/register' element={<ProductRegister />} /> {/* 상품 등록 페이지 */}
-          <Route path='/products/:productId' element={<ProductDetail />} /> {/* 상품 상세 페이지 */}
-          <Route path='/products/:productId/edit' element={<ProductEdit />} /> {/* 상품 수정 페이지 */}
+          <Route path='/products/:productId/edit' element={<ProductEdit />} />{' '}
+          {/* 상품 수정 페이지 */}
           <Route path='/products' element={<ProductList />} /> {/* 상품 목록 페이지 */}
         </Route>
+        <Route path='/products/:productId' element={<ProductDetail />} /> {/* 상품 상세 페이지 */}
       </Routes>
     </BrowserRouter>
   );

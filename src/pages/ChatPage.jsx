@@ -5,10 +5,10 @@ import ChatPageHeader from '@/components/chatting/ChatPageHeader';
 import ChatItem from '@/components/chatting/ChatItem';
 import { Client } from '@stomp/stompjs';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios';
 import SockJS from 'sockjs-client';
 import { Container, Button } from 'react-bootstrap';
-import { useCookies } from 'react-cookie';
+import { axiosCredential } from '../utils/axiosCredential';
+import Loading from '@/components/common/Loading';
 
 // 사용 예시
 const ChatPage = () => {
@@ -21,13 +21,8 @@ const ChatPage = () => {
   const [isScrollToDownBtnAvailable, setIsScrollToDownBtnAvailable] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [chatroomId, setChatroomId] = useState('');
-  const [myId, setMyId] = useState('');
-
-  const [initFinished, setInitFinished] = useState(false);
 
   const [stompClient, setStompClient] = useState(null);
-
-  const [cookies] = useCookies('accessToken');
 
   const loadMoreMessageRef = useRef(null);
   const endOfMessageRef = useRef(null);
@@ -42,17 +37,9 @@ const ChatPage = () => {
   // // const myId = queryParams.token;
 
   useEffect(() => {
-    const payload = JSON.parse(atob(cookies.accessToken.split('.')[1]));
-    setMyId(payload.accountId);
-
-    setInitFinished(true);
-  }, []);
-
-  useEffect(() => {
-    if (!initFinished) return;
     validateChatroom();
     setStompClient(stompClient);
-  }, [initFinished]);
+  }, []);
 
   // SockJS 연결 후 STOMP 프로토콜 사용
   useEffect(() => {
@@ -119,6 +106,7 @@ const ChatPage = () => {
         else setIsScrollToDownBtnAvailable(false);
       }
     };
+
     if (container) {
       container.addEventListener('scroll', handleScroll);
     }
@@ -132,21 +120,22 @@ const ChatPage = () => {
 
   const createClient = () => {
     const client = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:8080/connect'),
-      // debug: (str) => console.log(str),
-      connectHeaders: {
-        Authorization: myId,
-      },
+      webSocketFactory: () =>
+        new SockJS('http://localhost:8080/connect', null, { withCredentials: true }),
+      debug: (str) => console.log(str),
       onConnect: () => {
         setIsConnected(true);
+        markAsReadAllChats();
 
         client.subscribe(`/sub/chat/${chatroomId}`, (message) => {
           const stompMessage = JSON.parse(message.body);
 
-          setChats((prev) => [stompMessage, ...prev]);
-          if (stompMessage.sender.id == myId) {
+          // 닉네임이 다르다면 내꺼
+          if (stompMessage.nickname !== opponentName) {
             scrollToBottom();
           } else {
+            // 같다면 상대꺼
+            stompMessage.read = true;
             lockCurrentPosition('WS');
             setIsNewMessageAvailable(true);
 
@@ -154,10 +143,17 @@ const ChatPage = () => {
               destination: `/ack/chat/chatting/${stompMessage.chatId}`,
             });
           }
+          setChats((prev) => [stompMessage, ...prev]);
         });
       },
       onDisconnect: () => {
         setIsConnected(false);
+      },
+      onStompError: (err) => {
+        console.log('stomp error', err);
+      },
+      onWebSocketError: (err) => {
+        console.log('websocket error', err);
       },
     });
 
@@ -165,22 +161,14 @@ const ChatPage = () => {
   };
 
   const validateChatroom = () => {
-    const whatIsMyType = (id) => {
-      return myId == id ? myId : id;
-    };
-
     if (!sellerId || !buyerId || !productId) return;
 
-    axios({
-      // sellerId, buyerId, productId
-      baseURL: '/api/chatroom/valid',
-      data: {
+    axiosCredential
+      .post('/api/chatroom/valid', {
         productId: productId,
-        sellerId: whatIsMyType(sellerId),
-        buyerId: whatIsMyType(buyerId),
-      },
-      method: 'POST',
-    })
+        sellerId: sellerId,
+        buyerId: buyerId,
+      })
       .then((data) => {
         setChatroomId(data.data.chatroomId);
       })
@@ -194,12 +182,14 @@ const ChatPage = () => {
     const container = messageContainerRef.current;
     const prevScrollHeight = container.scrollHeight;
     const prevScrollTop = container.scrollTop;
+    // console.log(prevScrollHeight, prevScrollTop);
 
     setTimeout(() => {
       const afterScrollHeight = container.scrollHeight;
       const diff = afterScrollHeight - prevScrollHeight;
+      // console.log(afterScrollHeight, container.scrollTop);
 
-      if (prevScrollTop > 0.8) {
+      if (prevScrollTop > 0) {
         setIsNewMessageAvailable(false);
       } else {
         container.scrollTop = prevScrollTop + (getPrevFlag === 'DB' ? 0 : -diff);
@@ -208,44 +198,36 @@ const ChatPage = () => {
   };
 
   const fetchChatData = () => {
+    if (isLastPage) return;
     setIsLoading(true);
-    if (!isLastPage) {
-      axios({
-        baseURL: `/api/chatroom/${chatroomId}`,
-        method: 'GET',
+    axiosCredential
+      .get(`/api/chatroom/${chatroomId}`, {
         params: {
           page: page,
           lastLoadChatId: page === 0 ? Number.MAX_SAFE_INTEGER : chats[0].chatId,
         },
-        headers: {
-          token: myId,
-        },
       })
-        .then((data) => {
-          if (!data.data.length) {
-            return;
-          }
-          setPage((prev) => prev + 1);
-          setChats((prev) => [...prev, ...data.data]);
-          return data;
-        })
-        .then((data) => {
-          if (data.data.length < 50) {
-            setIsLastPage(true);
-          }
-          if (page === 0) {
-            scrollToBottom();
-          } else {
-            lockCurrentPosition('DB');
-          }
-        })
-        .catch(() => {
+      .then((data) => {
+        if (!data.data.length) {
+          return;
+        } else if (data.data.length < 50) {
           setIsLastPage(true);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }
+        }
+
+        setPage((prev) => prev + 1);
+        setChats((prev) => [...prev, ...data.data]);
+
+        if (page === 0) {
+          scrollToBottom();
+        } else {
+          lockCurrentPosition('DB');
+        }
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsLastPage(true);
+        setIsLoading(false);
+      });
   };
 
   const scrollToBottom = () => {
@@ -253,6 +235,13 @@ const ChatPage = () => {
     setTimeout(() => {
       endOfMessageRef.current?.scrollIntoView({ behavior: 'auto' });
     }, 0);
+  };
+
+  const markAsReadAllChats = () => {
+    axiosCredential
+      .post(`/api/chatroom/${chatroomId}`)
+      .then((data) => console.log(data))
+      .catch((err) => console.log(err));
   };
 
   const handleSendMessage = (message) => {
@@ -294,11 +283,8 @@ const ChatPage = () => {
 
   const onExitChatroom = async () => {
     try {
-      const response = await axios({
-        baseURL: `/api/chatroom/${chatroomId}`,
-        method: 'DELETE',
-      });
-      console.log(response.data);
+      const response = await axiosCredential.delete(`/api/chatroom/${chatroomId}`);
+      console.log(response);
     } catch (error) {
       console.log(error);
     }
@@ -312,13 +298,15 @@ const ChatPage = () => {
         <div ref={endOfMessageRef} className='chat-bottom' style={{ height: '1px' }} />
 
         {chats.map((message, key) => {
-          const isMine = message.sender.id == myId;
+          const isMine = message.sender.nickname !== opponentName;
+          const isRead = message.read;
           return (
             <ChatItem
               message={message.message}
               createdAt={formatDate(message.createdAt)}
               isMine={isMine}
               key={key}
+              isRead={isRead}
             />
           );
         })}
@@ -341,6 +329,7 @@ const ChatPage = () => {
         </Button>
       )}
       <ChatPageFooter messageSendHandler={handleSendMessage} />
+      <Loading isLoading={isLoading} />
     </Container>
   );
 };

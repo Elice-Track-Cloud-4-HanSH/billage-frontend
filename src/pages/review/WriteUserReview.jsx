@@ -30,7 +30,6 @@ const WriteUserReview = () => {
     };
 
     if (id) {
-      // id가 존재할 때만 실행
       fetchSubjectInfo();
     }
   }, [id]);
