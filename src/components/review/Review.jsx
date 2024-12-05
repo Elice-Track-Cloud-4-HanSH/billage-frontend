@@ -19,14 +19,12 @@ const Review = ({ review }) => {
           style={{ width: '150px', height: '150px', objectFit: 'cover' }}
         />
       </div>
-      <div>
-        <div>
+      <div className='col'>
+        <div className='d-flex justify-content-between align-items-center'>
           <h5>{review.subject}</h5>
           <div>{renderStars(review.score)}</div>
         </div>
-        <div>
-          <p>{review.content}</p>
-        </div>
+        <p className='mt-3'>{review.content}</p>
       </div>
     </div>
   );

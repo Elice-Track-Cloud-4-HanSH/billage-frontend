@@ -106,6 +106,7 @@ const ChatPage = () => {
         else setIsScrollToDownBtnAvailable(false);
       }
     };
+
     if (container) {
       container.addEventListener('scroll', handleScroll);
     }
@@ -282,10 +283,8 @@ const ChatPage = () => {
 
   const onExitChatroom = async () => {
     try {
-      axiosCredential
-        .delete(`/api/chatroom/${chatroomId}`)
-        .then((data) => console.log(data))
-        .catch((err) => console.log(err));
+      const response = await axiosCredential.delete(`/api/chatroom/${chatroomId}`);
+      console.log(response);
     } catch (error) {
       console.log(error);
     }
