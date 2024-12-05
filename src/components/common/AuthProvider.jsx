@@ -1,26 +1,27 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AuthContext from './AuthContext';
 
 const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
 
+  useEffect(() => {
+    const storedUserInfo = sessionStorage.getItem('userInfo');
+    if (storedUserInfo) {
+      setUserInfo(JSON.parse(storedUserInfo));
+    }
+  }, []);
+
   const login = (userData) => {
-    console.log('before rendering - isLoggedIn : ', isLoggedIn);
-    setIsLoggedIn(true);
     setUserInfo(userData);
-    console.log(userData);
+    sessionStorage.setItem('userInfo', JSON.stringify(userData));
   };
   const logout = () => {
-    console.log('before rendering - isLoggedIn : ', isLoggedIn);
-    setIsLoggedIn(false);
     setUserInfo(null);
+    sessionStorage.removeItem('userInfo');
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, userInfo, login, logout }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={{ userInfo, login, logout }}>{children}</AuthContext.Provider>
   );
 };
 

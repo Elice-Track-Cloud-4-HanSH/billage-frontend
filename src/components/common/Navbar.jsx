@@ -4,14 +4,15 @@ import useAuth from '@/hooks/useAuth';
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isLoggedIn } = useAuth();
+  const { userInfo } = useAuth();
 
   if (location.pathname.startsWith('/chat/')) {
     return null;
   }
 
   const thirdButtonHandler = () => {
-    isLoggedIn ? navigate('/profile') : navigate('/login');
+    console.log(userInfo);
+    userInfo ? navigate('/profile') : navigate('/login');
   };
 
   return (
@@ -36,7 +37,7 @@ const Navbar = () => {
           onClick={thirdButtonHandler}
         >
           <i className='bi bi-person'></i>
-          <div className='small'>{isLoggedIn ? '마이페이지' : '로그인'}</div>
+          <div className='small'>{userInfo ? '마이페이지' : '로그인'}</div>
         </button>
       </div>
     </div>
