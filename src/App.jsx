@@ -43,7 +43,6 @@ const App = () => {
           <Route path='/profile/:id' element={<TargetProfile />} />
           {/* 상품 */}
           <Route path='/products/register' element={<ProductRegister />} /> {/* 상품 등록 페이지 */}
-          {/*<Route path='/products/:productId' element={<ProductDetail />} /> /!* 상품 상세 페이지 *!/*/}
           <Route path='/products/:productId/edit' element={<ProductEdit />} />{' '}
           {/* 상품 수정 페이지 */}
           <Route path='/products' element={<ProductList />} /> {/* 상품 목록 페이지 */}
