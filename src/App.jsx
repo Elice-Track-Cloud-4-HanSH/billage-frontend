@@ -18,6 +18,7 @@ import ProfileEdit from '@/pages/ProfileEdit.jsx';
 import SetToRented from '@/pages/rental-record/SetToRented';
 import ProductList from '@/pages/product/ProductList';
 import TargetProfile from './pages/TargetProfile';
+import MyPage from './pages/MyPage';
 
 const App = () => {
   return (
@@ -41,6 +42,7 @@ const App = () => {
           <Route path='/logout' element={<Logout />} />
           <Route path='/profile-edit' element={<ProfileEdit />} />
           <Route path='/profile/:id' element={<TargetProfile />} />
+          <Route path='/mypage' element={<MyPage />} />
           {/* 상품 */}
           <Route path='/products/register' element={<ProductRegister />} /> {/* 상품 등록 페이지 */}
           <Route path='/products/:productId/edit' element={<ProductEdit />} />{' '}

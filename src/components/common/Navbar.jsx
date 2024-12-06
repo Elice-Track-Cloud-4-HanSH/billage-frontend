@@ -27,7 +27,7 @@ const Navbar = () => {
         </button>
         <button
           className={`btn btn-link ${location.pathname === '/profile' ? 'text-primary' : 'text-dark'}`}
-          onClick={() => navigate('/profile')}
+          onClick={() => navigate('/mypage')}
         >
           <i className='bi bi-person'></i>
           <div className='small'>마이페이지</div>
