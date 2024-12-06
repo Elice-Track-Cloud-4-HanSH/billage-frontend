@@ -8,6 +8,8 @@ import "@/styles/product/ProductDetail.css";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import useAuth from '@/hooks/useAuth';
+import defaultProfileImage from '@/styles/default_profile.png';
 
 const ProductDetail = () => {
     const { productId } = useParams(); // URL에서 productId 가져오기
@@ -19,6 +21,7 @@ const ProductDetail = () => {
     const [isFavorite, setIsFavorite] = useState(false); // 좋아요 상태 관리
     const [checkAuthor, setCheckAuthor] = useState(false); // 작성자 확인 상태 관리
     const sliderRef = useRef(null);
+    const { userInfo } = useAuth();
 
     // 상품 상세 정보를 가져오는 함수
     useEffect(() => {
@@ -205,9 +208,13 @@ const ProductDetail = () => {
                             <div className="seller-info">
                                 <div className="seller-details">
                                     <img
-                                        src={product.seller.sellerImageUrl.startsWith('/images') ?
-                                            `http://localhost:8080${product.seller.sellerImageUrl}`
-                                            : product.seller.sellerImageUrl}
+                                        src={
+                                            product.seller.sellerImageUrl && product.seller.sellerImageUrl.startsWith('/images')
+                                                ? `http://localhost:8080${product.seller.sellerImageUrl}`
+                                                : product.seller.sellerImageUrl
+                                                    ? product.seller.sellerImageUrl
+                                                    : defaultProfileImage
+                                        }
                                         alt={`${product.seller.sellerNickname}'의 프로필 이미지`}
                                         className="seller-profile-image"
                                     />
@@ -218,6 +225,7 @@ const ProductDetail = () => {
                             </div>
 
                             <div className="product-info">
+                                <h1>안녕하세요, {userInfo.accountId}님</h1>
                                 <h1 className="product-title">
                                 {product.rentalStatus === 'RENTED' && <span className="rental-status">대여중 </span>}
                                 {product.title}
@@ -245,6 +253,7 @@ const ProductDetail = () => {
                             dayPrice={product.dayPrice}
                             weekPrice={product.weekPrice}
                             onToggleFavorite={handleToggleFavorite}
+                            product={product}
                         />
                     )}
                 </div>
