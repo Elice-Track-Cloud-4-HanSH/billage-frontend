@@ -42,8 +42,9 @@ const LoginPage = () => {
       console.log('로그인 성공:', response.data);
 
       response = await axios.post('/api/users/after-login');
-      console.log(response?.data);
       login(response.data);
+      // optional chaining은 과도한 방어다.
+      // 100~399 응답은 항상 response에 접근 가능할 것을 보장한다.
 
       navigate('/chats');
     } catch (error) {
