@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Easteregg from '@/pages/Easteregg.jsx';
 import ChatroomList from '@/pages/ChatroomList.jsx';
@@ -21,15 +22,38 @@ import TargetProfile from './pages/TargetProfile';
 import ForgotPassword from '@/pages/user/ForgotPassword';
 import FavoriteProductList from '@/pages/product/FavoriteProductList';
 import MapTest from '@/pages/map/Activity_area';
+import ChatroomListProvider from './storage-provider/chatroom-list/ChatroomListProvider';
+import useAuth from '@/hooks/useAuth';
 
 const App = () => {
+  const { logout } = useAuth();
+
+  useEffect(() => {
+    const handleLogout = () => {
+      logout();
+    };
+
+    window.addEventListener('Unauthorized', handleLogout);
+
+    return () => {
+      window.removeEventListener('Unauthorized', handleLogout);
+    };
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<Layout />}>
           {/* 채팅 */}
           <Route path='/easter-egg' element={<Easteregg />} />
-          <Route path='/chats' element={<ChatroomList />} />
+          <Route
+            path='/chats'
+            element={
+              <ChatroomListProvider>
+                <ChatroomList />
+              </ChatroomListProvider>
+            }
+          />
           <Route path='/chat' element={<ChatPage />} />
           {/* 리뷰, 대여기록 */}
           <Route path='/myreview' element={<MyReview />} />
