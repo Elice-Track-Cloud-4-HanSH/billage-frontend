@@ -166,29 +166,9 @@ const ProductDetail = () => {
         <>
             <div className='layout-container'>
                 <div className='layout-wrapper'>
-
                     <Header title="대여 상품" />
 
                     <div className='layout-content'>
-                        {checkAuthor && (
-                            <div>
-                                <button
-                                    className="btn btn-primary"
-                                    onClick={handleEditProduct}
-                                >
-                                    수정
-                                </button>
-                                <button
-                                    className="btn btn-danger"
-                                    onClick={handleDeleteProduct}
-                                    style={{ marginLeft: "10px" }}
-                                >
-                                    삭제
-                                </button>
-                            </div>
-                        )}
-
-
                         <div className="product-detail">
 
                             <div>
@@ -222,10 +202,26 @@ const ProductDetail = () => {
                                         <p className="seller-nickname">{product.seller.sellerNickname}</p>
                                     </div>
                                 </div>
+                                {checkAuthor && (
+                                    <div className="product-buttons">
+                                        <button
+                                            className="btn product-edit"
+                                            onClick={handleEditProduct}
+                                        >
+                                            수정
+                                        </button>
+                                        <button
+                                            className="btn product-delete"
+                                            onClick={handleDeleteProduct}
+                                            style={{ marginLeft: "10px" }}
+                                        >
+                                            삭제
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="product-info">
-                                <h1>안녕하세요, {userInfo.accountId}님</h1>
                                 <h1 className="product-title">
                                 {product.rentalStatus === 'RENTED' && <span className="rental-status">대여중 </span>}
                                 {product.title}
