@@ -1,10 +1,11 @@
-import PropTypes from 'prop-types';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import '@/styles/chatting/ChatroomTypeButtons.css';
+import useChatroomList from './../../hooks/useChatroomList';
 
-const ChatroomTypeButtons = ({ handleTypeChange }) => {
+const ChatroomTypeButtons = () => {
   const scrollContainerRef = useRef(null);
-  const [activeBtn, setActiveBtn] = useState('ALL');
+
+  const { chatType, setChatType, setChatroomList, setIsLast, setPage } = useChatroomList();
 
   const handleMouseDown = (e) => {
     const startX = e.clientX;
@@ -31,10 +32,13 @@ const ChatroomTypeButtons = ({ handleTypeChange }) => {
 
   const handleButtonClick = (event) => {
     const button = event.target;
-    setActiveBtn(button.dataset.value);
-    if (button.dataset.value !== activeBtn) {
-      handleTypeChange(button.dataset.value);
-    }
+    if (button.dataset.value === chatType) return;
+    const cType = button.dataset.value;
+    history.replaceState(null, '', `/chats?type=${cType}`);
+    setChatroomList([]);
+    setChatType(cType);
+    setPage(0);
+    setIsLast(false);
   };
 
   return (
@@ -47,21 +51,21 @@ const ChatroomTypeButtons = ({ handleTypeChange }) => {
         onWheel={handleWheel}
       >
         <button
-          className={`btn ${activeBtn === 'ALL' ? 'btn-primary' : 'btn-secondary'} mx-2`}
+          className={`btn ${chatType === 'ALL' ? 'btn-primary' : 'btn-secondary'} mx-2`}
           data-value='ALL'
           onClick={handleButtonClick}
         >
           전체
         </button>
         <button
-          className={`btn ${activeBtn === 'LENT' ? 'btn-primary' : 'btn-secondary'} mx-2`}
+          className={`btn ${chatType === 'LENT' ? 'btn-primary' : 'btn-secondary'} mx-2`}
           data-value='LENT'
           onClick={handleButtonClick}
         >
           빌려준 물건
         </button>
         <button
-          className={`btn ${activeBtn === 'RENT' ? 'btn-primary' : 'btn-secondary'}  mx-2`}
+          className={`btn ${chatType === 'RENT' ? 'btn-primary' : 'btn-secondary'}  mx-2`}
           data-value='RENT'
           onClick={handleButtonClick}
         >
@@ -70,9 +74,6 @@ const ChatroomTypeButtons = ({ handleTypeChange }) => {
       </div>
     </div>
   );
-};
-ChatroomTypeButtons.propTypes = {
-  handleTypeChange: PropTypes.func.isRequired,
 };
 
 export default ChatroomTypeButtons;
