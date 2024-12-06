@@ -1,9 +1,11 @@
 import { useNavigate } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import '@/styles/product/ProductDetailNavbar.css';
+import useAuth from "@/hooks/useAuth.jsx";
 
-const ProductDetailNavbar = ({ isFavorite, dayPrice, weekPrice, onToggleFavorite }) => {
+const ProductDetailNavbar = ({ isFavorite, dayPrice, weekPrice, onToggleFavorite, product }) => {
     const navigate = useNavigate();
+    const { userInfo } = useAuth();
+    const isOwner = userInfo?.accountId === product?.seller?.sellerId;
 
     const handleFavoriteClick = () => {
         const newFavoriteStatus = !isFavorite;
@@ -15,28 +17,47 @@ const ProductDetailNavbar = ({ isFavorite, dayPrice, weekPrice, onToggleFavorite
     return (
         <div className='layout-footer bg-white border-top'>
             <div className='d-flex justify-content-around p-2'>
-                <button className='btn btn-link favorite-button' onClick={handleFavoriteClick}>
-                    {isFavorite ? (
-                        <i className='bi bi-heart-fill text-danger favorite-icon'></i>
-                    ) : (
-                        <i className='bi bi-heart favorite-icon'></i>
+                <div>
+                    {!isOwner && (
+                        <button
+                            className='btn btn-link favorite-button'
+                            onClick={handleFavoriteClick}
+                        >
+                            {isFavorite ? (
+                                <i className='bi bi-heart-fill text-danger favorite-icon'></i>
+                            ) : (
+                                <i className='bi bi-heart favorite-icon'></i>
+                            )}
+                        </button>
                     )}
-                </button>
-                <div className='text-center price-text'>
-                    <div>{dayPrice} / 일</div>
-                    {weekPrice && <div>{weekPrice} / 주</div>}
                 </div>
-                <button className='chat-button' onClick={() => navigate('/chat')}>채팅하기</button>
+                <div className='text-center price-text'>
+                    <div>{dayPrice.toLocaleString()}원 / 일</div>
+                    {weekPrice && <div>{weekPrice.toLocaleString()}원 / 주</div>}
+                </div>
+                <div>
+                    {!isOwner && (
+                        <button
+                            className='chat-button'
+                            onClick={() =>
+                                navigate('/chat', {
+                                    state: {
+                                        sellerId: product?.seller?.sellerId,
+                                        productId: product?.productId,
+                                        opponentName: product?.seller?.sellerNickname,
+                                    },
+                                })
+                            }
+                        >
+                            채팅하기
+                        </button>
+                    )}
+                </div>
+
             </div>
         </div>
     );
 };
 
-ProductDetailNavbar.propTypes = {
-    isFavorite: PropTypes.bool.isRequired,
-    dayPrice: PropTypes.number.isRequired,
-    weekPrice: PropTypes.number,
-    onToggleFavorite: PropTypes.func
-};
 
 export default ProductDetailNavbar;

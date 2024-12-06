@@ -1,9 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { axiosCredential } from "@/utils/axiosCredential";
 import Header from "@/components/common/Header"; // Header 컴포넌트 import
 import ReviewList from "@/components/review/ReviewList";
 import ProductDetailNavbar from "@/components/product/ProductDetailNavbar";
+import "@/styles/product/ProductDetail.css";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import useAuth from '@/hooks/useAuth';
+import defaultProfileImage from '@/styles/default_profile.png';
 
 const ProductDetail = () => {
     const { productId } = useParams(); // URL에서 productId 가져오기
@@ -14,6 +20,8 @@ const ProductDetail = () => {
     const [error, setError] = useState(null); // 에러 상태 관리
     const [isFavorite, setIsFavorite] = useState(false); // 좋아요 상태 관리
     const [checkAuthor, setCheckAuthor] = useState(false); // 작성자 확인 상태 관리
+    const sliderRef = useRef(null);
+    const { userInfo } = useAuth();
 
     // 상품 상세 정보를 가져오는 함수
     useEffect(() => {
@@ -55,6 +63,14 @@ const ProductDetail = () => {
         fetchReviews();
         fetchFavoriteStatus();
     }, [productId]);
+
+    useEffect(() => {
+        if (sliderRef.current) {
+            document.querySelectorAll(".slick-dots li div").forEach((dot, index) => {
+                dot.style.background = index === 0 ? "#333" : "#ccc";
+            });
+        }
+    }, [sliderRef]);
 
     const handleToggleFavorite = async (newFavoriteStatus) => {
         try {
@@ -109,75 +125,118 @@ const ProductDetail = () => {
         return <div>상품 정보가 없습니다.</div>;
     }
 
+    const sliderSettings = {
+        dots: true,
+        infinite: product.productImages.length > 1,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        arrows: true,
+        appendDots: dots => (
+            <div style={{
+                position: 'absolute',
+                bottom: '10px',
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center'
+            }}>
+                <ul style={{ margin: "0px", padding: "0px" }}>{dots}</ul>
+            </div>
+        ),
+        customPaging: i => (
+            <div
+                style={{
+                    width: "10px",
+                    height: "10px",
+                    borderRadius: "50%",
+                    background: i === 0 ? "#333" : "#ccc",
+                    margin: "5px"
+                }}
+            ></div>
+        ),
+        afterChange: current => {
+            document.querySelectorAll(".slick-dots li div").forEach((dot, index) => {
+                dot.style.background = index === current ? "#333" : "#ccc";
+            });
+        }
+    };
+
+
     return (
         <>
             <div className='layout-container'>
                 <div className='layout-wrapper'>
-
-                    <Header title="상품 상세 정보" />
+                    <Header title="대여 상품" />
 
                     <div className='layout-content'>
-                        {checkAuthor && (
-                            <div>
-                                <button
-                                    className="btn btn-primary"
-                                    onClick={handleEditProduct}
-                                >
-                                    수정
-                                </button>
-                                <button
-                                    className="btn btn-danger"
-                                    onClick={handleDeleteProduct}
-                                    style={{ marginLeft: "10px" }}
-                                >
-                                    삭제
-                                </button>
-                            </div>
-                        )}
-
-
                         <div className="product-detail">
-                            <h1>{product.title}</h1>
-                            <p>카테고리: {product.category.categoryName}</p>
-                            <p>설명: {product.description}</p>
-                            <p>상태: {product.rentalStatus}</p>
-                            {product.expectedReturnDate && (
-                                <p>반납 예정일: {product.expectedReturnDate}</p>
-                            )}
-                            <p>일일 대여 가격: {product.dayPrice}원</p>
-                            <p>
-                                주간 대여 가격:{" "}
-                                {product.weekPrice ? `${product.weekPrice}원` : "없음"}
-                            </p>
-                            <p>위치: {product.latitude}, {product.longitude}</p>
-                            <p>조회수: {product.viewCount}</p>
-                            <p>마지막 업데이트: {new Date(product.updatedAt).toLocaleString()}</p>
 
-                            <h2>판매자 정보</h2>
+                            <div>
+                                <Slider ref={sliderRef} {...sliderSettings} className="product-image-carousel">
+                                    {product.productImages.map((image, index) => (
+                                        <div key={index}>
+                                            <img
+                                                src={image.imageUrl}
+                                                alt={`Product Image ${index + 1}`}
+                                                className="carousel-image"
+                                            />
+                                        </div>
+                                    ))}
+                                </Slider>
+                            </div>
+
                             <div className="seller-info">
-                                <img
-                                    src={product.seller.sellerImageUrl}
-                                    alt={`${product.seller.sellerNickname}의 프로필 이미지`}
-                                    style={{ width: "100px", borderRadius: "50%" }}
-                                />
-                                <p>닉네임: {product.seller.sellerNickname}</p>
-                            </div>
-
-                            <h2>상품 이미지</h2>
-                            <div className="product-images">
-                                {product.productImages.map((image, index) => (
-                                    <div key={index} style={{ marginBottom: "20px" }}>
-                                        <img
-                                            src={image.imageUrl}
-                                            alt={`Product Image ${index + 1}`}
-                                            style={{ width: "200px", margin: "10px" }}
-                                        />
-                                        <p>썸네일 여부: {image.thumbnail === "Y" ? "썸네일" : "일반 이미지"}</p>
+                                <div className="seller-details">
+                                    <img
+                                        src={
+                                            product.seller.sellerImageUrl && product.seller.sellerImageUrl.startsWith('/images')
+                                                ? `http://localhost:8080${product.seller.sellerImageUrl}`
+                                                : product.seller.sellerImageUrl
+                                                    ? product.seller.sellerImageUrl
+                                                    : defaultProfileImage
+                                        }
+                                        alt={`${product.seller.sellerNickname}'의 프로필 이미지`}
+                                        className="seller-profile-image"
+                                    />
+                                    <div className="seller-text">
+                                        <p className="seller-nickname">{product.seller.sellerNickname}</p>
                                     </div>
-                                ))}
+                                </div>
+                                {checkAuthor && (
+                                    <div className="product-buttons">
+                                        <button
+                                            className="btn product-edit"
+                                            onClick={handleEditProduct}
+                                        >
+                                            수정
+                                        </button>
+                                        <button
+                                            className="btn product-delete"
+                                            onClick={handleDeleteProduct}
+                                            style={{ marginLeft: "10px" }}
+                                        >
+                                            삭제
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
-                            <h2>리뷰</h2>
+                            <div className="product-info">
+                                <h1 className="product-title">
+                                {product.rentalStatus === 'RENTED' && <span className="rental-status">대여중 </span>}
+                                {product.title}
+                                </h1>
+                                {product.expectedReturnDate && (
+                                    <p className="product-return-date">반납 예정일: {product.expectedReturnDate}</p>
+                                )}
+                                <span className="product-category">{product.category.categoryName}</span>
+                                <span style={{paddingLeft: "20px"}}>{new Date(product.updatedAt).toLocaleString()}</span>
+                                <p className="product-description">{product.description}</p>
+                                <p className="product-location">위치: {product.latitude}, {product.longitude}</p>
+                                <p className="product-views">조회수: {product.viewCount}</p>
+                            </div>
+
+                            {/*<h2>리뷰</h2>*/}
                             <ReviewList reviews={reviews} />
                         </div>
 
@@ -190,6 +249,7 @@ const ProductDetail = () => {
                             dayPrice={product.dayPrice}
                             weekPrice={product.weekPrice}
                             onToggleFavorite={handleToggleFavorite}
+                            product={product}
                         />
                     )}
                 </div>
