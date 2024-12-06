@@ -25,6 +25,7 @@ import MapTest from '@/pages/map/Activity_area';
 import ChatroomListProvider from './storage-provider/chatroom-list/ChatroomListProvider';
 import useAuth from '@/hooks/useAuth';
 import MyPage from './pages/MyPage';
+import AfterLogin from './pages/AfterLogin';
 
 const App = () => {
   const { logout } = useAuth();
@@ -44,6 +45,7 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path='/after-login' element={<AfterLogin />} />
         <Route path='/' element={<Layout />}>
           {/* 채팅 */}
           <Route path='/easter-egg' element={<Easteregg />} />
