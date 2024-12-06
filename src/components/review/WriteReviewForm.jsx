@@ -19,37 +19,43 @@ const WriteReviewForm = ({ onSubmit }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className='write-review-form'>
-      <div className='rating'>
-        <label>별점:</label>
-        {[1, 2, 3, 4, 5].map((star) => (
-          <span
-            key={star}
-            onClick={() => handleScoreChange(star)}
-            style={{
-              cursor: 'pointer',
-              color: star <= score ? 'gold' : 'gray',
-              fontSize: '24px',
-            }}
-          >
-            ★
-          </span>
-        ))}
+    <form onSubmit={handleSubmit} className='container p-4'>
+      <div className='mb-4'>
+        <label className='form-label fs-5'>별점</label>
+        <div>
+          {[1, 2, 3, 4, 5].map((star) => (
+            <span
+              key={star}
+              onClick={() => handleScoreChange(star)}
+              style={{
+                cursor: 'pointer',
+                color: star <= score ? 'gold' : 'gray',
+                fontSize: '36px',
+              }}
+              className='me-2'
+            >
+              ★
+            </span>
+          ))}
+        </div>
       </div>
-      <div className='textarea'>
-        <label htmlFor='review'>리뷰:</label>
+
+      <div className='mb-4'>
         <textarea
           id='content'
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder='리뷰를 작성해주세요'
           rows='5'
-          style={{ width: '100%', padding: '8px' }}
+          className='form-control'
         />
       </div>
-      <button type='submit' style={{ marginTop: '10px' }}>
-        제출하기
-      </button>
+
+      <div className='text-end'>
+        <button type='submit' className='btn btn-primary btn-lg'>
+          제출하기
+        </button>
+      </div>
     </form>
   );
 };

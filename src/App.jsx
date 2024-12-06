@@ -14,10 +14,14 @@ import Login from '@/pages/Login.jsx';
 import Signup from '@/pages/Signup.jsx';
 import ProductDetail from '@/pages/product/ProductDetail';
 import Logout from '@/pages/Logout.jsx';
-import ProfileEdit from '@/pages/ProfileEdit.jsx';
+import EditProfile from '@/pages/EditProfile.jsx';
 import SetToRented from '@/pages/rental-record/SetToRented';
 import ProductList from '@/pages/product/ProductList';
 import MapTest from '@/pages/map/Activity_area';
+import TargetProfile from './pages/TargetProfile';
+import ForgotPassword from '@/pages/user/ForgotPassword';
+import FavoriteProductList from '@/pages/product/FavoriteProductList';
+
 
 const App = () => {
   return (
@@ -39,15 +43,22 @@ const App = () => {
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/logout' element={<Logout />} />
-          <Route path='/profile-edit' element={<ProfileEdit />} />
+          <Route path='/edit-profile' element={<EditProfile />} />
+          <Route path='/forgot-password' element={<ForgotPassword />} />
+          <Route path='/profile/:id' element={<TargetProfile />} />
           {/* 상품 */}
           <Route path='/products/register' element={<ProductRegister />} /> {/* 상품 등록 페이지 */}
+
           {/*<Route path='/products/:productId' element={<ProductDetail />} /> /!* 상품 상세 페이지 *!/*/}
           <Route path='/products/:productId/edit' element={<ProductEdit />} />{' '}
           {/* 상품 수정 페이지 */}
+          <Route path='/products' element={<ProductList />} /> {/* 상품 목록 페이지 */} 
+          <Route path='/products/:productId/edit' element={<ProductEdit />} />{/* 상품 수정 페이지 */}
           <Route path='/products' element={<ProductList />} /> {/* 상품 목록 페이지 */}
+          <Route path='/myfavorites' element={<FavoriteProductList />} /> {/* 관심 상품 목록 페이지 */}
           {/* 지도 */}
           <Route path='/map' element={<MapTest />} />
+
         </Route>
         <Route path='/products/:productId' element={<ProductDetail />} /> {/* 상품 상세 페이지 */}
       </Routes>

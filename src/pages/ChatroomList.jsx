@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '@/styles/chatting/ChatroomList.css';
 import ChatroomItem from '@/components/chatting/ChatroomItem.jsx';
-import { useCookies } from 'react-cookie';
 import ChatroomListHeader from '../components/chatting/ChatroomListHeader';
 import { axiosCredential } from '../utils/axiosCredential';
+import Loading from '@/components/common/Loading';
 
 const ChatroomList = () => {
   const [chatroomList, setChatroomList] = useState([]);
@@ -14,14 +14,6 @@ const ChatroomList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLast, setIsLast] = useState(false);
   const [errMsg, setErrMsg] = useState('');
-  let myId;
-  try {
-    const [cookies] = useCookies('accessToken');
-    const myToken = JSON.parse(atob(cookies.accessToken.split('.')[1]));
-    myId = myToken.accountId;
-  } catch {
-    myId = -1;
-  }
 
   const observerRef = useRef(null);
   const navigate = useNavigate();
@@ -65,6 +57,7 @@ const ChatroomList = () => {
         if (data.length < 20) setIsLast(true);
         setPage((prev) => prev + 1);
         setChatroomList((prev) => [...prev, ...data]);
+        setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -74,8 +67,6 @@ const ChatroomList = () => {
             console.log('로그인을 먼저 해주세요!');
             break;
         }
-      })
-      .finally(() => {
         setIsLoading(false);
       });
     setCurrentTime(Date.now());
@@ -85,10 +76,6 @@ const ChatroomList = () => {
     navigate(`/chat`, {
       state: { opponentName, sellerId, buyerId, productId },
     });
-  };
-
-  const checkOpponent = (seller, buyer) => {
-    return seller.id === myId ? buyer.nickname : seller.nickname;
   };
 
   return (
@@ -108,10 +95,9 @@ const ChatroomList = () => {
                 key={chatroom.chatroomId}
                 chatroom={chatroom}
                 currentTime={currentTime}
-                myId={myId}
                 onClick={() =>
                   navigateToChatroom({
-                    opponentName: checkOpponent(chatroom.seller, chatroom.buyer),
+                    opponentName: chatroom.opponent.nickname,
                     sellerId: chatroom.seller.id,
                     buyerId: chatroom.buyer.id,
                     productId: chatroom.product.id,
@@ -120,6 +106,8 @@ const ChatroomList = () => {
               />
             );
           })}
+
+          <Loading isLoading={isLoading} />
           {!isLoading && <div ref={observerRef} style={{ height: '1px' }} />}
           {isLast && <p> 마지막 채팅입니다 </p>}
         </div>

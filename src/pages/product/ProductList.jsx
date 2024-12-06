@@ -1,29 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import {axiosCredential} from "@/utils/axiosCredential";
+import { useNavigate } from 'react-router-dom';
+import { axiosCredential } from "@/utils/axiosCredential";
 import CategoryPopup from '@/components/category/CategoryPopup';
 import '@/styles/product/ProductList.css';
 
 const ProductList = () => {
     const [products, setProducts] = useState([]);
+    const [login, setLogin] = useState([]);
     const [isCategoryPopupOpen, setIsCategoryPopupOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState({ id: 1, name: '전체' });
+    const [rentalStatus, setRentalStatus] = useState('ALL');
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 const response = await axiosCredential.get('/api/products', {
-                    params: { categoryId: selectedCategory.id }
+                    params: {
+                        categoryId: selectedCategory.id,
+                        rentalStatus: rentalStatus
+                    }
                 });
-                setProducts(response.data);
+                setProducts(response.data.products);
+                setLogin(response.data.login);
             } catch (error) {
                 console.error('Error fetching products:', error);
             }
         };
 
         fetchProducts();
-    }, [selectedCategory]);
+    }, [selectedCategory, rentalStatus]);
 
     const handleProductClick = (productId) => {
         navigate(`/products/${productId}`);
@@ -41,6 +47,11 @@ const ProductList = () => {
         setSelectedCategory({ id: categoryId, name: categoryName });
     };
 
+    const handleRentalStatusChange = (event) => {
+        const value = event.target.value;
+        setRentalStatus(value);
+    };
+
     return (
         <div className='product-list-container'>
             <div className='search-area d-flex align-items-center justify-content-between p-3 bg-white border-bottom'>
@@ -56,28 +67,50 @@ const ProductList = () => {
                     className='profile-img rounded-circle'
                 />
             </div>
-            <div className='sorting-criteria p-2 d-flex bg-light'>
-                <button className='btn btn-outline-secondary flex-grow-1' onClick={handleOpenPopup}>
+            <div className='sorting-criteria p-2 d-flex justify-content-between bg-light'>
+                <button className='sorting-button' onClick={handleOpenPopup}>
                     {selectedCategory.name}
                 </button>
-                <button className='btn btn-outline-secondary flex-grow-1'>정렬 기준 1</button>
-                <button className='btn btn-outline-secondary flex-grow-1 ml-2'>정렬 기준 2</button>
+                <select
+                    className='sorting-select'
+                    value={rentalStatus}
+                    onChange={handleRentalStatusChange}
+                >
+                    <option value="ALL">전체</option>
+                    <option value="AVAILABLE">대여 판매 중</option>
+                </select>
+                {login && (
+                    <button className='sorting-button'
+                            onClick={() => navigate('/products/register')}
+                    >
+                        + 글쓰기
+                    </button>
+                )}
             </div>
             <div className='product-list p-3'>
                 {products.map((product) => (
-                    <div className='product-card d-flex align-items-center mb-3 p-3 bg-white border' key={product.productId}
-                    onClick={() => handleProductClick(product.productId)} style={{ cursor: 'pointer' }}>
+                    <div
+                        className={`product-card d-flex align-items-center p-3 bg-white ${product.expectedReturnDate ? 'rented' : ''}`}
+                        key={product.productId}
+                        onClick={() => handleProductClick(product.productId)} style={{ cursor: 'pointer' }}>
                         <img
                             src={product.thumbnailUrl || 'https://via.placeholder.com/60'}
                             alt={product.title}
                             className='product-img rounded'
-                            style={{ width: '60px', height: '60px' }}
                         />
+                        {product.expectedReturnDate && (
+                            <div className='expected-return-tag'>
+                                대여 중
+                                <p className='return-date mb-1'>
+                                    {new Date(product.expectedReturnDate).toLocaleDateString()}
+                                </p>
+                            </div>
+                        )}
                         <div className='product-info flex-grow-1 ml-3'>
                             <h5 className='product-title mb-1'>{product.title}</h5>
                             <p className='product-location text-muted mb-1'>
                                 서울 성북구 교동 14
-                                <span className='ml-3'>수정일자: {new Date(product.updatedAt).toLocaleDateString()}</span>
+                                <span className='ml-3' style={{ paddingLeft: '30px' }}>{new Date(product.updatedAt).toLocaleDateString()}</span>
                             </p>
                             <p className='product-price mb-0'>
                                 {product.dayPrice.toLocaleString()}원 / 일
