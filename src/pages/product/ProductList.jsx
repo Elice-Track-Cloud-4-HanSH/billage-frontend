@@ -64,7 +64,7 @@ const ProductList = () => {
     };
 
     const handleActivityAreaClick = () => {
-        navigate('/activity-area'); // 활동 지역 설정 페이지로 이동
+        navigate('/map'); // 활동 지역 설정 페이지로 이동
     };
 
     return (
