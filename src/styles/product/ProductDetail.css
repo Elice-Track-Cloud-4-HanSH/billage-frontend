@@ -1,0 +1,104 @@
+.product-detail {
+    padding-left: 100px;
+    padding-right: 100px;
+}
+
+.product-image-carousel {
+    width: 100%;
+    max-width: 600px;
+    max-height: 400px;
+    margin: 0 auto 20px;
+    position: relative;
+}
+
+.carousel-image-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.carousel-image {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+}
+
+.action-buttons {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.product-detail .product-info {
+    margin-bottom: 20px;
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    /*box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);*/
+    text-align: left;
+}
+
+.product-detail .product-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.product-detail .rental-status {
+    color: #6c63ff;
+}
+
+.product-category,
+.product-description,
+.product-status,
+.product-price,
+.product-location,
+.product-views,
+.product-updated {
+    margin: 5px 0;
+}
+
+.product-description {
+    font-size: larger;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.seller-info {
+    margin-top: 30px;
+    margin-bottom: 20px;
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    /*box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);*/
+}
+
+.seller-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.seller-details {
+    display: flex;
+    align-items: center;
+}
+
+.seller-profile-image {
+    object-fit: cover;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.seller-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.seller-nickname {
+    margin: 0;
+    font-weight: bold;
+}
