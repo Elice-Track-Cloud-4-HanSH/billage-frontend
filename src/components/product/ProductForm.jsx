@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ProductImages from "./ProductImages";
 import CategoryPopup from "../category/CategoryPopup";
+import LocationPicker from "../map/LocationPicker";
 import "@/styles/product/ProductForm.css";
 
 const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpdate, onImageDelete, isEdit }) => {
@@ -11,17 +12,24 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
         description: "",
         dayPrice: "",
         weekPrice: "",
-        latitude: 0,
-        longitude: 0,
+        latitude: null,
+        longitude: null,
         productImages: [],
     });
 
     const [isCategoryPopupOpen, setIsCategoryPopupOpen] = useState(false);
+    const [isLocationPickerOpen, setIsLocationPickerOpen] = useState(false);
+    const [locationText, setLocationText] = useState("거래 희망 장소 선택");
 
     useEffect(() => {
-       if (initialData) {
-           setFormData(initialData);
-       }
+        if (initialData) {
+            setFormData(initialData);
+            if (initialData.latitude && initialData.longitude) {
+                setLocationText(
+                    `선택 완료 (위도: ${initialData.latitude.toFixed(5)}, 경도: ${initialData.longitude.toFixed(5)})`
+                );
+            }
+        }
     }, [initialData]);
 
     const handleChange = (e) => {
@@ -33,8 +41,17 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
         setFormData({ ...formData, categoryId, categoryName });
     };
 
-    const handleImageUpload = (newImages) => {
-        setFormData({ ...formData, productImages: newImages });
+    const handleLocationSelect = (location) => {
+        if (location && location.latitude !== undefined && location.longitude !== undefined) {
+            setFormData({ ...formData, latitude: location.latitude, longitude: location.longitude });
+            setLocationText(
+                `선택 완료 (위도: ${location.latitude.toFixed(5)}, 경도: ${location.longitude.toFixed(5)})`
+            );
+            setIsLocationPickerOpen(false);
+        } else {
+            console.error("잘못된 위치 데이터:", location);
+            alert("유효한 위치를 선택해주세요.");
+        }
     };
 
     const handleSubmit = (e) => {
@@ -51,10 +68,10 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
     return (
         <form className="product-form" onSubmit={handleSubmit}>
             <ProductImages
-                initialImages={existingImages} // 부모로부터 받아온 기존 이미지
-                onExistingImageUpdate={onExistingImageUpdate} // 기존 이미지 썸네일 변경
-                onNewImageUpload={handleImageUpload} // 새로 추가된 이미지
-                onImageDelete={onImageDelete} // 삭제할 이미지
+                initialImages={existingImages}
+                onExistingImageUpdate={onExistingImageUpdate}
+                onNewImageUpload={(newImages) => setFormData({ ...formData, productImages: newImages })}
+                onImageDelete={onImageDelete}
             />
 
             <div>
@@ -106,6 +123,13 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
                 />
             </div>
 
+            <div>
+                <label>거래 희망 장소</label>
+                <button type="button" onClick={() => setIsLocationPickerOpen(true)}>
+                    {locationText}
+                </button>
+            </div>
+
             <button type="submit">{isEdit ? "수정" : "등록"}</button>
 
             <CategoryPopup
@@ -113,6 +137,13 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
                 onClose={() => setIsCategoryPopupOpen(false)}
                 onSelectCategory={handleCategorySelect}
             />
+
+            {isLocationPickerOpen && (
+                <LocationPicker
+                    onLocationSelect={handleLocationSelect}
+                    onCancel={() => setIsLocationPickerOpen(false)}
+                />
+            )}
         </form>
     );
 };
