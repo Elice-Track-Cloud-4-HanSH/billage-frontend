@@ -34,7 +34,7 @@ const Navbar = () => {
         </button>
         <button
           className={`btn btn-link ${location.pathname === '/profile' ? 'text-primary' : 'text-dark'}`}
-          onClick={thirdButtonHandler}
+          onClick={() => navigate('/mypage')}
         >
           <i className='bi bi-person'></i>
           <div className='small'>{userInfo ? '마이페이지' : '로그인'}</div>

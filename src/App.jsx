@@ -24,6 +24,7 @@ import FavoriteProductList from '@/pages/product/FavoriteProductList';
 import MapTest from '@/pages/map/Activity_area';
 import ChatroomListProvider from './storage-provider/chatroom-list/ChatroomListProvider';
 import useAuth from '@/hooks/useAuth';
+import MyPage from './pages/MyPage';
 
 const App = () => {
   const { logout } = useAuth();
@@ -69,6 +70,7 @@ const App = () => {
           <Route path='/edit-profile' element={<EditProfile />} />
           <Route path='/forgot-password' element={<ForgotPassword />} />
           <Route path='/profile/:id' element={<TargetProfile />} />
+          <Route path='/mypage' element={<MyPage />} />
           {/* 상품 */}
           <Route path='/products/register' element={<ProductRegister />} /> {/* 상품 등록 페이지 */}
           <Route path='/products/:productId/edit' element={<ProductEdit />} />
