@@ -21,6 +21,7 @@ import TargetProfile from './pages/TargetProfile';
 import ForgotPassword from '@/pages/user/ForgotPassword';
 import FavoriteProductList from '@/pages/product/FavoriteProductList';
 import MapTest from '@/pages/map/Activity_area';
+import ChatroomListProvider from './storage-provider/chatroom-list/ChatroomListProvider';
 
 const App = () => {
   return (
@@ -29,7 +30,14 @@ const App = () => {
         <Route path='/' element={<Layout />}>
           {/* 채팅 */}
           <Route path='/easter-egg' element={<Easteregg />} />
-          <Route path='/chats' element={<ChatroomList />} />
+          <Route
+            path='/chats'
+            element={
+              <ChatroomListProvider>
+                <ChatroomList />
+              </ChatroomListProvider>
+            }
+          />
           <Route path='/chat' element={<ChatPage />} />
           {/* 리뷰, 대여기록 */}
           <Route path='/myreview' element={<MyReview />} />
