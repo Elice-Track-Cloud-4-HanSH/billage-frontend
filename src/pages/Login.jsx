@@ -33,7 +33,7 @@ const LoginPage = () => {
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:8080/api/login', formData, {
+      let response = await axios.post('http://localhost:8080/api/login', formData, {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
       });
@@ -41,8 +41,9 @@ const LoginPage = () => {
       alert('로그인 성~공');
       console.log('로그인 성공:', response.data);
 
-      const decode = jwtDecode(response.data.accessToken);
-      login(decode);
+      response = await axios.post('/api/users/after-login');
+      console.log(response?.data);
+      login(response.data);
 
       navigate('/chats');
     } catch (error) {
