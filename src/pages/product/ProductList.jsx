@@ -11,6 +11,7 @@ const ProductList = () => {
     const [selectedCategory, setSelectedCategory] = useState({ id: 1, name: '전체' });
     const [rentalStatus, setRentalStatus] = useState('ALL');
     const [activityArea, setActivityArea] = useState(null); // 활동 지역 정보 상태 추가
+    const[search, setSearch] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -19,7 +20,8 @@ const ProductList = () => {
                 const response = await axiosCredential.get('/api/products', {
                     params: {
                         categoryId: selectedCategory.id,
-                        rentalStatus: rentalStatus
+                        rentalStatus: rentalStatus,
+                        search: search.trim() === '' ? 'ALL' : search
                     }
                 });
                 setProducts(response.data.products);
@@ -40,7 +42,7 @@ const ProductList = () => {
 
         fetchProducts();
         fetchActivityArea(); // 활동 지역 정보 가져오기
-    }, [selectedCategory, rentalStatus]);
+    }, [selectedCategory, rentalStatus, search]);
 
     const handleProductClick = (productId) => {
         navigate(`/products/${productId}`);
@@ -67,6 +69,22 @@ const ProductList = () => {
         navigate('/map'); // 활동 지역 설정 페이지로 이동
     };
 
+    const handleSearchInputChange = (event) => {
+        setSearch(event.target.value);
+    }
+
+    const handleSearch = () => {
+        if (search.trim() === '') {
+            setSearch('ALL'); // 검색어가 없으면 'ALL'로 설정
+        }
+    };
+
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            handleSearch();
+        }
+    };
+
     return (
         <div className='product-list-container'>
             <div className='search-area d-flex align-items-center justify-content-between p-3 bg-white border-bottom'>
@@ -82,13 +100,14 @@ const ProductList = () => {
                 <input
                     type='text'
                     className='search-input flex-grow-1 mx-2 p-2'
-                    placeholder='「 검색 내용 입력 」'
+                    placeholder='검색 내용 입력'
+                    value={search}
+                    onChange={handleSearchInputChange}
+                    onKeyUp={handleKeyPress}
                 />
-                <img
-                    src='https://via.placeholder.com/40'
-                    alt='Profile'
-                    className='profile-img rounded-circle'
-                />
+                <button className='btn btn-link search-button' onClick={handleSearch}>
+                    <i className='fa fa-search favorite-icon'></i>
+                </button>
             </div>
             <div className='sorting-criteria p-2 d-flex justify-content-between bg-light'>
                 <button className='sorting-button' onClick={handleOpenPopup}>
