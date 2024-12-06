@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Col, Row } from 'react-bootstrap';
 
 import '@/styles/chatting/ChatPageHeader.css';
-import { Link } from 'react-router-dom';
 import ChatExitModal from './ChatExitModal';
 
 const ChatPageHeader = ({ otherNickname, exitButtonHandler }) => {
@@ -23,17 +22,19 @@ const ChatPageHeader = ({ otherNickname, exitButtonHandler }) => {
     // 실제 채팅방 나가기 로직
     await exitButtonHandler();
     setShowExitModal(false);
-    navigate('/chats');
+    handleGoBackFromChatRoom(-1);
+  };
+
+  const handleGoBackFromChatRoom = () => {
+    navigate(-1);
   };
 
   return (
     <>
       <Row className='header py-1'>
         <Col xs={2}>
-          <Button variant='link'>
-            <Link to='/chats'>
-              <i className='bi bi-arrow-left'></i>
-            </Link>
+          <Button variant='link' onClick={handleGoBackFromChatRoom}>
+            <i className='bi bi-arrow-left'></i>
           </Button>
         </Col>
         <Col xs={8} className='d-flex align-items-center text-start ps-0'>

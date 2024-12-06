@@ -5,18 +5,18 @@ import ChatroomItem from '@/components/chatting/ChatroomItem.jsx';
 import ChatroomListHeader from '../components/chatting/ChatroomListHeader';
 import { axiosCredential } from '../utils/axiosCredential';
 import Loading from '@/components/common/Loading';
+import useChatroomList from '@/hooks/useChatroomList';
 
 const ChatroomList = () => {
-  const [chatroomList, setChatroomList] = useState([]);
-  const [chatType, setChatType] = useState('ALL');
-  const [page, setPage] = useState(0);
   const [currentTime, setCurrentTime] = useState(Date.now());
   const [isLoading, setIsLoading] = useState(false);
-  const [isLast, setIsLast] = useState(false);
   const [errMsg, setErrMsg] = useState('');
 
   const observerRef = useRef(null);
   const navigate = useNavigate();
+
+  const { chatType, page, setPage, chatroomList, setChatroomList, isLast, setIsLast } =
+    useChatroomList();
 
   useEffect(() => {
     if (!observerRef.current) return;
@@ -34,13 +34,6 @@ const ChatroomList = () => {
 
     return () => observer.disconnect(); // 컴포넌트 언마운트 시 해제
   }, [chatType, page]);
-
-  const changeChatTypeHandler = (data) => {
-    setChatType(data);
-    setPage(0);
-    setChatroomList([]);
-    setIsLast(false);
-  };
 
   const loadMoreChatroom = () => {
     if (isLast) return;
@@ -60,13 +53,8 @@ const ChatroomList = () => {
         setIsLoading(false);
       })
       .catch((err) => {
-        console.log(err);
-        switch (err.status) {
-          case 500:
-            setErrMsg('로그인을 먼저 해주세요!');
-            console.log('로그인을 먼저 해주세요!');
-            break;
-        }
+        setErrMsg('로그인을 먼저 해주세요!');
+        console.log('로그인을 먼저 해주세요!');
         setIsLoading(false);
       });
     setCurrentTime(Date.now());
@@ -80,8 +68,7 @@ const ChatroomList = () => {
 
   return (
     <div className='chatroom-list-container d-flex flex-column h-100'>
-      <ChatroomListHeader changeChatTypeHandler={changeChatTypeHandler} />
-      {/* <ChatroomTypeButtons handleTypeChange={changeChatTypeHandler} /> */}
+      <ChatroomListHeader />
       {errMsg && (
         <div className='d-flex justify-content-center align-items-center flex-grow-1 '>
           {errMsg}

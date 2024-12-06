@@ -6,9 +6,11 @@ import '@/styles/product/ProductList.css';
 
 const ProductList = () => {
     const [products, setProducts] = useState([]);
+    const [login, setLogin] = useState([]);
     const [isCategoryPopupOpen, setIsCategoryPopupOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState({ id: 1, name: '전체' });
     const [rentalStatus, setRentalStatus] = useState('ALL');
+    const [activityArea, setActivityArea] = useState(null); // 활동 지역 정보 상태 추가
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -20,18 +22,29 @@ const ProductList = () => {
                         rentalStatus: rentalStatus
                     }
                 });
-                setProducts(response.data);
+                setProducts(response.data.products);
+                setLogin(response.data.login);
             } catch (error) {
                 console.error('Error fetching products:', error);
             }
         };
 
+        const fetchActivityArea = async () => {
+            try {
+                const response = await axiosCredential.get('/api/activity-area');
+                setActivityArea(response.data); // 활동 지역 정보 저장
+            } catch (error) {
+                console.error('Error fetching activity area:', error);
+            }
+        };
+
         fetchProducts();
+        fetchActivityArea(); // 활동 지역 정보 가져오기
     }, [selectedCategory, rentalStatus]);
 
     const handleProductClick = (productId) => {
         navigate(`/products/${productId}`);
-    }
+    };
 
     const handleOpenPopup = () => {
         setIsCategoryPopupOpen(true);
@@ -50,10 +63,22 @@ const ProductList = () => {
         setRentalStatus(value);
     };
 
+    const handleActivityAreaClick = () => {
+        navigate('/map'); // 활동 지역 설정 페이지로 이동
+    };
+
     return (
         <div className='product-list-container'>
             <div className='search-area d-flex align-items-center justify-content-between p-3 bg-white border-bottom'>
-                <div className='region-select'>행정구역 ▼</div>
+                <div
+                    className='region-select'
+                    onClick={handleActivityAreaClick}
+                    style={{ cursor: 'pointer' }}
+                >
+                    {activityArea
+                        ? `${activityArea.sidoNm} ${activityArea.sggNm} ${activityArea.emdNm}`
+                        : '활동지역 설정'} ▼
+                </div>
                 <input
                     type='text'
                     className='search-input flex-grow-1 mx-2 p-2'
@@ -77,30 +102,39 @@ const ProductList = () => {
                     <option value="ALL">전체</option>
                     <option value="AVAILABLE">대여 판매 중</option>
                 </select>
-                <button className='sorting-button'>정렬 기준 2</button>
+                {login && (
+                    <button
+                        className='sorting-button'
+                        onClick={() => navigate('/products/register')}
+                    >
+                        + 글쓰기
+                    </button>
+                )}
             </div>
             <div className='product-list p-3'>
                 {products.map((product) => (
                     <div
-                        className={`product-card d-flex align-items-center mb-3 p-3 bg-white border ${product.expectedReturnDate ? 'rented' : ''}`}
+                        className={`product-card d-flex align-items-center p-3 bg-white ${product.expectedReturnDate ? 'rented' : ''}`}
                         key={product.productId}
                         onClick={() => handleProductClick(product.productId)} style={{ cursor: 'pointer' }}>
                         <img
                             src={product.thumbnailUrl || 'https://via.placeholder.com/60'}
                             alt={product.title}
                             className='product-img rounded'
-                            style={{ width: '60px', height: '60px' }}
                         />
                         {product.expectedReturnDate && (
                             <div className='expected-return-tag'>
                                 대여 중
+                                <p className='return-date mb-1'>
+                                    {new Date(product.expectedReturnDate).toLocaleDateString()}
+                                </p>
                             </div>
                         )}
                         <div className='product-info flex-grow-1 ml-3'>
                             <h5 className='product-title mb-1'>{product.title}</h5>
                             <p className='product-location text-muted mb-1'>
                                 서울 성북구 교동 14
-                                <span className='ml-3'>수정일자: {new Date(product.updatedAt).toLocaleDateString()}</span>
+                                <span className='ml-3' style={{ paddingLeft: '30px' }}>{new Date(product.updatedAt).toLocaleDateString()}</span>
                             </p>
                             <p className='product-price mb-0'>
                                 {product.dayPrice.toLocaleString()}원 / 일
@@ -108,11 +142,6 @@ const ProductList = () => {
                             {product.weekPrice && (
                                 <p className='product-price mb-0'>
                                     {product.weekPrice.toLocaleString()}원 / 주
-                                </p>
-                            )}
-                            {product.expectedReturnDate && (
-                                <p className='product-price return-date'>
-                                    반납예정일: {new Date(product.expectedReturnDate).toLocaleDateString()}
                                 </p>
                             )}
                         </div>
