@@ -36,7 +36,7 @@ const ChatPage = () => {
   const { userInfo } = useAuth();
 
   useEffect(() => {
-    if (!sellerId || !productId || !userInfo) navigate('/chats');
+    if (!sellerId || !productId || !userInfo) navigate(-1, { replace: true });
     validateChatroom();
     setStompClient(stompClient);
   }, []);
