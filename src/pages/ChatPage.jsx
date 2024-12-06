@@ -4,11 +4,12 @@ import ChatPageFooter from '@/components/chatting/ChatPageFooter';
 import ChatPageHeader from '@/components/chatting/ChatPageHeader';
 import ChatItem from '@/components/chatting/ChatItem';
 import { Client } from '@stomp/stompjs';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import SockJS from 'sockjs-client';
 import { Container, Button } from 'react-bootstrap';
 import { axiosCredential } from '../utils/axiosCredential';
 import Loading from '@/components/common/Loading';
+import useAuth from '@/hooks/useAuth';
 
 // 사용 예시
 const ChatPage = () => {
@@ -29,14 +30,13 @@ const ChatPage = () => {
   const messageContainerRef = useRef(null);
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   const { sellerId, buyerId, productId, opponentName } = location.state || {};
-
-  // const location = useLocation(); // 현재 위치 정보 가져오기
-  // const queryParams = queryString.parse(location.search); // 쿼리 파라미터 파싱
-  // // const myId = queryParams.token;
+  const { userInfo } = useAuth();
 
   useEffect(() => {
+    if (!sellerId || !productId || !userInfo) navigate('/chats');
     validateChatroom();
     setStompClient(stompClient);
   }, []);
@@ -161,7 +161,7 @@ const ChatPage = () => {
   };
 
   const validateChatroom = () => {
-    if (!sellerId || !buyerId || !productId) return;
+    if (!sellerId || !productId) return;
 
     axiosCredential
       .post('/api/chatroom/valid', {
@@ -209,6 +209,8 @@ const ChatPage = () => {
       })
       .then((data) => {
         if (!data.data.length) {
+          setIsLoading(false);
+          setIsLastPage(true);
           return;
         } else if (data.data.length < 50) {
           setIsLastPage(true);
