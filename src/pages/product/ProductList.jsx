@@ -10,6 +10,7 @@ const ProductList = () => {
     const [isCategoryPopupOpen, setIsCategoryPopupOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState({ id: 1, name: '전체' });
     const [rentalStatus, setRentalStatus] = useState('ALL');
+    const [activityArea, setActivityArea] = useState(null); // 활동 지역 정보 상태 추가
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -28,12 +29,22 @@ const ProductList = () => {
             }
         };
 
+        const fetchActivityArea = async () => {
+            try {
+                const response = await axiosCredential.get('/api/activity-area');
+                setActivityArea(response.data); // 활동 지역 정보 저장
+            } catch (error) {
+                console.error('Error fetching activity area:', error);
+            }
+        };
+
         fetchProducts();
+        fetchActivityArea(); // 활동 지역 정보 가져오기
     }, [selectedCategory, rentalStatus]);
 
     const handleProductClick = (productId) => {
         navigate(`/products/${productId}`);
-    }
+    };
 
     const handleOpenPopup = () => {
         setIsCategoryPopupOpen(true);
@@ -52,10 +63,22 @@ const ProductList = () => {
         setRentalStatus(value);
     };
 
+    const handleActivityAreaClick = () => {
+        navigate('/map'); // 활동 지역 설정 페이지로 이동
+    };
+
     return (
         <div className='product-list-container'>
             <div className='search-area d-flex align-items-center justify-content-between p-3 bg-white border-bottom'>
-                <div className='region-select'>행정구역 ▼</div>
+                <div
+                    className='region-select'
+                    onClick={handleActivityAreaClick}
+                    style={{ cursor: 'pointer' }}
+                >
+                    {activityArea
+                        ? `${activityArea.sidoNm} ${activityArea.sggNm} ${activityArea.emdNm}`
+                        : '활동지역 설정'} ▼
+                </div>
                 <input
                     type='text'
                     className='search-input flex-grow-1 mx-2 p-2'
@@ -80,8 +103,9 @@ const ProductList = () => {
                     <option value="AVAILABLE">대여 판매 중</option>
                 </select>
                 {login && (
-                    <button className='sorting-button'
-                            onClick={() => navigate('/products/register')}
+                    <button
+                        className='sorting-button'
+                        onClick={() => navigate('/products/register')}
                     >
                         + 글쓰기
                     </button>
