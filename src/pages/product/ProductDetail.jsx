@@ -104,7 +104,7 @@ const ProductDetail = () => {
                 return;
             }
             await axiosCredential.delete(`/api/products/${productId}`);
-            alert("상품이 삭제되었습니다.");
+            alert("대여 상품이 삭제되었습니다.");
             navigate("/products");
         } catch (err) {
             console.error("글 삭제 중 오류 발생:", err);

@@ -54,6 +54,12 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
         }
     };
 
+    const handleWheel = (event) => {
+        if (event.target.type === "number") {
+            event.preventDefault();
+        }
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -66,7 +72,7 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
     };
 
     return (
-        <form className="product-form" onSubmit={handleSubmit}>
+        <form className="product-form" onSubmit={handleSubmit} onWheel={handleWheel}>
             <ProductImages
                 initialImages={existingImages}
                 onExistingImageUpdate={onExistingImageUpdate}
@@ -75,7 +81,9 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
             />
 
             <div>
-                <label>제목</label>
+                <div className="product-form-label">
+                    <label>제목</label>
+                </div>
                 <input
                     type="text"
                     name="title"
@@ -86,15 +94,19 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
                 />
             </div>
 
-            <div>
-                <label>카테고리</label>
-                <button type="button" onClick={() => setIsCategoryPopupOpen(true)}>
+            <div style={{textAlign: "left"}}>
+                <div className="product-form-label">
+                    <label>카테고리</label>
+                </div>
+                <button type="button" className="product-form-button" onClick={() => setIsCategoryPopupOpen(true)}>
                     {formData.categoryName || "카테고리 선택"}
                 </button>
             </div>
 
             <div>
-                <label>자세한 설명</label>
+                <div className="product-form-label">
+                    <label>자세한 설명</label>
+                </div>
                 <textarea
                     name="description"
                     value={formData.description}
@@ -104,33 +116,51 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
                 />
             </div>
 
-            <div>
-                <label>가격</label>
-                <input
-                    type="number"
-                    name="dayPrice"
-                    value={formData.dayPrice}
-                    onChange={handleChange}
-                    placeholder="일 단위 가격"
-                    required
-                />
-                <input
-                    type="number"
-                    name="weekPrice"
-                    value={formData.weekPrice}
-                    onChange={handleChange}
-                    placeholder="주 단위 가격 (선택)"
-                />
-            </div>
-
-            <div>
-                <label>거래 희망 장소</label>
-                <button type="button" onClick={() => setIsLocationPickerOpen(true)}>
+            <div style={{textAlign: "left"}}>
+                <div className="product-form-label">
+                    <label>거래 희망 장소</label>
+                </div>
+                <button type="button" className="product-form-button" onClick={() => setIsLocationPickerOpen(true)}>
                     {locationText}
                 </button>
             </div>
+            {isLocationPickerOpen && (
+                <LocationPicker
+                    onLocationSelect={handleLocationSelect}
+                    onCancel={() => setIsLocationPickerOpen(false)}
+                />
+            )}
 
-            <button type="submit">{isEdit ? "수정" : "등록"}</button>
+            <div>
+                <div className="product-form-label">
+                    <label>가격</label>
+                </div>
+                <div className="price-container">
+                    <div className="price-unit">
+                        <input
+                            type="number"
+                            name="dayPrice"
+                            value={formData.dayPrice}
+                            onChange={handleChange}
+                            placeholder="가격을 입력해 주세요."
+                            required
+                        />
+                        <span>/ 일</span>
+                    </div>
+                    <div className="price-unit">
+                        <input
+                            type="number"
+                            name="weekPrice"
+                            value={formData.weekPrice}
+                            onChange={handleChange}
+                            placeholder="가격을 입력해 주세요. (선택)"
+                        />
+                        <span>/ 주</span>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" className="product-form-button">{isEdit ? "수정" : "등록"}</button>
 
             <CategoryPopup
                 isOpen={isCategoryPopupOpen}
@@ -138,12 +168,7 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
                 onSelectCategory={handleCategorySelect}
             />
 
-            {isLocationPickerOpen && (
-                <LocationPicker
-                    onLocationSelect={handleLocationSelect}
-                    onCancel={() => setIsLocationPickerOpen(false)}
-                />
-            )}
+
         </form>
     );
 };
