@@ -95,19 +95,21 @@ const styles = {
     },
     confirmButton: {
         padding: "0.5rem 1rem",
-        backgroundColor: "#28a745",
+        backgroundColor: "#6c63ff",
         color: "white",
         border: "none",
         borderRadius: "4px",
         cursor: "pointer",
+        fontWeight: "bold",
     },
     cancelButton: {
         padding: "0.5rem 1rem",
-        backgroundColor: "#dc3545",
+        backgroundColor: "#F16366",
         color: "white",
         border: "none",
         borderRadius: "4px",
         cursor: "pointer",
+        fontWeight: "bold",
     },
 };
 
