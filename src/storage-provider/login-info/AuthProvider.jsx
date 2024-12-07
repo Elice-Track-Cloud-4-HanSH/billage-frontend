@@ -1,23 +1,27 @@
 import { useState, useEffect } from 'react';
 import AuthContext from './AuthContext';
+import useStompClient from '../zustand/useStompClient';
 
 const AuthProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState(null);
+  const { connectClient } = useStompClient();
 
   useEffect(() => {
-    const storedUserInfo = sessionStorage.getItem('userInfo');
+    const storedUserInfo = localStorage.getItem('userInfo');
     if (storedUserInfo) {
-      setUserInfo(JSON.parse(storedUserInfo));
+      const decodedUserInfo = JSON.parse(storedUserInfo);
+      setUserInfo(decodedUserInfo);
+      connectClient(decodedUserInfo.userId);
     }
   }, []);
 
   const login = (userData) => {
     setUserInfo(userData);
-    sessionStorage.setItem('userInfo', JSON.stringify(userData));
+    localStorage.setItem('userInfo', JSON.stringify(userData));
   };
   const logout = () => {
     setUserInfo(null);
-    sessionStorage.removeItem('userInfo');
+    localStorage.removeItem('userInfo');
   };
 
   return (
