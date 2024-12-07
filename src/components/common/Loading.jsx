@@ -1,7 +1,6 @@
 import { PropTypes } from 'prop-types';
 
 const Loading = ({ isLoading }) => {
-  console.log('loading component loaded: isLoading === ', isLoading);
   return (
     <>
       {isLoading && (
