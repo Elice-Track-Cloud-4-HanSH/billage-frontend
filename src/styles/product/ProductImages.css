@@ -23,8 +23,20 @@
 }
 
 .product-images-preview img {
-    width: 60px;
-    height: 60px;
+    width: 100px;
+    height: 100px;
     border-radius: 5px;
     object-fit: cover;
+}
+
+.product-form .product-image-delete-btn {
+    background-color: #F16366 !important;
+    color: #fff !important;
+    font-weight: bold !important;
+}
+
+.product-form .product-image-delete-btn:hover {
+    background-color: #dc3545 !important; /* 부트스트랩 기본 btn-primary 색상 */
+    color: #fff !important;
+    font-weight: bold !important;
 }
