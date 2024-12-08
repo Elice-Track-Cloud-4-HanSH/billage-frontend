@@ -3,15 +3,17 @@ import Header from '../../components/common/Header';
 import ReviewSubject from '../../components/review/ReviewSubject';
 import WriteReviewForm from '../../components/review/WriteReviewForm';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const WriteUserReview = () => {
   const [subjectInfo, setSubjectInfo] = useState();
   const { id } = useParams();
+  const nav = useNavigate();
 
   const handleReviewSubmit = async (data) => {
     try {
       const response = await axios.post(`/api/user-review/${id}`, data);
+      nav('/myreview', { replace: true });
       console.log('응답 성공:', response.data);
     } catch (error) {
       console.error('리뷰 제출 중 오류 발생:', error);
@@ -30,7 +32,6 @@ const WriteUserReview = () => {
     };
 
     if (id) {
-      // id가 존재할 때만 실행
       fetchSubjectInfo();
     }
   }, [id]);
