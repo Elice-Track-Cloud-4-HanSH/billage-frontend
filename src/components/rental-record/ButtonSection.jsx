@@ -19,7 +19,10 @@ const ButtonSection = ({ record }) => {
           >
             대여 중으로 변경
           </button>
-          <button className='btn btn-warning w-50 mx-3' onClick={() => nav()}>
+          <button
+            className='btn btn-warning w-50 mx-3'
+            onClick={() => nav(`/products/${record.productId}/edit`)}
+          >
             수정
           </button>
           <button className='btn btn-danger w-50 mx-3' onClick={() => setShowModal(true)}>
