@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "@/styles/product/ProductForm.css";
+// import "@/styles/product/ProductForm.css";
+import "@/styles/product/ProductImages.css";
 
 const ProductImages = ({ initialImages, onExistingImageUpdate, onNewImageUpload, onImageDelete }) => {
     const [existingImages, setExistingImages] = useState(initialImages); // 기존 이미지
@@ -157,7 +158,6 @@ const ProductImages = ({ initialImages, onExistingImageUpdate, onNewImageUpload,
 
     return (
         <div>
-            <label>이미지</label>
             <input
                 type="file"
                 multiple
@@ -170,7 +170,7 @@ const ProductImages = ({ initialImages, onExistingImageUpdate, onNewImageUpload,
                         <img
                             src={image.imageUrl}
                             alt={`preview-${index}`}
-                            style={{ width: "50px", height: "50px", display: "block", marginBottom: "5px" }}
+                            style={{ width: "100px", height: "100px", display: "block", marginBottom: "5px" }}
                         />
                         <label>
                             <input
@@ -181,7 +181,12 @@ const ProductImages = ({ initialImages, onExistingImageUpdate, onNewImageUpload,
                             />
                             썸네일
                         </label>
-                        <button type="button" onClick={() => handleExistingImageDelete(index)}>삭제</button>
+                        <button
+                            className= "product-image-delete-btn"
+                            onClick={() => handleExistingImageDelete(index)}
+                        >
+                            삭제
+                        </button>
                     </div>
                 ))}
 
@@ -190,7 +195,7 @@ const ProductImages = ({ initialImages, onExistingImageUpdate, onNewImageUpload,
                         <img
                             src={URL.createObjectURL(image.file)}
                             alt={`preview-new-${index}`}
-                            style={{ width: "50px", height: "50px", display: "block", marginBottom: "5px" }}
+                            style={{ width: "100px", height: "100px", display: "block", marginBottom: "5px" }}
                         />
                         <label>
                             <input
@@ -201,7 +206,11 @@ const ProductImages = ({ initialImages, onExistingImageUpdate, onNewImageUpload,
                             />
                             썸네일
                         </label>
-                        <button type="button" onClick={() => handleNewImageDelete(index)}>삭제</button>
+                        <button
+                            className= "product-image-delete-btn"
+                            onClick={() => handleNewImageDelete(index)}>
+                            삭제
+                        </button>
                     </div>
                 ))}
             </div>

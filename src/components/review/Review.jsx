@@ -10,18 +10,21 @@ const Review = ({ review }) => {
   };
 
   return (
-    <div>
-      <div>
-        <img src={review.imageUrl} alt='이미지' />
+    <div className='row align-items-center my-3'>
+      <div className='col-auto'>
+        <img
+          src={review.imageUrl}
+          alt='이미지'
+          className='img-fluid rounded'
+          style={{ width: '150px', height: '150px', objectFit: 'cover' }}
+        />
       </div>
-      <div>
-        <div>
+      <div className='col'>
+        <div className='d-flex justify-content-between align-items-center'>
           <h5>{review.subject}</h5>
           <div>{renderStars(review.score)}</div>
         </div>
-        <div>
-          <p>{review.content}</p>
-        </div>
+        <p className='mt-3'>{review.content}</p>
       </div>
     </div>
   );

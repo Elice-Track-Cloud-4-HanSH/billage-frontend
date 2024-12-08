@@ -19,9 +19,6 @@ const CategoryPopup = ({isOpen, onClose, onSelectCategory}) => {
     return (
         <div className="popup-overlay">
             <div className="popup-content">
-                <button className="close-button" onClick={onClose}>
-                    닫기
-                </button>
                 <div className="categories-grid">
                     {categories.map((category) => (
                         <div
@@ -33,10 +30,13 @@ const CategoryPopup = ({isOpen, onClose, onSelectCategory}) => {
                             }}
                         >
                             <img src={category.imageUrl} alt={category.name}/>
-                            <p>{category.name}</p>
+                            <p style={{fontWeight: 'bold'}}>{category.name}</p>
                         </div>
                     ))}
                 </div>
+                <button className="close-button" onClick={onClose}>
+                    닫기
+                </button>
             </div>
         </div>
     );

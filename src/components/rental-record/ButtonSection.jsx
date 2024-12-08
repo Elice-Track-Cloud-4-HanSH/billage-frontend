@@ -10,48 +10,75 @@ const ButtonSection = ({ record }) => {
   const [showModal, setShowModal] = useState(false);
 
   const renderActions = (tab) => {
-    console.log('탭: ' + tab);
     if (tab === 'products/on-sale') {
       return (
-        <>
-          <button onClick={() => nav('/set-to-rented')}>대여 중으로 변경</button>
-          <button onClick={() => nav()}>수정</button>
-          <button onClick={() => setShowModal(true)}>삭제</button>
-        </>
+        <div className='d-flex justify-content-around gap-5'>
+          <button
+            className='btn btn-primary w-50 mx-3'
+            onClick={() => nav(`/set-to-rented/${record.productId}`)}
+          >
+            대여 중으로 변경
+          </button>
+          <button
+            className='btn btn-warning w-50 mx-3'
+            onClick={() => nav(`/products/${record.productId}/edit`)}
+          >
+            수정
+          </button>
+          <button className='btn btn-danger w-50 mx-3' onClick={() => setShowModal(true)}>
+            삭제
+          </button>
+        </div>
       );
     } else if (tab === 'rental-record?type=대여중/판매') {
       return (
-        <>
-          <button onClick={() => handleReturnComplete(record.rentalRecordId)}>반납 완료</button>
-          <button onClick={() => nav()}>상대방에게 채팅 보내기</button>
-        </>
+        <div className='d-flex justify-content-around gap-5'>
+          <button
+            className='btn btn-primary w-50 mx-5 px-3'
+            onClick={() => handleReturnComplete(record.rentalRecordId)}
+          >
+            반납 완료
+          </button>
+          <button className='btn btn-primary w-50 mx-5 px-3' onClick={() => nav()}>
+            상대방에게 채팅 보내기
+          </button>
+        </div>
       );
     } else if (tab === 'rental-record?type=대여내역/판매') {
       return (
-        <>
-          <button onClick={() => nav(`/user-review/${record.rentalRecordId}`)}>
+        <div className='d-flex justify-content-around'>
+          <button
+            className='btn btn-primary w-40'
+            onClick={() => nav(`/user-review/${record.rentalRecordId}`)}
+          >
             사용자 후기 작성
           </button>
-        </>
+        </div>
       );
     } else if (tab === 'rental-record?type=대여중/구매') {
       return (
-        <>
-          <button>
-            <button onClick={() => nav()}>사용자에게 채팅 보내기</button>
+        <div className='d-flex justify-content-around'>
+          <button className='btn btn-primary w-40' onClick={() => nav()}>
+            사용자에게 채팅 보내기
           </button>
-        </>
+        </div>
       );
     } else if (tab === 'rental-record?type=대여내역/구매') {
       return (
-        <>
-          <button onClick={() => nav(`/product-review/${record.rentalRecordId}`)}>
+        <div className='d-flex justify-content-around gap-5'>
+          <button
+            className='btn btn-primary w-50 mx-5 px-3'
+            onClick={() => nav(`/product-review/${record.rentalRecordId}`)}
+          >
             상품 후기 작성
           </button>
-          <button onClick={() => nav(`/user-review/${record.rentalRecordId}`)}>
+          <button
+            className='btn btn-primary w-50 mx-5 px-3'
+            onClick={() => nav(`/user-review/${record.rentalRecordId}`)}
+          >
             사용자 후기 작성
           </button>
-        </>
+        </div>
       );
     }
     return null;
@@ -78,7 +105,7 @@ const ButtonSection = ({ record }) => {
 
   return (
     <>
-      <div>{renderActions(activeTab)}</div>
+      <>{renderActions(activeTab)}</>
 
       {showModal && (
         <div className='modal'>

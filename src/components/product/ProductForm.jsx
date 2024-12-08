@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ProductImages from "./ProductImages";
 import CategoryPopup from "../category/CategoryPopup";
+import LocationPicker from "../map/LocationPicker";
 import "@/styles/product/ProductForm.css";
 
 const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpdate, onImageDelete, isEdit }) => {
@@ -11,30 +12,62 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
         description: "",
         dayPrice: "",
         weekPrice: "",
-        latitude: 0,
-        longitude: 0,
+        latitude: null,
+        longitude: null,
         productImages: [],
     });
 
+    const [errors, setErrors] = useState({
+        dayPrice: "",
+        weekPrice: "",
+    });
+
     const [isCategoryPopupOpen, setIsCategoryPopupOpen] = useState(false);
+    const [isLocationPickerOpen, setIsLocationPickerOpen] = useState(false);
+    const [locationText, setLocationText] = useState("거래 희망 장소 선택");
 
     useEffect(() => {
-       if (initialData) {
-           setFormData(initialData);
-       }
+        if (initialData) {
+            setFormData(initialData);
+            if (initialData.latitude && initialData.longitude) {
+                setLocationText(
+                    `선택 완료 (위도: ${initialData.latitude.toFixed(5)}, 경도: ${initialData.longitude.toFixed(5)})`
+                );
+            }
+        }
     }, [initialData]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+
+        if (name === "dayPrice" || name === "weekPrice") {
+            // 숫자 유효성 검사
+            if (value === "" || /^[0-9\b]+$/.test(value)) {
+                setFormData({ ...formData, [name]: value });
+                setErrors({ ...errors, [name]: "" }); // 에러 메시지 제거
+            } else {
+                setErrors({ ...errors, [name]: "가격은 숫자만 입력 가능합니다." });
+            }
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
     };
 
     const handleCategorySelect = (categoryId, categoryName) => {
         setFormData({ ...formData, categoryId, categoryName });
     };
 
-    const handleImageUpload = (newImages) => {
-        setFormData({ ...formData, productImages: newImages });
+    const handleLocationSelect = (location) => {
+        if (location && location.latitude !== undefined && location.longitude !== undefined) {
+            setFormData({ ...formData, latitude: location.latitude, longitude: location.longitude });
+            setLocationText(
+                `선택 완료 (위도: ${location.latitude.toFixed(5)}, 경도: ${location.longitude.toFixed(5)})`
+            );
+            setIsLocationPickerOpen(false);
+        } else {
+            console.error("잘못된 위치 데이터:", location);
+            alert("유효한 위치를 선택해주세요.");
+        }
     };
 
     const handleSubmit = (e) => {
@@ -45,20 +78,24 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
             return;
         }
 
+        if (errors.dayPrice || errors.weekPrice) return;
+
         onSubmit(formData);
     };
 
     return (
         <form className="product-form" onSubmit={handleSubmit}>
             <ProductImages
-                initialImages={existingImages} // 부모로부터 받아온 기존 이미지
-                onExistingImageUpdate={onExistingImageUpdate} // 기존 이미지 썸네일 변경
-                onNewImageUpload={handleImageUpload} // 새로 추가된 이미지
-                onImageDelete={onImageDelete} // 삭제할 이미지
+                initialImages={existingImages}
+                onExistingImageUpdate={onExistingImageUpdate}
+                onNewImageUpload={(newImages) => setFormData({ ...formData, productImages: newImages })}
+                onImageDelete={onImageDelete}
             />
 
             <div>
-                <label>제목</label>
+                <div className="product-form-label">
+                    <label>제목</label>
+                </div>
                 <input
                     type="text"
                     name="title"
@@ -69,15 +106,19 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
                 />
             </div>
 
-            <div>
-                <label>카테고리</label>
-                <button type="button" onClick={() => setIsCategoryPopupOpen(true)}>
+            <div style={{textAlign: "left"}}>
+                <div className="product-form-label">
+                    <label>카테고리</label>
+                </div>
+                <button type="button" className="product-form-button" onClick={() => setIsCategoryPopupOpen(true)}>
                     {formData.categoryName || "카테고리 선택"}
                 </button>
             </div>
 
             <div>
-                <label>자세한 설명</label>
+                <div className="product-form-label">
+                    <label>자세한 설명</label>
+                </div>
                 <textarea
                     name="description"
                     value={formData.description}
@@ -87,32 +128,61 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
                 />
             </div>
 
+            <div style={{textAlign: "left"}}>
+                <div className="product-form-label">
+                    <label>거래 희망 장소</label>
+                </div>
+                <button type="button" className="product-form-button" onClick={() => setIsLocationPickerOpen(true)}>
+                    {locationText}
+                </button>
+            </div>
+            {isLocationPickerOpen && (
+                <LocationPicker
+                    onLocationSelect={handleLocationSelect}
+                    onCancel={() => setIsLocationPickerOpen(false)}
+                />
+            )}
+
             <div>
-                <label>가격</label>
-                <input
-                    type="number"
-                    name="dayPrice"
-                    value={formData.dayPrice}
-                    onChange={handleChange}
-                    placeholder="일 단위 가격"
-                    required
-                />
-                <input
-                    type="number"
-                    name="weekPrice"
-                    value={formData.weekPrice}
-                    onChange={handleChange}
-                    placeholder="주 단위 가격 (선택)"
-                />
+                <div className="product-form-label">
+                    <label>가격</label>
+                </div>
+                <div className="price-container">
+                    <div className="price-unit">
+                        <input
+                            type="text"
+                            name="dayPrice"
+                            value={formData.dayPrice}
+                            onChange={handleChange}
+                            placeholder="가격을 입력해 주세요."
+                            required
+                        />
+                        <span>/ 일</span>
+                    </div>
+                    {errors.dayPrice && <div style={{ color: "red", fontSize: "0.9rem", textAlign: "left", paddingLeft: "40px" }}>{errors.dayPrice}</div>}
+                    <div className="price-unit">
+                        <input
+                            type="text"
+                            name="weekPrice"
+                            value={formData.weekPrice}
+                            onChange={handleChange}
+                            placeholder="가격을 입력해 주세요. (선택)"
+                        />
+                        <span>/ 주</span>
+                    </div>
+                    {errors.weekPrice && <div style={{ color: "red", fontSize: "0.9rem", textAlign: "left", paddingLeft: "40px" }}>{errors.weekPrice}</div>}
+                </div>
             </div>
 
-            <button type="submit">{isEdit ? "수정" : "등록"}</button>
+            <button type="submit" className="product-form-button">{isEdit ? "수정" : "등록"}</button>
 
             <CategoryPopup
                 isOpen={isCategoryPopupOpen}
                 onClose={() => setIsCategoryPopupOpen(false)}
                 onSelectCategory={handleCategorySelect}
             />
+
+
         </form>
     );
 };
