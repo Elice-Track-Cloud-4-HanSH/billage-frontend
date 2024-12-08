@@ -1,33 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { axiosCredential } from '@/utils/axiosCredential';
 import Header from '../../components/common/Header';
+import '@/styles/map/ActivityArea.css';
 
 const ActivityArea = () => {
   const [sggNm, setSggNm] = useState(''); // 시군구명
   const [emdNm, setEmdNm] = useState(''); // 읍면동명
   const [searchResults, setSearchResults] = useState([]);
   const [selectedArea, setSelectedArea] = useState(null);
-  const [geoJson, setGeoJson] = useState(null); // 선택된 지역의 GeoJSON 데이터
+  const [geoJson, setGeoJson] = useState(null); // 행정구역 GeoJSON 데이터
+  const [neighborGeoJsons, setNeighborGeoJsons] = useState([]); // NeighborArea GeoJSON 데이터
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(5);
+  const [depth, setDepth] = useState(1); // depth 기본값
 
   useEffect(() => {
     if (geoJson) {
       const mapDiv = document.getElementById('map');
+      const map = new naver.maps.Map(mapDiv, { zoom: 15 });
 
-      // 네이버 지도 초기화
-      const map = new naver.maps.Map(mapDiv, {
-        zoom: 15, // 기본 확대 수준
-      });
-
-      // GeoJSON 데이터를 파싱하여 폴리곤 생성
+      // 행정구역 폴리곤 그리기
       const geoJsonData = JSON.parse(geoJson.geomGeoJson);
-
       const polygonPaths = geoJsonData.coordinates[0][0].map(([lng, lat]) => {
         return new naver.maps.LatLng(lat, lng);
       });
 
-      // 폴리곤 표시
       const polygon = new naver.maps.Polygon({
         map,
         paths: polygonPaths,
@@ -37,23 +34,43 @@ const ActivityArea = () => {
         strokeWeight: 2,
       });
 
-      // 폴리곤 경계 계산
+      // 지도 영역 맞추기
       const bounds = new naver.maps.LatLngBounds();
       polygonPaths.forEach((path) => bounds.extend(path));
 
-      // 딜레이를 추가해서 지도 렌더링하고 fitBounds 실행
+      // NeighborArea 폴리곤 그리기
+      neighborGeoJsons.forEach((neighborGeoJson) => {
+        const neighborData = JSON.parse(neighborGeoJson.geomGeoJson);
+        const neighborPaths = neighborData.coordinates[0][0].map(([lng, lat]) => {
+          return new naver.maps.LatLng(lat, lng);
+        });
+
+        new naver.maps.Polygon({
+          map,
+          paths: neighborPaths,
+          fillColor: '#00ff00', // NeighborArea 폴리곤 색상
+          fillOpacity: 0.3,
+          strokeColor: '#00ff00',
+          strokeWeight: 2,
+        });
+
+        // Neighbor 폴리곤도 영역에 포함
+        neighborPaths.forEach((path) => bounds.extend(path));
+      });
+
+      // 지도 영역 업데이트
       setTimeout(() => {
         map.fitBounds(bounds);
       }, 100);
     }
-  }, [geoJson]);
+  }, [geoJson, neighborGeoJsons]);
 
   const handleSearch = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/emd-area/search', {
+      const response = await axiosCredential.get('/api/emd-area/search', {
         params: { sggNm, emdNm, page, size },
       });
-      setSearchResults(response.data.content); // 백엔드에서 반환된 데이터 사용
+      setSearchResults(response.data.content);
     } catch (error) {
       console.error('검색 실패:', error);
       alert('검색 중 오류가 발생했습니다.');
@@ -62,10 +79,25 @@ const ActivityArea = () => {
 
   const handleAreaSelect = async (area) => {
     setSelectedArea(area);
-
     try {
-      const response = await axios.get(`http://localhost:8080/api/emd-area/${area.id}`);
-      setGeoJson(response.data); // GeoJSON 데이터 저장
+      // 행정구역 GeoJSON 가져오기
+      const geoResponse = await axiosCredential.get(`/api/emd-area/${area.id}`);
+      setGeoJson(geoResponse.data);
+
+      // NeighborArea GeoJSON 가져오기
+      if (depth === 1) {
+        const neighborResponse = await axiosCredential.get(`/api/neighbor-area/${area.id}`, {
+          params: { depth },
+        });
+
+        // 응답이 단일 객체일 경우 배열로 변환
+        const neighborData = Array.isArray(neighborResponse.data)
+          ? neighborResponse.data
+          : [neighborResponse.data];
+        setNeighborGeoJsons(neighborData);
+      } else {
+        setNeighborGeoJsons([]); // Depth가 2일 때 NeighborArea를 그리지 않음
+      }
     } catch (error) {
       console.error('GeoJSON 데이터 가져오기 실패:', error);
       alert('GeoJSON 데이터를 가져오는 중 오류가 발생했습니다.');
@@ -80,9 +112,9 @@ const ActivityArea = () => {
 
     try {
       const token = ''; // 사용자 인증 토큰 필요 시 설정
-      await axios.post(
-        'http://localhost:8080/api/activity-area',
-        { emdCd: selectedArea.id },
+      await axiosCredential.post(
+        '/api/activity-area',
+        { emdCd: selectedArea.id, depth },
         {
           headers: {
             'Content-Type': 'application/json',
@@ -97,159 +129,78 @@ const ActivityArea = () => {
     }
   };
 
-  // 페이지 이동
-  const handleNextPage = () => {
-    setPage((prevPage) => prevPage + 1);
-  };
+  const handleNextPage = () => setPage((prevPage) => prevPage + 1);
+  const handlePrevPage = () => setPage((prevPage) => (prevPage > 0 ? prevPage - 1 : 0));
 
-  const handlePrevPage = () => {
-    setPage((prevPage) => (prevPage > 0 ? prevPage - 1 : 0));
-  };
-
-  // 페이지 변경 시 자동 검색
   useEffect(() => {
     if (sggNm || emdNm) {
       handleSearch();
     }
   }, [page]);
+
+  const handleDepthChange = (e) => {
+    setDepth(Number(e.target.value));
+    setNeighborGeoJsons([]); // Depth 변경 시 Neighbor 데이터를 초기화
+  };
+
   return (
     <>
       <Header title='활동 지역 설정' />
-      <div style={styles.container}>
-        <div style={styles.searchContainer}>
+      <div className='container'>
+        <div className='searchContainer'>
           <input
             type='text'
             value={sggNm}
             onChange={(e) => setSggNm(e.target.value)}
             placeholder='시군구명을 입력하세요 (예: 종로구)'
-            style={styles.input}
+            className='input'
           />
           <input
             type='text'
             value={emdNm}
             onChange={(e) => setEmdNm(e.target.value)}
             placeholder='읍면동명을 입력하세요 (예: 궁정)'
-            style={styles.input}
+            className='input'
           />
-          <button onClick={handleSearch} style={styles.searchButton}>
+          <button onClick={handleSearch} className='searchButton'>
             검색
           </button>
         </div>
 
+        <div className='depthContainer'>
+          <label htmlFor='depth' className='depthLabel'>
+            범위 선택:
+          </label>
+          <select id='depth' value={depth} onChange={handleDepthChange} className='depthSelect'>
+            <option value={1}>좁은 범위</option>
+            <option value={2}>넓은 범위</option>
+          </select>
+        </div>
+
         {searchResults.length > 0 && (
-          <>
-            <ul style={styles.resultsList}>
-              {searchResults.map((area) => (
-                <li
-                  key={area.id}
-                  style={{
-                    ...styles.resultItem,
-                    backgroundColor: selectedArea?.id === area.id ? '#d3f9d8' : 'white',
-                  }}
-                  onClick={() => handleAreaSelect(area)}
-                >
-                  {`${area.sidoNm} ${area.sggNm} ${area.emdNm}`}
-                </li>
-              ))}
-            </ul>
-            <div style={styles.paginationContainer}>
-              <button
-                onClick={handlePrevPage}
-                style={styles.paginationButton}
-                disabled={page === 0}
+          <ul className='resultsList'>
+            {searchResults.map((area) => (
+              <li
+                key={area.id}
+                className='resultItem'
+                style={{
+                  backgroundColor: selectedArea?.id === area.id ? '#d3f9d8' : 'white',
+                }}
+                onClick={() => handleAreaSelect(area)}
               >
-                이전
-              </button>
-              <span style={styles.pageInfo}>페이지 {page + 1}</span>
-              <button onClick={handleNextPage} style={styles.paginationButton}>
-                다음
-              </button>
-            </div>
-          </>
+                {`${area.sidoNm} ${area.sggNm} ${area.emdNm}`}
+              </li>
+            ))}
+          </ul>
         )}
 
-        <div id='map' style={styles.map}></div>
-
-        <button onClick={handleSubmit} style={styles.submitButton}>
+        <div id='map' className='map'></div>
+        <button onClick={handleSubmit} className='submitButton'>
           설정 완료
         </button>
       </div>
     </>
   );
-};
-
-const styles = {
-  container: {
-    maxWidth: '600px',
-    margin: '2rem auto',
-    padding: '1rem',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
-  },
-  searchContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem',
-  },
-  input: {
-    padding: '0.5rem',
-    borderRadius: '4px',
-    border: '1px solid #ddd',
-  },
-  searchButton: {
-    padding: '0.5rem 1rem',
-    backgroundColor: '#007bff',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  },
-  resultsList: {
-    listStyle: 'none',
-    padding: 0,
-  },
-  resultItem: {
-    padding: '0.75rem',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    marginBottom: '0.5rem',
-    cursor: 'pointer',
-  },
-  paginationContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: '1rem',
-    marginTop: '1rem',
-  },
-  paginationButton: {
-    padding: '0.5rem 1rem',
-    backgroundColor: '#007bff',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  },
-  pageInfo: {
-    fontSize: '1rem',
-    fontWeight: 'bold',
-  },
-  map: {
-    width: '100%',
-    height: '400px',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    marginTop: '1rem',
-  },
-  submitButton: {
-    padding: '0.75rem',
-    backgroundColor: '#28a745',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  },
 };
 
 export default ActivityArea;
