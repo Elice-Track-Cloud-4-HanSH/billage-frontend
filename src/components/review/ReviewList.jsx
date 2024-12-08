@@ -1,17 +1,22 @@
 import Review from './Review';
 import PropTypes from 'prop-types';
+import { Card, Alert } from 'react-bootstrap';
 
 const ReviewList = ({ reviews }) => {
   return (
-    <div>
+    <div className='container'>
       {reviews.length > 0 ? (
         reviews.map((review, index) => (
-          <div key={index} className='mb-3'>
-            <Review review={review} />
-          </div>
+          <Card key={index} className='mb-4 pb-3 border-0 border-bottom'>
+            <Card.Body className='p-0'>
+              <Review review={review} />
+            </Card.Body>
+          </Card>
         ))
       ) : (
-        <p>리뷰가 없습니다.</p>
+        <Alert variant='info' className='mt-4'>
+          리뷰가 없습니다.
+        </Alert>
       )}
     </div>
   );

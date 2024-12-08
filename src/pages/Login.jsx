@@ -1,154 +1,184 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/common/Header';
+import { Eye, EyeOff } from 'lucide-react';
+import googleLogo from '@/assets/Google__G__logo.svg';
 
-const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const LoginPage = () => {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    setError(''); // Clear error when user types
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    try {
-      const loginData = {
-        email,
-        password
-      };
-      console.log('로그인 시도:', loginData);
+    setIsLoading(true);
+    setError('');
 
-      const response = await axios.post('http://localhost:8080/api/login', loginData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        withCredentials: true
+    try {
+      const response = await axios.post('http://localhost:8080/api/login', formData, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
       });
-      
-      console.log('로그인 응답:', response.data);
-      
-      alert('로그인 성공!');
-      navigate('/');
+
+      alert('로그인 성~공');
+      console.log('로그인 성공:', response.data);
+
+      navigate('/after-login');
     } catch (error) {
-      console.error('로그인 실패:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
-      });
-      alert('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
+      console.error('로그인 실패:', error);
+      setError(
+        error.response?.data?.message || '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.'
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    window.location.href = `${import.meta.env.VITE_AXIOS_BASE_URL}/oauth2/authorization/google`;
   };
 
   return (
-    <>
-      <Header title="로그인" />
-      <div style={styles.container}>
-        <form onSubmit={handleLogin} style={styles.form}>
-          <div style={styles.inputGroup}>
-            <label>이메일</label>
-            <input 
-              type="email" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-              required 
-              style={styles.input}
-            />
+    <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
+      <div className='max-w-md w-full'>
+        {/* Logo and Title */}
+        <div className='text-center mb-8'>
+          <div className='mx-auto h-12 w-12 bg-blue-600 rounded-lg flex items-center justify-center'>
+            <span className='text-white text-2xl font-bold'>A</span>
           </div>
-          <div style={styles.inputGroup}>
-            <label>비밀번호</label>
-            <input 
-              type="password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              required 
-              style={styles.input}
-            />
-          </div>
-          <button type="submit" style={styles.loginButton}>로그인</button>
-        </form>
-        
-        <div style={styles.divider}>
-          <span>또는</span>
+          <h2 className='mt-6 text-3xl font-extrabold text-gray-900'>로그인</h2>
+          <p className='mt-2 text-sm text-gray-600'>
+            또는{' '}
+            <a href='/signup' className='font-medium text-blue-600 hover:text-blue-500'>
+              새 계정 만들기
+            </a>
+          </p>
         </div>
 
-        <button 
-          onClick={handleGoogleLogin} 
-          style={styles.googleButton}
-        >
-          <img 
-            src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" 
-            alt="Google logo" 
-            style={styles.googleLogo} 
-          />
-          Google로 로그인
-        </button>
+        {/* Login Form */}
+        <div className='bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10 space-y-6'>
+          <form onSubmit={handleLogin} className='space-y-6'>
+            {error && (
+              <div className='bg-red-50 text-red-500 px-4 py-3 rounded-md text-sm'>{error}</div>
+            )}
+
+            <div>
+              <label htmlFor='email' className='block text-sm font-medium text-gray-700'>
+                이메일
+              </label>
+              <div className='mt-1'>
+                <input
+                  id='email'
+                  name='email'
+                  type='email'
+                  autoComplete='email'
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 
+                           focus:outline-none focus:ring-blue-500 focus:border-blue-500'
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor='password' className='block text-sm font-medium text-gray-700'>
+                비밀번호
+              </label>
+              <div className='mt-1 relative'>
+                <input
+                  id='password'
+                  name='password'
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete='current-password'
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 
+                           focus:outline-none focus:ring-blue-500 focus:border-blue-500'
+                />
+                <button
+                  type='button'
+                  onClick={() => setShowPassword(!showPassword)}
+                  className='absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-500'
+                >
+                  {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                </button>
+              </div>
+            </div>
+
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center'>
+                <input
+                  id='remember-me'
+                  name='remember-me'
+                  type='checkbox'
+                  className='h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded'
+                />
+                <label htmlFor='remember-me' className='ml-2 block text-sm text-gray-900'>
+                  로그인 상태 유지
+                </label>
+              </div>
+
+              <div className='text-sm'>
+                <a
+                  href='/forgot-password'
+                  className='font-medium text-blue-600 hover:text-blue-500'
+                >
+                  비밀번호 찾기
+                </a>
+              </div>
+            </div>
+
+            <div>
+              <button
+                type='submit'
+                disabled={isLoading}
+                className='w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
+                         bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
+                         disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200'
+              >
+                {isLoading ? '로그인 중...' : '로그인'}
+              </button>
+            </div>
+          </form>
+
+          <div className='relative'>
+            <div className='absolute inset-0 flex items-center'>
+              <div className='w-full border-t border-gray-300' />
+            </div>
+            <div className='relative flex justify-center text-sm'>
+              <span className='px-2 bg-white text-gray-500'>또는</span>
+            </div>
+          </div>
+
+          <button
+            onClick={handleGoogleLogin}
+            className='w-full flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm rounded-md text-sm font-medium 
+                     text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
+                     transition-colors duration-200'
+          >
+            <img src={googleLogo} alt='Google logo' className='me-2' style={{ width: '20px' }} />
+            Google로 계속하기
+          </button>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 
-const styles = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    maxWidth: '400px',
-    margin: '2rem auto',
-    padding: '0 1rem',
-  },
-  form: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
-  },
-  inputGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem',
-  },
-  input: {
-    padding: '0.75rem',
-    borderRadius: '4px',
-    border: '1px solid #ddd',
-    fontSize: '1rem',
-  },
-  loginButton: {
-    padding: '0.75rem',
-    backgroundColor: '#007bff',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '1rem',
-    cursor: 'pointer',
-  },
-  divider: {
-    width: '100%',
-    textAlign: 'center',
-    borderBottom: '1px solid #ddd',
-    lineHeight: '0.1em',
-    margin: '2rem 0',
-  },
-  googleButton: {
-    width: '100%',
-    padding: '0.75rem',
-    backgroundColor: 'white',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    fontSize: '1rem',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '0.5rem',
-  },
-  googleLogo: {
-    width: '18px',
-    height: '18px',
-  },
-};
-
-export default Login;
+export default LoginPage;
