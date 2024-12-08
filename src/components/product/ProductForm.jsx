@@ -17,6 +17,11 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
         productImages: [],
     });
 
+    const [errors, setErrors] = useState({
+        dayPrice: "",
+        weekPrice: "",
+    });
+
     const [isCategoryPopupOpen, setIsCategoryPopupOpen] = useState(false);
     const [isLocationPickerOpen, setIsLocationPickerOpen] = useState(false);
     const [locationText, setLocationText] = useState("거래 희망 장소 선택");
@@ -34,7 +39,18 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+
+        if (name === "dayPrice" || name === "weekPrice") {
+            // 숫자 유효성 검사
+            if (value === "" || /^[0-9\b]+$/.test(value)) {
+                setFormData({ ...formData, [name]: value });
+                setErrors({ ...errors, [name]: "" }); // 에러 메시지 제거
+            } else {
+                setErrors({ ...errors, [name]: "가격은 숫자만 입력 가능합니다." });
+            }
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
     };
 
     const handleCategorySelect = (categoryId, categoryName) => {
@@ -54,12 +70,6 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
         }
     };
 
-    const handleWheel = (event) => {
-        if (event.target.type === "number") {
-            event.preventDefault();
-        }
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -68,11 +78,13 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
             return;
         }
 
+        if (errors.dayPrice || errors.weekPrice) return;
+
         onSubmit(formData);
     };
 
     return (
-        <form className="product-form" onSubmit={handleSubmit} onWheel={handleWheel}>
+        <form className="product-form" onSubmit={handleSubmit}>
             <ProductImages
                 initialImages={existingImages}
                 onExistingImageUpdate={onExistingImageUpdate}
@@ -138,7 +150,7 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
                 <div className="price-container">
                     <div className="price-unit">
                         <input
-                            type="number"
+                            type="text"
                             name="dayPrice"
                             value={formData.dayPrice}
                             onChange={handleChange}
@@ -147,9 +159,10 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
                         />
                         <span>/ 일</span>
                     </div>
+                    {errors.dayPrice && <div style={{ color: "red", fontSize: "0.9rem", textAlign: "left", paddingLeft: "40px" }}>{errors.dayPrice}</div>}
                     <div className="price-unit">
                         <input
-                            type="number"
+                            type="text"
                             name="weekPrice"
                             value={formData.weekPrice}
                             onChange={handleChange}
@@ -157,6 +170,7 @@ const ProductForm = ({ onSubmit, initialData, existingImages, onExistingImageUpd
                         />
                         <span>/ 주</span>
                     </div>
+                    {errors.weekPrice && <div style={{ color: "red", fontSize: "0.9rem", textAlign: "left", paddingLeft: "40px" }}>{errors.weekPrice}</div>}
                 </div>
             </div>
 
