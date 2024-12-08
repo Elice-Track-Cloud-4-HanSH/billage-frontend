@@ -3,18 +3,16 @@ import '@/styles/chatting/ChatPage.css';
 import ChatPageFooter from '@/components/chatting/ChatPageFooter';
 import ChatPageHeader from '@/components/chatting/ChatPageHeader';
 import ChatItem from '@/components/chatting/ChatItem';
-import { Client } from '@stomp/stompjs';
 import { useLocation, useNavigate } from 'react-router-dom';
-import SockJS from 'sockjs-client';
 import { Container, Button } from 'react-bootstrap';
 import { axiosCredential } from '../utils/axiosCredential';
 import Loading from '@/components/common/Loading';
 import useAuth from '@/hooks/useAuth';
+import useStompClient from '../storage-provider/zustand/useStompClient';
+import { throttle } from 'lodash';
 
 // 사용 예시
 const ChatPage = () => {
-  // const [client, setClient] = useState(null);
-  const [isConnected, setIsConnected] = useState(false);
   const [page, setPage] = useState(0);
   const [chats, setChats] = useState([]);
   const [isLastPage, setIsLastPage] = useState(false);
@@ -22,8 +20,6 @@ const ChatPage = () => {
   const [isScrollToDownBtnAvailable, setIsScrollToDownBtnAvailable] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [chatroomId, setChatroomId] = useState('');
-
-  const [stompClient, setStompClient] = useState(null);
 
   const loadMoreMessageRef = useRef(null);
   const endOfMessageRef = useRef(null);
@@ -34,30 +30,39 @@ const ChatPage = () => {
 
   const { sellerId, buyerId, productId, opponentName } = location.state || {};
   const { userInfo } = useAuth();
+  const { isConnected, publishToChannel, subscribeChannel, unsubscribeChannel } = useStompClient();
 
   useEffect(() => {
-    if (!sellerId || !productId || !userInfo) navigate('/chats');
+    if (!sellerId || !productId || !userInfo) navigate(-1, { replace: true });
     validateChatroom();
-    setStompClient(stompClient);
   }, []);
 
   // SockJS 연결 후 STOMP 프로토콜 사용
   useEffect(() => {
     if (!chatroomId) return;
-    if (!stompClient) {
-      createClient();
-    }
 
-    if (!isConnected && stompClient) {
-      stompClient.activate();
-    }
+    markAsReadAllChats();
+    subscribeChannel(`/sub/chat/${chatroomId}`, (parsedMessage) => {
+      // 닉네임이 다르다면 내꺼
+      if (parsedMessage.sender.nickname !== opponentName) {
+        scrollToBottom();
+      } else {
+        // 같다면 상대꺼
+        parsedMessage.read = true;
+        lockCurrentPosition('WS');
+        setIsNewMessageAvailable(true);
+
+        publishToChannel(`/ack/chat/chatting/${parsedMessage.chatId}`);
+      }
+      setChats((prev) => [parsedMessage, ...prev]);
+    });
 
     return () => {
-      if (stompClient) {
-        stompClient.deactivate();
+      if (isConnected) {
+        unsubscribeChannel(`/sub/chat/${chatroomId}`);
       }
     };
-  }, [chatroomId, stompClient]);
+  }, [chatroomId]);
 
   useEffect(() => {
     if (!chatroomId) return;
@@ -100,12 +105,12 @@ const ChatPage = () => {
 
   useEffect(() => {
     const container = messageContainerRef.current;
-    const handleScroll = () => {
+    const handleScroll = throttle(() => {
       if (messageContainerRef.current) {
         if (container.scrollTop < 0) setIsScrollToDownBtnAvailable(true);
         else setIsScrollToDownBtnAvailable(false);
       }
-    };
+    }, 100);
 
     if (container) {
       container.addEventListener('scroll', handleScroll);
@@ -117,48 +122,6 @@ const ChatPage = () => {
       }
     };
   }, []);
-
-  const createClient = () => {
-    const client = new Client({
-      webSocketFactory: () =>
-        new SockJS('http://localhost:8080/connect', null, { withCredentials: true }),
-      debug: (str) => console.log(str),
-      onConnect: () => {
-        setIsConnected(true);
-        markAsReadAllChats();
-
-        client.subscribe(`/sub/chat/${chatroomId}`, (message) => {
-          const stompMessage = JSON.parse(message.body);
-
-          // 닉네임이 다르다면 내꺼
-          if (stompMessage.nickname !== opponentName) {
-            scrollToBottom();
-          } else {
-            // 같다면 상대꺼
-            stompMessage.read = true;
-            lockCurrentPosition('WS');
-            setIsNewMessageAvailable(true);
-
-            client.publish({
-              destination: `/ack/chat/chatting/${stompMessage.chatId}`,
-            });
-          }
-          setChats((prev) => [stompMessage, ...prev]);
-        });
-      },
-      onDisconnect: () => {
-        setIsConnected(false);
-      },
-      onStompError: (err) => {
-        console.log('stomp error', err);
-      },
-      onWebSocketError: (err) => {
-        console.log('websocket error', err);
-      },
-    });
-
-    setStompClient(client);
-  };
 
   const validateChatroom = () => {
     if (!sellerId || !productId) return;
@@ -240,25 +203,13 @@ const ChatPage = () => {
   };
 
   const markAsReadAllChats = () => {
-    axiosCredential
-      .post(`/api/chatroom/${chatroomId}`)
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err));
+    axiosCredential.post(`/api/chatroom/${chatroomId}`).catch((err) => console.log(err));
   };
 
   const handleSendMessage = (message) => {
-    if (stompClient && isConnected) {
-      try {
-        stompClient.publish({
-          destination: `/pub/chat/${chatroomId}`,
-          body: JSON.stringify({
-            message: message,
-          }),
-        });
-      } catch (error) {
-        console.error('Fail to send message: ', error);
-      }
-    }
+    publishToChannel(`/pub/chat/${chatroomId}`, {
+      message: message,
+    });
   };
 
   const formatDate = (timedata) => {

@@ -1,11 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import '@/styles/product/ProductDetailNavbar.css';
-import useAuth from "@/hooks/useAuth.jsx";
+import useAuth from "@/hooks/useAuth";
 
 const ProductDetailNavbar = ({ isFavorite, dayPrice, weekPrice, onToggleFavorite, product }) => {
     const navigate = useNavigate();
     const { userInfo } = useAuth();
-    const isOwner = userInfo?.accountId === product?.seller?.sellerId;
+    const isOwner = userInfo?.userId === product?.seller?.sellerId;
 
     const handleFavoriteClick = () => {
         const newFavoriteStatus = !isFavorite;
