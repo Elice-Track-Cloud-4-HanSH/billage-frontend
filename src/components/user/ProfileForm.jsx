@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import { Badge } from 'react-bootstrap';
 import { FaStar } from 'react-icons/fa';
 
 const ProfileForm = ({ profile }) => {
@@ -41,13 +40,6 @@ const ProfileForm = ({ profile }) => {
             </span>
           </div>
         </div>
-      </div>
-
-      <div className='d-flex align-items-center gap-1'>
-        <span>받은 거래 후기 </span>
-        <Badge bg='secondary' className='fs-6'>
-          {profile.reviewCount}건
-        </Badge>
       </div>
     </div>
   );
