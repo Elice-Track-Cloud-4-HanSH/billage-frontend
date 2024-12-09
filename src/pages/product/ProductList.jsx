@@ -215,7 +215,7 @@ const ProductList = () => {
                             alt={product.title}
                             className='product-img rounded'
                         />
-                        {product.expectedReturnDate && (
+            ㅎ            {product.expectedReturnDate && (
                             <div className='expected-return-tag'>
                                 대여 중
                                 <p className='return-date mb-1'>
