@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { InputGroup } from 'react-bootstrap';
 
 import { Button, Row, Form } from 'react-bootstrap';
 
@@ -15,7 +14,6 @@ const ChatItemFooter = ({ messageSendHandler }) => {
 
   const handleSendMessage = () => {
     messageSendHandler(message);
-    console.log('Sending message: ', message);
     setMessage('');
   };
 
