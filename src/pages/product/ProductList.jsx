@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { axiosCredential } from "@/utils/axiosCredential";
 import CategoryPopup from '@/components/category/CategoryPopup';
 import '@/styles/product/ProductList.css';
+import Loading from "@/components/common/Loading";
 
 const ProductList = () => {
     const [products, setProducts] = useState([]);
@@ -12,37 +13,98 @@ const ProductList = () => {
     const [rentalStatus, setRentalStatus] = useState('ALL');
     const [activityArea, setActivityArea] = useState(null); // 활동 지역 정보 상태 추가
     const[search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState(''); // 디바운스된 검색어
+    const [page, setPage] = useState(0);
+    const [isLast, setIsLast] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const observerRef = useRef(null);
     const navigate = useNavigate();
 
+    const fetchProducts = async () => {
+        if (isLast || isLoading) return;
+
+        setIsLoading(true);
+        const pageSize = 10;
+
+        console.log(`Fetching page: ${page}`); // 페이지 번호 확인
+        try {
+            const response = await axiosCredential.get('/api/products', {
+                params: {
+                    categoryId: selectedCategory.id,
+                    rentalStatus: rentalStatus,
+                    search: search.trim() === '' ? 'ALL' : search,
+                    page,
+                    pageSize
+                }
+            });
+
+            const data = response.data.products;
+
+            console.log(`Fetched data length: ${data.length}`); // 반환된 데이터 크기 확인
+
+            if (data.length < pageSize) setIsLast(true);
+
+            setProducts((prev) => {
+                const existingIds = prev.map((product) => product.productId);
+                const newProducts = data.filter((product) => !existingIds.includes(product.productId));
+                return [...prev, ...newProducts];
+            });
+
+            setLogin(response.data.login);
+            setPage((prev) => prev + 1); // 페이지 증가
+
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchActivityArea = async () => {
+        try {
+            const response = await axiosCredential.get('/api/activity-area');
+            setActivityArea(response.data); // 활동 지역 정보 저장
+        } catch (error) {
+            console.error('Error fetching activity area:', error);
+        }
+    };
+
+    // 디바운스를 적용하여 검색어 업데이트
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await axiosCredential.get('/api/products', {
-                    params: {
-                        categoryId: selectedCategory.id,
-                        rentalStatus: rentalStatus,
-                        search: search.trim() === '' ? 'ALL' : search
-                    }
-                });
-                setProducts(response.data.products);
-                setLogin(response.data.login);
-            } catch (error) {
-                console.error('Error fetching products:', error);
-            }
-        };
+        const handler = setTimeout(() => {
+            setDebouncedSearch(search.trim() === '' ? 'ALL' : search);
+        }, 300); // 300ms 딜레이
 
-        const fetchActivityArea = async () => {
-            try {
-                const response = await axiosCredential.get('/api/activity-area');
-                setActivityArea(response.data); // 활동 지역 정보 저장
-            } catch (error) {
-                console.error('Error fetching activity area:', error);
-            }
+        return () => {
+            clearTimeout(handler); // 이전 타이머 클리어
         };
+    }, [search]);
 
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) {
+                    fetchProducts();
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (observerRef.current) observer.observe(observerRef.current);
+
+        return () => {
+            if (observerRef.current) observer.disconnect();
+        };
+    }, [page, isLast, isLoading]); // 페이지 상태 변경 시만 작동
+
+    // 필터 변경 시 초기화 및 데이터 로드
+    useEffect(() => {
+        setProducts([]); // 기존 데이터 초기화
+        setPage(0);      // 페이지 번호 초기화
+        setIsLast(false); // 마지막 여부 초기화
         fetchProducts();
         fetchActivityArea(); // 활동 지역 정보 가져오기
-    }, [selectedCategory, rentalStatus, search]);
+    }, [selectedCategory, rentalStatus, debouncedSearch]); // 필터 상태 변경 시만 작동(디바운스된 검색어 기준)
 
     const handleProductClick = (productId) => {
         navigate(`/products/${productId}`);
@@ -58,11 +120,17 @@ const ProductList = () => {
 
     const handleSelectCategory = (categoryId, categoryName) => {
         setSelectedCategory({ id: categoryId, name: categoryName });
+        setProducts([]);
+        setPage(0);
+        setIsLast(false);
     };
 
     const handleRentalStatusChange = (event) => {
         const value = event.target.value;
         setRentalStatus(value);
+        setProducts([]);
+        setPage(0);
+        setIsLast(false);
     };
 
     const handleActivityAreaClick = () => {
@@ -71,12 +139,18 @@ const ProductList = () => {
 
     const handleSearchInputChange = (event) => {
         setSearch(event.target.value);
+        setProducts([]);
+        setPage(0);
+        setIsLast(false);
     }
 
     const handleSearch = () => {
         if (search.trim() === '') {
             setSearch('ALL'); // 검색어가 없으면 'ALL'로 설정
         }
+        setProducts([]);
+        setPage(0);
+        setIsLast(false);
     };
 
     const handleKeyPress = (event) => {
@@ -178,6 +252,10 @@ const ProductList = () => {
                         </div>
                     </div>
                 ))}
+
+                {!isLoading && !isLast && <div ref={observerRef} style={{ height: '10px' }} />}
+                <Loading isLoading={isLoading} />
+                {isLast && <p>마지막 상품입니다</p>}
             </div>
 
             <CategoryPopup
