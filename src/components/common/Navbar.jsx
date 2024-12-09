@@ -14,7 +14,7 @@ const Navbar = () => {
 
   const thirdButtonHandler = () => {
     console.log(userInfo);
-    userInfo ? navigate('/profile') : navigate('/login');
+    userInfo ? navigate('/mypage') : navigate('/login');
   };
 
   return (
@@ -41,7 +41,7 @@ const Navbar = () => {
           <div className='small'>채팅</div>
         </button>
         <button
-          className={`btn btn-link ${location.pathname === '/profile' ? 'text-primary' : 'text-dark'}`}
+          className={`btn btn-link ${location.pathname === '/mypage' ? 'text-primary' : 'text-dark'}`}
           onClick={thirdButtonHandler}
         >
           <i className='bi bi-person'></i>
