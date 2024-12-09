@@ -8,12 +8,11 @@ const Navbar = () => {
   const { userInfo } = useAuth();
   const { unreadChatCount } = useUnreadChatCount();
 
-  if (location.pathname.startsWith('/chat/')) {
+  if (location.pathname.endsWith('/chat')) {
     return null;
   }
 
   const thirdButtonHandler = () => {
-    console.log(userInfo);
     userInfo ? navigate('/profile') : navigate('/login');
   };
 

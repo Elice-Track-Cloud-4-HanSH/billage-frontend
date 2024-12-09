@@ -35,7 +35,6 @@ const LoginPage = () => {
       });
 
       alert('로그인 성~공');
-      console.log('로그인 성공:', response.data);
 
       navigate('/after-login');
     } catch (error) {

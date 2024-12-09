@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import useUnreadChatCount from './useUnreadChatCount';
+import useNewChats from './useNewChats';
 
 const useStompClient = create((set, get) => ({
   stompClient: null,
@@ -11,13 +12,14 @@ const useStompClient = create((set, get) => ({
   connectClient: (userId) => {
     const { increaseUnreadChatCounts, decreaeUnreadChatCounts, resetUnreadChatCounts } =
       useUnreadChatCount.getState();
+    const { appendNewChats } = useNewChats.getState();
     if (!get().isConnected) {
       const client = new Client({
         webSocketFactory: () =>
           new SockJS(`${import.meta.env.VITE_AXIOS_BASE_URL}/connect`, null, {
             withCredentials: true,
           }),
-        debug: (str) => console.log(str),
+        // debug: (str) => console.log(str),
         onConnect: () => {
           const destination = `/sub/chat/unread/${userId}`;
           client.subscribe(destination, (message) => {
