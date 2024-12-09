@@ -162,11 +162,13 @@ const ChatPage = () => {
 
   const fetchChatData = () => {
     if (isLastPage) return;
+    const pageSize = 50;
     setIsLoading(true);
     axiosCredential
       .get(`/api/chatroom/${chatroomId}`, {
         params: {
           page: page,
+          pageSize: pageSize,
           lastLoadChatId: page === 0 ? Number.MAX_SAFE_INTEGER : chats[0].chatId,
         },
       })
@@ -243,10 +245,10 @@ const ChatPage = () => {
   };
 
   return (
-    <Container>
+    <Container className='chat-container mt-0 mb-0 pt-0 pb-0 gap-0 h-100 flex-column'>
       <ChatPageHeader otherNickname={opponentName} exitButtonHandler={onExitChatroom} />
 
-      <div ref={messageContainerRef} className='messages-container flex-grow-1'>
+      <div ref={messageContainerRef} className='messages-container flex-grow-1 mt-0 mb-0'>
         <div ref={endOfMessageRef} className='chat-bottom' style={{ height: '1px' }} />
 
         {chats.map((message, key) => {
@@ -264,9 +266,7 @@ const ChatPage = () => {
         })}
         {isLastPage && <p>첫 채팅입니다</p>}
 
-        {!isLastPage && !isLoading && (
-          <div ref={loadMoreMessageRef} className='load-more-chats' style={{ margin: '1px' }} />
-        )}
+        {!isLastPage && !isLoading && <div ref={loadMoreMessageRef} style={{ margin: '1px' }} />}
       </div>
 
       {isNewMessageAvailable && (
