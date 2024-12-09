@@ -44,7 +44,11 @@ const MyPage = () => {
       <header className='d-flex align-items-center px-3 py-2 border-bottom'>
         <h1 className='m-0 fs-4'>마이페이지</h1>
       </header>
-      {profile ? <ProfileForm profile={profile} /> : <div>정보를 불러오는 중입니다.</div>}
+      {profile ? (
+        <ProfileForm profile={profile} mypage={true} />
+      ) : (
+        <div>정보를 불러오는 중입니다.</div>
+      )}
       <ServiceSection subject='나의 거래' options={options} />
       {profile ? <ReviewCount profile={profile} /> : <div>정보를 불러오는 중입니다.</div>}
       <ReviewList reviews={reviews} />
