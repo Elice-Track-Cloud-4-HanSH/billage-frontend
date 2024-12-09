@@ -80,12 +80,12 @@ const ForgotPassword = () => {
   return (
     <div className="forgot-password-container">
       <div className="forgot-password-card">
-        <h1 className="page-title">비밀번호 재설정</h1>
-        
+        <h1 className="page-title">BILLAGE</h1>
+        <h1 className="page-title" style={{fontSize: "larger"}}>비밀번호 재설정</h1>
+
         {error && <div className="error-message">{error}</div>}
         
-        <div className="input-group">
-          <label className="input-label">이메일</label>
+        <div>
           <div className="input-container">
             <input
               type="email"
@@ -103,8 +103,7 @@ const ForgotPassword = () => {
           </div>
         </div>
 
-        <div className="input-group">
-          <label className="input-label">인증코드</label>
+        <div>
           <div className="input-container">
             <input
               type="text"
@@ -122,24 +121,22 @@ const ForgotPassword = () => {
           </div>
         </div>
 
-        <div className="input-group">
-          <label className="input-label">비밀번호</label>
+        <div>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="text-input"
+            className="full-width-input"
             placeholder="새 비밀번호를 입력하세요"
           />
         </div>
 
-        <div className="input-group">
-          <label className="input-label">비밀번호 확인</label>
+        <div>
           <input
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="text-input"
+            className="full-width-input"
             placeholder="비밀번호를 다시 입력하세요"
           />
         </div>
