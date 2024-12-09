@@ -31,24 +31,25 @@ const ChatPageHeader = ({ otherNickname, exitButtonHandler }) => {
 
   return (
     <>
-      <Row className='header py-1'>
-        <Col xs={2}>
-          <Button variant='link' onClick={handleGoBackFromChatRoom}>
+      <div className='chatpage-header'>
+        <div className='d-flex align-items-center justify-content-between py-2 p-12'>
+          <Button
+            className='justify-content-start'
+            variant='link'
+            onClick={handleGoBackFromChatRoom}
+          >
             <i className='bi bi-arrow-left'></i>
           </Button>
-        </Col>
-        <Col xs={8} className='d-flex align-items-center text-start ps-0'>
-          <div className='w-100'>
-            <h6 className='mb-0'>{otherNickname}</h6>
-          </div>
-        </Col>
-        <Col xs={2} className='text-end'>
-          <Button onClick={handleExitButtonClick}>
-            나가기
+          <h6 className='mb-0 text-start w-100'>{otherNickname}</h6>
+          <Button
+            className='btn d-inline-flex align-items-center justify-content-end me-2'
+            onClick={handleExitButtonClick}
+          >
+            <span className='me-2 text-nowrap'>나가기</span>
             <i className='bi bi-door-open'></i>
           </Button>
-        </Col>
-      </Row>
+        </div>
+      </div>
       <ChatExitModal
         showExitModal={showExitModal}
         handleCloseModal={handleCloseModal}
