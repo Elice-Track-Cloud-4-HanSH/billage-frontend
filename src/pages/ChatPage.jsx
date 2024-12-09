@@ -236,8 +236,7 @@ const ChatPage = () => {
 
   const onExitChatroom = async () => {
     try {
-      const response = await axiosCredential.delete(`/api/chatroom/${chatroomId}`);
-      console.log(response);
+      await axiosCredential.delete(`/api/chatroom/${chatroomId}`);
     } catch (error) {
       console.log(error);
     }

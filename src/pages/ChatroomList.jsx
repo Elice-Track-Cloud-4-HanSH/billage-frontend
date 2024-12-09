@@ -6,6 +6,7 @@ import ChatroomListHeader from '../components/chatting/ChatroomListHeader';
 import { axiosCredential } from '../utils/axiosCredential';
 import Loading from '@/components/common/Loading';
 import useChatroomList from '@/hooks/useChatroomList';
+import useNewChats from '../storage-provider/zustand/useNewChats';
 
 const ChatroomList = () => {
   const [currentTime, setCurrentTime] = useState(Date.now());
@@ -17,6 +18,13 @@ const ChatroomList = () => {
 
   const { chatType, page, setPage, chatroomList, setChatroomList, isLast, setIsLast } =
     useChatroomList();
+
+  const { newChats, clearNewChats } = useNewChats();
+
+  useEffect(() => {
+    clearNewChats();
+    return () => clearNewChats();
+  }, []);
 
   useEffect(() => {
     if (!observerRef.current) return;
@@ -32,29 +40,33 @@ const ChatroomList = () => {
 
     observer.observe(observerRef.current);
 
-    return () => observer.disconnect(); // 컴포넌트 언마운트 시 해제
+    return () => {
+      observer.disconnect(); // 컴포넌트 언마운트 시 해제
+    };
   }, [chatType, page]);
 
   const loadMoreChatroom = () => {
     if (isLast) return;
+    const pageSize = 10;
     setIsLoading(true);
     axiosCredential
       .get('/api/chatroom', {
         params: {
           type: chatType,
           page: page,
+          pageSize: pageSize,
+          newChats: [].join(','),
         },
       })
       .then((response) => {
         const data = response.data;
-        if (data.length < 20) setIsLast(true);
+        if (data.length < pageSize) setIsLast(true);
         setPage((prev) => prev + 1);
         setChatroomList((prev) => [...prev, ...data]);
         setIsLoading(false);
       })
       .catch((err) => {
         setErrMsg('로그인을 먼저 해주세요!');
-        console.log('로그인을 먼저 해주세요!');
         setIsLoading(false);
       });
     setCurrentTime(Date.now());
