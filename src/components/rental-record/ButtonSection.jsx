@@ -14,15 +14,24 @@ const ButtonSection = ({ record }) => {
       return (
         <div className='d-flex justify-content-around gap-5'>
           <button
-            className='btn btn-primary w-50 mx-3'
+            className='btn w-50 mx-3'
             onClick={() => nav(`/set-to-rented/${record.productId}`)}
+            style={{ backgroundColor: '#6366F1' }}
           >
             대여 중으로 변경
           </button>
-          <button className='btn btn-warning w-50 mx-3' onClick={() => nav()}>
+          <button
+            className='btn w-50 mx-3'
+            onClick={() => nav(`/products/${record.productId}/edit`)}
+            style={{ backgroundColor: '#F9BD24' }}
+          >
             수정
           </button>
-          <button className='btn btn-danger w-50 mx-3' onClick={() => setShowModal(true)}>
+          <button
+            className='btn w-50 mx-3'
+            onClick={() => setShowModal(true)}
+            style={{ backgroundColor: '#F16366' }}
+          >
             삭제
           </button>
         </div>
@@ -31,12 +40,17 @@ const ButtonSection = ({ record }) => {
       return (
         <div className='d-flex justify-content-around gap-5'>
           <button
-            className='btn btn-primary w-50 mx-5 px-3'
+            className='btn w-50 mx-5 px-3'
             onClick={() => handleReturnComplete(record.rentalRecordId)}
+            style={{ backgroundColor: '#6366F1' }}
           >
             반납 완료
           </button>
-          <button className='btn btn-primary w-50 mx-5 px-3' onClick={() => nav()}>
+          <button
+            className='btn w-50 mx-5 px-3'
+            onClick={() => nav()}
+            style={{ backgroundColor: '#6366F1' }}
+          >
             상대방에게 채팅 보내기
           </button>
         </div>
@@ -45,8 +59,9 @@ const ButtonSection = ({ record }) => {
       return (
         <div className='d-flex justify-content-around'>
           <button
-            className='btn btn-primary w-40'
+            className='btn w-40'
             onClick={() => nav(`/user-review/${record.rentalRecordId}`)}
+            style={{ backgroundColor: '#6366F1' }}
           >
             사용자 후기 작성
           </button>
@@ -55,7 +70,7 @@ const ButtonSection = ({ record }) => {
     } else if (tab === 'rental-record?type=대여중/구매') {
       return (
         <div className='d-flex justify-content-around'>
-          <button className='btn btn-primary w-40' onClick={() => nav()}>
+          <button className='btn w-40' onClick={() => nav()} style={{ backgroundColor: '#6366F1' }}>
             사용자에게 채팅 보내기
           </button>
         </div>
@@ -64,14 +79,16 @@ const ButtonSection = ({ record }) => {
       return (
         <div className='d-flex justify-content-around gap-5'>
           <button
-            className='btn btn-primary w-50 mx-5 px-3'
+            className='btn w-50 mx-5 px-3'
             onClick={() => nav(`/product-review/${record.rentalRecordId}`)}
+            style={{ backgroundColor: '#6366F1' }}
           >
             상품 후기 작성
           </button>
           <button
-            className='btn btn-primary w-50 mx-5 px-3'
+            className='btn w-50 mx-5 px-3'
             onClick={() => nav(`/user-review/${record.rentalRecordId}`)}
+            style={{ backgroundColor: '#6366F1' }}
           >
             사용자 후기 작성
           </button>

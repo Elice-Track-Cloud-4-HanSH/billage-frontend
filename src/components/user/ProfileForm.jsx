@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
-import { Badge } from 'react-bootstrap';
 import { FaStar } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
-const ProfileForm = ({ profile }) => {
+const ProfileForm = ({ profile, mypage }) => {
+  const nav = useNavigate();
+
   return (
     <div className='mt-4 px-5'>
       <div className='d-flex align-items-center mb-4 gap-4'>
@@ -13,6 +15,13 @@ const ProfileForm = ({ profile }) => {
           style={{ width: '180px', height: '180px' }}
         />
         <h2 className='ms-3 mb-0'>{profile.nickname}</h2>
+        {mypage ? (
+          <button onClick={() => nav('/edit-profile')} style={{ backgroundColor: '#6366F1' }}>
+            프로필 수정
+          </button>
+        ) : (
+          {}
+        )}
       </div>
 
       <div className='d-flex justify-content-between mb-5 text-start'>
@@ -42,13 +51,6 @@ const ProfileForm = ({ profile }) => {
           </div>
         </div>
       </div>
-
-      <div className='d-flex align-items-center gap-1'>
-        <span>받은 거래 후기 </span>
-        <Badge bg='secondary' className='fs-6'>
-          {profile.reviewCount}건
-        </Badge>
-      </div>
     </div>
   );
 };
@@ -61,6 +63,7 @@ ProfileForm.propTypes = {
     avgScore: PropTypes.number,
     reviewCount: PropTypes.number,
   }),
+  mypage: PropTypes.boolean,
 };
 
 export default ProfileForm;

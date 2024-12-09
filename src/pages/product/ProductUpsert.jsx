@@ -101,7 +101,8 @@ const ProductUpsert = ({ isEdit }) => {
                     },
                 });
 
-                navigate(`/products/${productId}`);
+                alert("대여 상품이 수정되었습니다.");
+                navigate(`/products/${productId}`, {replace: true});
             } else {
                 // 등록 API 호출
                 const data = new FormData();
@@ -127,7 +128,8 @@ const ProductUpsert = ({ isEdit }) => {
 
                 const { productId } = response.data;
                 if (productId) {
-                    navigate(`/products/${productId}`);
+                    alert("대여 상품이 등록되었습니다.");
+                    navigate(`/products/${productId}`, {replace: true});
                 }
             }
         } catch (error) {

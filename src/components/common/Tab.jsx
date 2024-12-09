@@ -21,8 +21,9 @@ const Tab = ({ tabs, defaultTab, onChangeTab }) => {
       {tabs.map((tab) => (
         <button
           key={tab.value}
-          className={`btn ${activeTab === tab.value ? 'btn-primary' : 'btn-light'} mx-2 my-3  `}
+          className={'btn btn-light mx-2 my-3 '}
           onClick={() => handleTabClick(tab.value)}
+          style={activeTab === tab.value ? { backgroundColor: '#6366F1' } : {}}
         >
           {tab.name}
         </button>

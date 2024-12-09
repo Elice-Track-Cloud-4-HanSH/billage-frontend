@@ -52,7 +52,7 @@ const WriteReviewForm = ({ onSubmit }) => {
       </div>
 
       <div className='text-end'>
-        <button type='submit' className='btn btn-primary btn-lg'>
+        <button type='submit' className='btn btn-lg' style={{ backgroundColor: '#6366F1' }}>
           제출하기
         </button>
       </div>

@@ -32,7 +32,7 @@ const RentalForm = ({ purchasers }) => {
     try {
       const response = await axios.post('/api/rental-record', requestData);
       console.log(response);
-      nav('/mysales');
+      nav('/mysales', { replace: true });
     } catch (error) {
       console.error(error);
       alert(error.response?.data?.message || '대여 요청에 실패했습니다.');
@@ -93,7 +93,7 @@ const RentalForm = ({ purchasers }) => {
         />
       </div>
       <div className='text-end w-100'>
-        <button type='submit' className='btn btn-primary btn-lg'>
+        <button type='submit' className='btn btn-lg' style={{ backgroundColor: '#6366F1' }}>
           변경하기
         </button>
       </div>

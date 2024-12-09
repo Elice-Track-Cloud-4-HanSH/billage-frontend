@@ -4,6 +4,7 @@ import ReviewList from '../components/review/ReviewList';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import ProfileForm from '../components/user/ProfileForm';
+import ReviewCount from '../components/user/ReviewCount';
 
 const TargetProfile = () => {
   const [reviews, setReviews] = useState([]);
@@ -39,7 +40,14 @@ const TargetProfile = () => {
   return (
     <>
       <Header title='프로필' />
-      {profile ? <ProfileForm profile={profile} /> : <div>정보를 불러오는 중입니다.</div>}
+      {profile ? (
+        <>
+          <ProfileForm profile={profile} />
+          <ReviewCount profile={profile} />
+        </>
+      ) : (
+        <div>정보를 불러오는 중입니다.</div>
+      )}
       <ReviewList reviews={reviews} />
     </>
   );
