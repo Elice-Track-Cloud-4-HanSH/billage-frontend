@@ -6,7 +6,6 @@ import ChatroomListHeader from '../components/chatting/ChatroomListHeader';
 import { axiosCredential } from '../utils/axiosCredential';
 import Loading from '@/components/common/Loading';
 import useChatroomList from '@/hooks/useChatroomList';
-import useNewChats from '../storage-provider/zustand/useNewChats';
 
 const ChatroomList = () => {
   const [currentTime, setCurrentTime] = useState(Date.now());
@@ -18,13 +17,6 @@ const ChatroomList = () => {
 
   const { chatType, page, setPage, chatroomList, setChatroomList, isLast, setIsLast } =
     useChatroomList();
-
-  const { newChats, clearNewChats } = useNewChats();
-
-  useEffect(() => {
-    clearNewChats();
-    return () => clearNewChats();
-  }, []);
 
   useEffect(() => {
     if (!observerRef.current) return;
@@ -55,7 +47,6 @@ const ChatroomList = () => {
           type: chatType,
           page: page,
           pageSize: pageSize,
-          newChats: [].join(','),
         },
       })
       .then((response) => {
@@ -106,8 +97,8 @@ const ChatroomList = () => {
             );
           })}
 
+          {!isLoading && !isLast && <div ref={observerRef} style={{ margin: '1px' }} />}
           <Loading isLoading={isLoading} />
-          {!isLoading && <div ref={observerRef} style={{ height: '1px' }} />}
           {isLast && <p> 마지막 채팅입니다 </p>}
         </div>
       )}

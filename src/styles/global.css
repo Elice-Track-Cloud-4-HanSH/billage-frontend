@@ -9,23 +9,29 @@ body {
   display: none;
 }
 
+#root {
+  padding: 0;
+  height: 100%;
+}
+
 :root {
   --mobile-max-width: 500px;
 }
 
 .layout-container {
   width: 100%;
-  min-height: 90vh;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0;
+  padding: 0rem;
+  margin: 0rem;
 }
 
 .layout-wrapper {
   display: flex;
   flex-direction: column;
-  height: 90vh;
+  height: 100%;
   background-color: #ffffff;
   position: relative;
 }
