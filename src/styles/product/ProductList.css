@@ -1,11 +1,11 @@
 .product-list {
     display: flex;
     flex-direction: column;
-    /*gap: 20px;*/
+    gap: 20px;
     padding: 20px;
     background-color: white;
     border-radius: 10px;
-    /*box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);*/
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .product-list label {
@@ -83,8 +83,8 @@
     padding: 20px;
     background-color: white;
     border: none; /* 기존 보더 제거 */
-    /*box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);*/
-    border-bottom: 2px solid black; /* 하단 경계선 추가 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /*border-bottom: 2px solid black; !* 하단 경계선 추가 *!*/
     height: 150px; /* 고정 높이 설정 */
     overflow: hidden; /* 넘치는 콘텐츠 숨김 */
 }
