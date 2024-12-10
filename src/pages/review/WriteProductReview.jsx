@@ -16,8 +16,11 @@ const WriteProductReview = () => {
       nav('/myreview', { replace: true });
       console.log('응답 성공:', response.data);
     } catch (error) {
-      console.error('리뷰 제출 중 오류 발생:', error);
-      alert('리뷰 제출에 실패했습니다. 다시 시도해주세요.');
+      if (error.response && error.response.status === 409) {
+        alert('이미 해당 거래에 대한 상품 후기가 존재합니다.\n작성한 리뷰에서 확인해주세요.');
+      } else {
+        alert('리뷰 제출에 실패했습니다. 다시 시도해주세요.');
+      }
     }
   };
 
