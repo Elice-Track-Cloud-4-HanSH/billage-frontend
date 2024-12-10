@@ -23,9 +23,7 @@ const ProfileForm = ({ profile, mypage }) => {
           >
             프로필 수정
           </button>
-        ) : (
-          {}
-        )}
+        ) : null}
       </div>
 
       <div className='d-flex justify-content-between mb-5 text-start'>
@@ -67,7 +65,7 @@ ProfileForm.propTypes = {
     avgScore: PropTypes.number,
     reviewCount: PropTypes.number,
   }),
-  mypage: PropTypes.boolean,
+  mypage: PropTypes.bool,
 };
 
 export default ProfileForm;
