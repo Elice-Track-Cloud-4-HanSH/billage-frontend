@@ -66,7 +66,29 @@ const ChatroomItem = ({ chatroom, currentTime, onClick }) => {
       <div className='card-body d-flex align-items-center justify-content-between p-3 w-100'>
         <ChatIcon unreadCount={chatroom.unreadCount} />
         <div className='d-flex align-items-center w-100'>
-          <div className='rounded-circle bg-secondary me-3' style={{ width: 40, height: 40 }}></div>
+          <div className='me-3 position-relative'>
+            <div
+              className='d-flex align-items-center justify-content-center'
+              style={{ width: '100px', height: '100px' }}
+            >
+              <img
+                className='img-thumbnail'
+                src={
+                  chatroom.product.thumbnail ||
+                  `${import.meta.env.VITE_AXIOS_BASE_URL}/images/default-product.png`
+                }
+              />
+            </div>
+            <img
+              className='position-absolute  bottom-0 start-0 rounded-circle border border-2 border-white'
+              style={{ width: '50px', height: '50px' }}
+              src={
+                chatroom.opponent.profileImage ||
+                `${import.meta.env.VITE_AXIOS_BASE_URL}/images/default_profile.png`
+              }
+              alt='Profile'
+            />
+          </div>
           <div className='flex-grow-1'>
             <div className='text-start'>
               <div className='d-flex align-items-center justify-content-between'>
@@ -104,10 +126,12 @@ ChatroomItem.propTypes = {
     product: PropTypes.shape({
       id: PropTypes.number,
       name: PropTypes.string.isRequired,
+      thumbnail: PropTypes.string,
     }),
     opponent: PropTypes.shape({
       id: PropTypes.number,
       nickname: PropTypes.string,
+      profileImage: PropTypes.string,
     }),
     unreadCount: PropTypes.number,
   }),
