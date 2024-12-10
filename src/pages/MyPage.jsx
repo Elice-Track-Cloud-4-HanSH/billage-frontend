@@ -4,10 +4,13 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import ProfileForm from '../components/user/ProfileForm';
 import ReviewCount from '../components/user/ReviewCount';
+import { useNavigate } from 'react-router-dom';
 
 const MyPage = () => {
   const [reviews, setReviews] = useState([]);
   const [profile, setProfile] = useState();
+
+  const navigate = useNavigate();
 
   const options = [
     { name: '관심목록', nav: '/myfavorites' },
@@ -41,8 +44,19 @@ const MyPage = () => {
 
   return (
     <>
-      <header className='d-flex align-items-center px-3 py-2 border-bottom'>
+      <header className='d-flex align-items-center px-3 py-2 border-bottom justify-content-between'>
         <h1 className='m-0 fs-4'>마이페이지</h1>
+        <button
+          type='button'
+          className='btn'
+          style={{ backgroundColor: '#F16366', borderColor: '#F16366', color: 'white' }}
+          onClick={() => {
+            navigate('/logout');
+          }}
+        >
+          {' '}
+          로그아웃{' '}
+        </button>
       </header>
       {profile ? (
         <ProfileForm profile={profile} mypage={true} />
