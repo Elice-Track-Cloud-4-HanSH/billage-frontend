@@ -45,8 +45,8 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/after-login' element={<AfterLogin />} />
         <Route path='/' element={<Layout />}>
+          <Route path='/after-login' element={<AfterLogin />} />
           {/* 채팅 */}
           <Route path='/easter-egg' element={<Easteregg />} />
           <Route
@@ -66,7 +66,7 @@ const App = () => {
           <Route path='/user-review/:id' element={<WriteUserReview />} />
           <Route path='/set-to-rented/:id' element={<SetToRented />} />
           {/* 회원 */}
-          <Route path='/login' element={<Login />} />
+          <Route path='/signin' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/logout' element={<Logout />} />
           <Route path='/edit-profile' element={<EditProfile />} />
@@ -75,9 +75,11 @@ const App = () => {
           <Route path='/mypage' element={<MyPage />} />
           {/* 상품 */}
           <Route path='/products/register' element={<ProductRegister />} /> {/* 상품 등록 페이지 */}
-          <Route path='/products/:productId/edit' element={<ProductEdit />} />{/* 상품 수정 페이지 */}
+          <Route path='/products/:productId/edit' element={<ProductEdit />} />
+          {/* 상품 수정 페이지 */}
           <Route path='/products' element={<ProductList />} /> {/* 상품 목록 페이지 */}
-          <Route path='/myfavorites' element={<FavoriteProductList />} />{' '}{/* 관심 상품 목록 페이지 */}
+          <Route path='/myfavorites' element={<FavoriteProductList />} />{' '}
+          {/* 관심 상품 목록 페이지 */}
           {/* 지도 */}
           <Route path='/map' element={<MapTest />} />
         </Route>
