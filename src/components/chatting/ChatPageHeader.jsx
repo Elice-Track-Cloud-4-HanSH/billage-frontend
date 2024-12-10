@@ -41,13 +41,14 @@ const ChatPageHeader = ({ otherNickname, exitButtonHandler }) => {
             <i className='bi bi-arrow-left'></i>
           </Button>
           <h6 className='mb-0 text-start w-100'>{otherNickname}</h6>
-          <Button
+          <button
             className='btn d-inline-flex align-items-center justify-content-end me-2'
+            style={{ backgroundColor: '#F16366', color: 'white' }}
             onClick={handleExitButtonClick}
           >
             <span className='me-2 text-nowrap'>나가기</span>
             <i className='bi bi-door-open'></i>
-          </Button>
+          </button>
         </div>
       </div>
       <ChatExitModal
