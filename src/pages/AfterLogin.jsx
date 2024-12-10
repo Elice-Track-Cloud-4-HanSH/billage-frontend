@@ -4,6 +4,7 @@ import useAuth from './../hooks/useAuth';
 import { useEffect } from 'react';
 import useStompClient from '../storage-provider/zustand/useStompClient';
 import useUnreadChatCount from '../storage-provider/zustand/useUnreadChatCount';
+import '@/styles/user/AfterLogin.css';
 
 const AfterLogin = () => {
   const { login } = useAuth();
@@ -23,12 +24,18 @@ const AfterLogin = () => {
 
         navigate('/products', { replace: true });
       } catch (_) {
-        navigate('/login', { replace: true });
+        navigate('/signin', { replace: true });
       }
     };
 
     getUserInfo();
   }, []);
+
+  return (
+    <div className='h-100 d-flex justify-content-center align-items-center after-login-container'>
+      <p className='after-login-text'>로그인 중입니다...</p>
+    </div>
+  );
 };
 
 export default AfterLogin;

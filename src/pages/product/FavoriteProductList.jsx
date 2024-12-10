@@ -1,25 +1,62 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { axiosCredential } from "@/utils/axiosCredential";
 import '@/styles/product/ProductList.css';
 import Header from "@/components/common/Header.jsx";
+import Loading from '@/components/common/Loading';
 
 const FavoriteProductList = () => {
     const [favoriteProducts, setFavoriteProducts] = useState([]);
+    const [page, setPage] = useState(0);
+    const [isLast, setIsLast] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const observerRef = useRef(null);
     const navigate = useNavigate();
 
+    const fetchFavoriteProducts = async () => {
+        if (isLast || isLoading) return;
+
+        setIsLoading(true);
+        const pageSize = 10;
+
+        console.log(`Fetching page: ${page}`); // 페이지 번호 확인
+        try {
+            const response = await axiosCredential.get('/api/favorites', {
+                params: { page, pageSize },
+            });
+            const data = response.data;
+
+            console.log(`Fetched data length: ${data.length}`); // 반환된 데이터 크기 확인
+
+            if (data.length < pageSize) setIsLast(true);
+            setFavoriteProducts((prev) => [...prev, ...data]);
+            setPage((prev) => prev + 1); // 다음 페이지로 증가
+        } catch (error) {
+            console.error('Error fetching favorite products:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchFavoriteProducts = async () => {
-            try {
-                const response = await axiosCredential.get('/api/favorites');
-                setFavoriteProducts(response.data);
-            } catch (error) {
-                console.error('Error fetching favorite products:', error);
-            }
+        if (!observerRef.current) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) {
+                    fetchFavoriteProducts();
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        observer.observe(observerRef.current);
+
+        return () => {
+            observer.disconnect();
         };
 
-        fetchFavoriteProducts();
-    }, []);
+    }, [page, isLast, isLoading]);
 
     const handleProductClick = (productId) => {
         navigate(`/products/${productId}`);
@@ -72,6 +109,10 @@ const FavoriteProductList = () => {
                         </div>
                     </div>
                 ))}
+
+                {!isLoading && !isLast && <div ref={observerRef} style={{ margin: '1px' }} />}
+                <Loading isLoading={isLoading} />
+                {isLast && <p className='mx-auto'>마지막 상품입니다</p>}
             </div>
         </div>
     );

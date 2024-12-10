@@ -264,7 +264,7 @@ const ChatPage = () => {
             />
           );
         })}
-        {isLastPage && <p>첫 채팅입니다</p>}
+        {isLastPage && <p className='mx-auto'>첫 채팅입니다</p>}
 
         {!isLastPage && !isLoading && <div ref={loadMoreMessageRef} style={{ margin: '1px' }} />}
       </div>
