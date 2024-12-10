@@ -16,12 +16,13 @@ const ProfileForm = ({ profile, mypage }) => {
         />
         <h2 className='ms-3 mb-0'>{profile.nickname}</h2>
         {mypage ? (
-          <button onClick={() => nav('/edit-profile')} style={{ backgroundColor: '#6366F1' }}>
+          <button
+            onClick={() => nav('/edit-profile')}
+            style={{ backgroundColor: '#6366F1', color: 'white' }}
+          >
             프로필 수정
           </button>
-        ) : (
-          {}
-        )}
+        ) : null}
       </div>
 
       <div className='d-flex justify-content-between mb-5 text-start'>
@@ -63,7 +64,7 @@ ProfileForm.propTypes = {
     avgScore: PropTypes.number,
     reviewCount: PropTypes.number,
   }),
-  mypage: PropTypes.boolean,
+  mypage: PropTypes.bool,
 };
 
 export default ProfileForm;

@@ -4,7 +4,13 @@ const Review = ({ review }) => {
   const renderStars = (rating) => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
-      stars.push(<span key={i} className={`fa fa-star${i <= rating ? ' checked' : ''}`}></span>);
+      stars.push(
+        <span
+          key={i}
+          className={`fa fa-star${i <= rating ? ' checked' : ''}`}
+          style={{ color: i <= rating ? 'gold' : 'gray' }}
+        ></span>
+      );
     }
     return stars;
   };
@@ -24,7 +30,7 @@ const Review = ({ review }) => {
           <h5>{review.subject}</h5>
           <div>{renderStars(review.score)}</div>
         </div>
-        <p className='mt-3'>{review.content}</p>
+        <p className='mt-3 text-start'>{review.content}</p>
       </div>
     </div>
   );
