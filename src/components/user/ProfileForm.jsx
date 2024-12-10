@@ -16,7 +16,11 @@ const ProfileForm = ({ profile, mypage }) => {
         />
         <h2 className='ms-3 mb-0'>{profile.nickname}</h2>
         {mypage ? (
-          <button onClick={() => nav('/edit-profile')} style={{ backgroundColor: '#6366F1' }}>
+          <button
+            className='btn'
+            onClick={() => nav('/edit-profile')}
+            style={{ backgroundColor: '#F9BD24', color: 'white' }}
+          >
             프로필 수정
           </button>
         ) : (
