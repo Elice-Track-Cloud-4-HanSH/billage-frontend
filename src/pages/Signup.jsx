@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/common/Header';
+import '@/styles/user/Signup.css';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
@@ -75,111 +76,85 @@ const Signup = () => {
   return (
     <>
       <Header title='회원가입' />
-      <form onSubmit={handleSignup} style={styles.form}>
-        <div style={styles.inputGroup}>
-          <label>닉네임</label>
-          <input
-            type='text'
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-            required
-          />
-        </div>
+      <div className='signup-container'>
+        <form onSubmit={handleSignup} className='signup-form'>
+          <h1 className='page-title'>BILLAGE</h1>
+          <h1 className='page-title' style={{ fontSize: 'larger' }}>
+            WELCOME
+          </h1>
 
-        <div style={styles.inputGroup}>
-          <label>이메일</label>
-          <div style={styles.rowGroup}>
-            <input
-              type='email'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              style={styles.flexInput}
-            />
-            <button type='button' onClick={handleSendVerification} style={styles.button}>
-              전송
-            </button>
-          </div>
-        </div>
-
-        <div style={styles.inputGroup}>
-          <label>인증 코드</label>
-          <div style={styles.rowGroup}>
+          <div className='input-group'>
             <input
               type='text'
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value)}
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
               required
-              style={styles.flexInput}
+              className='text-input'
+              placeholder='닉네임을 입력하세요'
             />
-            <button type='button' onClick={handleVerifyEmail} style={styles.button}>
-              인증
-            </button>
           </div>
-        </div>
 
-        <div style={styles.inputGroup}>
-          <label>비밀번호</label>
-          <input
-            type='password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
+          <div className='input-group'>
+            <div className='row-group'>
+              <input
+                type='email'
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className='text-input'
+                placeholder='이메일을 입력하세요'
+              />
+              <button type='button' onClick={handleSendVerification} className='action-button'>
+                전송
+              </button>
+            </div>
+          </div>
 
-        <div style={styles.inputGroup}>
-          <label>비밀번호 확인</label>
-          <input
-            type='password'
-            value={passwordConfirm}
-            onChange={(e) => setPasswordConfirm(e.target.value)}
-            required
-          />
-        </div>
+          <div className='input-group'>
+            <div className='row-group'>
+              <input
+                type='text'
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+                required
+                className='text-input'
+                placeholder='인증코드를 입력하세요'
+              />
+              <button type='button' onClick={handleVerifyEmail} className='action-button'>
+                인증
+              </button>
+            </div>
+          </div>
 
-        <button type='submit' style={styles.submitButton}>
-          회원가입
-        </button>
-      </form>
+          <div className='input-group'>
+            <input
+              type='password'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className='text-input'
+              placeholder='비밀번호를 입력하세요'
+            />
+          </div>
+
+          <div className='input-group'>
+            <input
+              type='password'
+              value={passwordConfirm}
+              onChange={(e) => setPasswordConfirm(e.target.value)}
+              required
+              className='text-input'
+              placeholder='비밀번호를 다시 입력하세요'
+            />
+          </div>
+
+          <button type='submit' className='submit-button'>
+            회원가입
+          </button>
+        </form>
+      </div>
     </>
   );
-};
-
-const styles = {
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
-    maxWidth: '400px',
-    margin: '2rem auto',
-    padding: '0 1rem',
-  },
-  inputGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem',
-  },
-  rowGroup: {
-    display: 'flex',
-    gap: '0.5rem',
-  },
-  flexInput: {
-    flex: 1,
-  },
-  button: {
-    padding: '0.5rem 1rem',
-    whiteSpace: 'nowrap',
-  },
-  submitButton: {
-    padding: '0.75rem',
-    marginTop: '1rem',
-    backgroundColor: '#007bff',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  },
 };
 
 export default Signup;
