@@ -1,15 +1,21 @@
 import PropTypes from 'prop-types';
 import { FaStar } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import defaultImage from '@/assets/default_profile.png';
 
 const ProfileForm = ({ profile, mypage }) => {
   const nav = useNavigate();
+
+  // 이미지 URL이 '/images'로 시작하면 defaultImage를 사용
+  const imageUrl = profile.imageUrl && profile.imageUrl.startsWith('/images')
+      ? defaultImage
+      : profile.imageUrl;
 
   return (
     <div className='mt-4 px-5'>
       <div className='d-flex align-items-center mb-4 gap-4'>
         <img
-          src={profile.imageUrl}
+          src={imageUrl}
           alt='프로필 이미지'
           className='rounded-circle border'
           style={{ width: '180px', height: '180px' }}
