@@ -1,14 +1,13 @@
 import PropTypes from 'prop-types';
 import { FaStar } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import defaultImage from '@/assets/default_profile.png';
 
 const ProfileForm = ({ profile, mypage }) => {
   const nav = useNavigate();
 
   // 이미지 URL이 '/images'로 시작하면 defaultImage를 사용
   const imageUrl = profile.imageUrl && profile.imageUrl.startsWith('/images')
-      ? defaultImage
+      ? `${import.meta.env.VITE_AXIOS_BASE_URL}${profile.imageUrl}`
       : profile.imageUrl;
 
   return (

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '@/styles/user/EditProfile.css';
-import defaultImage from '@/assets/default_profile.png';
 
 const ProfileEdit = () => {
   const navigate = useNavigate();
@@ -143,7 +142,7 @@ const ProfileEdit = () => {
               alt='Prsdfdsile'
               onError={(e) => {
                 console.error('이미지 로딩 실패');
-                e.target.src = defaultImage; // 이미지 로드 실패시에도 기본 프로필 이미지 사용
+                e.target.src = `${import.meta.env.VITE_AXIOS_BASE_URL}${image}`; // 이미지 로드 실패시에도 기본 프로필 이미지 사용
               }}
             />
           </div>
