@@ -74,16 +74,14 @@ const App = () => {
           <Route path='/profile/:id' element={<TargetProfile />} />
           <Route path='/mypage' element={<MyPage />} />
           {/* 상품 */}
-          <Route path='/products/register' element={<ProductRegister />} /> {/* 상품 등록 페이지 */}
+          <Route path='/products/register' element={<ProductRegister />} />
           <Route path='/products/:productId/edit' element={<ProductEdit />} />
-          {/* 상품 수정 페이지 */}
-          <Route path='/products' element={<ProductList />} /> {/* 상품 목록 페이지 */}
-          <Route path='/myfavorites' element={<FavoriteProductList />} />{' '}
-          {/* 관심 상품 목록 페이지 */}
+          <Route path='/products/:productId' element={<ProductDetail />} />
+          <Route path='/products' element={<ProductList />} />
+          <Route path='/myfavorites' element={<FavoriteProductList />} />
           {/* 지도 */}
           <Route path='/map' element={<MapTest />} />
         </Route>
-        <Route path='/products/:productId' element={<ProductDetail />} /> {/* 상품 상세 페이지 */}
       </Routes>
     </BrowserRouter>
   );
