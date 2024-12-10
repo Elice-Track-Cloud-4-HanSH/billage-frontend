@@ -18,7 +18,7 @@ const ProfileEdit = () => {
         });
 
         setNickname(response.data.nickname);
-        setImage(response.data.imageUrl || '/default-profile.png');
+        setImage(response.data.imageUrl);
         console.log(response);
         setDescription(response.data.description || '');
       } catch (error) {
@@ -79,9 +79,9 @@ const ProfileEdit = () => {
         },
         withCredentials: true,
       });
-      alert('성공했습니다');
+      alert('프로필이 수정되었습니다.');
 
-      navigate('/easter-egg');
+      navigate('/mypage');
     } catch (error) {
       console.error('프로필 수정 실패:', error);
       alert('프로필 수정에 실패했습니다.');
@@ -142,7 +142,7 @@ const ProfileEdit = () => {
               alt='Prsdfdsile'
               onError={(e) => {
                 console.error('이미지 로딩 실패');
-                e.target.src = '@/styles/default-profile.png'; // 이미지 로드 실패시에도 기본 프로필 이미지 사용
+                e.target.src = `${import.meta.env.VITE_AXIOS_BASE_URL}${image}`; // 이미지 로드 실패시에도 기본 프로필 이미지 사용
               }}
             />
           </div>

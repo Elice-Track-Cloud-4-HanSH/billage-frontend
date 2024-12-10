@@ -25,7 +25,11 @@ const Signup = () => {
     } catch (error) {
       // 에러 상세 정보 출력
       console.error('Error details:', error.response || error);
-      alert('인증 코드 발송에 실패했습니다.');
+      if(error.response && error.response.status === 409) {
+        alert('이미 등록된 이메일입니다.');
+      } else {
+        alert('인증 코드 발송에 실패했습니다.');
+      }
     }
   };
 

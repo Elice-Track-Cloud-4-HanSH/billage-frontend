@@ -12,6 +12,10 @@ const Navbar = () => {
     return null;
   }
 
+  if (location.pathname.match(/^\/products\/[^/]+$/)) {
+    return null;
+  }
+
   const thirdButtonHandler = () => {
     userInfo ? navigate('/mypage') : navigate('/signin');
   };
