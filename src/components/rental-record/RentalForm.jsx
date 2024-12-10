@@ -93,7 +93,11 @@ const RentalForm = ({ purchasers }) => {
         />
       </div>
       <div className='text-end w-100'>
-        <button type='submit' className='btn btn-lg' style={{ backgroundColor: '#6366F1' }}>
+        <button
+          type='submit'
+          className='btn btn-lg'
+          style={{ backgroundColor: '#6366F1', color: 'white' }}
+        >
           변경하기
         </button>
       </div>

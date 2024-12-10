@@ -42,7 +42,7 @@ const TargetProfile = () => {
       <Header title='프로필' />
       {profile ? (
         <>
-          <ProfileForm profile={profile} />
+          <ProfileForm profile={profile} mypage={false} />
           <ReviewCount profile={profile} />
         </>
       ) : (
