@@ -21,7 +21,7 @@ import ProductList from '@/pages/product/ProductList';
 import TargetProfile from './pages/TargetProfile';
 import ForgotPassword from '@/pages/user/ForgotPassword';
 import FavoriteProductList from '@/pages/product/FavoriteProductList';
-import MapTest from '@/pages/map/Activity_area';
+import MapTest from '@/pages/map/ActivityArea';
 import ChatroomListProvider from './storage-provider/chatroom-list/ChatroomListProvider';
 import useAuth from '@/hooks/useAuth';
 import MyPage from './pages/MyPage';
