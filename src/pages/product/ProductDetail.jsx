@@ -22,6 +22,7 @@ const ProductDetail = () => {
   const [isFavorite, setIsFavorite] = useState(false); // 좋아요 상태 관리
   const [checkAuthor, setCheckAuthor] = useState(false); // 작성자 확인 상태 관리
   const sliderRef = useRef(null);
+  const mapRef = useRef(null); // mapRef 정의 추가
   const { userInfo } = useAuth();
 
   // 상품 상세 정보를 가져오는 함수
@@ -74,6 +75,21 @@ const ProductDetail = () => {
       });
     }
   }, [sliderRef]);
+  useEffect(() => {
+    if (product && mapRef.current) {
+      const map = new naver.maps.Map(mapRef.current, {
+        center: new naver.maps.LatLng(product.latitude, product.longitude),
+        zoom: 16,
+      });
+
+      // 마커 추가
+      new naver.maps.Marker({
+        position: new naver.maps.LatLng(product.latitude, product.longitude),
+        map,
+        title: product.title,
+      });
+    }
+  }, [product]);
 
   const handleToggleFavorite = async (newFavoriteStatus) => {
     try {
@@ -245,6 +261,14 @@ const ProductDetail = () => {
               {/*<h2>리뷰</h2>*/}
               <ReviewCount profile={product} />
               <ReviewList reviews={reviews} />
+              <h2 style={{ marginTop: '20px', fontSize: '1.2em', fontWeight: 'bold' }}>
+                거래 희망 장소
+              </h2>
+              <div
+                id='map'
+                ref={mapRef}
+                style={{ width: '100%', height: '400px', marginTop: '20px' }}
+              ></div>
             </div>
           </div>
 
