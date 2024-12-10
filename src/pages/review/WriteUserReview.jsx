@@ -48,7 +48,7 @@ const WriteUserReview = () => {
           comment='거래 상대방의 매너 점수를 평가해주세요.'
         />
       ) : (
-        <div>정보를 불러오는 중입니다...</div> // 로딩 상태
+        <div>정보를 불러오는 중입니다...</div>
       )}
       <WriteReviewForm onSubmit={handleReviewSubmit} />
     </>

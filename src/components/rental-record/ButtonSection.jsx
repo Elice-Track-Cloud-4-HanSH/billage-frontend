@@ -139,7 +139,7 @@ const ButtonSection = ({ record }) => {
 
   return (
     <>
-      <>{renderActions(activeTab)}</>
+      <div className='px-4'>{renderActions(activeTab)}</div>
 
       {showModal && (
         <div className='modal'>
