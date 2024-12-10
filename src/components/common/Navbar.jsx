@@ -13,7 +13,7 @@ const Navbar = () => {
   }
 
   const thirdButtonHandler = () => {
-    userInfo ? navigate('/mypage') : navigate('/login');
+    userInfo ? navigate('/mypage') : navigate('/signin');
   };
 
   return (
