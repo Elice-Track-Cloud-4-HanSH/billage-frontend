@@ -30,10 +30,14 @@ const LoginPage = () => {
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:8080/api/login', formData, {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_AXIOS_BASE_URL}/api/login`,
+        formData,
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
 
       navigate('/after-login');
     } catch (error) {

@@ -193,7 +193,7 @@ const ProductDetail = () => {
                     src={
                       product.seller.sellerImageUrl &&
                       product.seller.sellerImageUrl.startsWith('/images')
-                        ? `http://localhost:8080${product.seller.sellerImageUrl}`
+                        ? `${import.meta.env.VITE_AXIOS_BASE_URL}${product.seller.sellerImageUrl}`
                         : product.seller.sellerImageUrl
                           ? product.seller.sellerImageUrl
                           : defaultProfileImage
