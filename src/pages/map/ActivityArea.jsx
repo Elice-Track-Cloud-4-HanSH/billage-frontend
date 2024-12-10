@@ -20,7 +20,7 @@ const ActivityArea = () => {
       const map = new naver.maps.Map(mapDiv, { zoom: 15 });
 
       // 행정구역 폴리곤 그리기
-      const geoJsonData = JSON.parse(geoJson.geomGeoJson);
+      const geoJsonData = geoJson.geomGeoJson;
       const polygonPaths = geoJsonData.coordinates[0][0].map(([lng, lat]) => {
         return new naver.maps.LatLng(lat, lng);
       });
@@ -40,7 +40,7 @@ const ActivityArea = () => {
 
       // NeighborArea 폴리곤 그리기
       neighborGeoJsons.forEach((neighborGeoJson) => {
-        const neighborData = JSON.parse(neighborGeoJson.geomGeoJson);
+        const neighborData = neighborGeoJson.geomGeoJson;
         const neighborPaths = neighborData.coordinates[0][0].map(([lng, lat]) => {
           return new naver.maps.LatLng(lat, lng);
         });
@@ -195,6 +195,22 @@ const ActivityArea = () => {
         )}
 
         <div id='map' className='map'></div>
+
+        {/* 페이지네이션 버튼 추가 */}
+        <div className='paginationContainer'>
+          <button className='paginationButton' onClick={handlePrevPage} disabled={page === 0}>
+            이전
+          </button>
+          <span className='pageInfo'>페이지 {page + 1}</span>
+          <button
+            className='paginationButton'
+            onClick={handleNextPage}
+            disabled={searchResults.length < size}
+          >
+            다음
+          </button>
+        </div>
+
         <button onClick={handleSubmit} className='submitButton'>
           설정 완료
         </button>
