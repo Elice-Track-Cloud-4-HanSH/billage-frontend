@@ -20,6 +20,8 @@ const ChatPage = () => {
   const [isScrollToDownBtnAvailable, setIsScrollToDownBtnAvailable] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [chatroomId, setChatroomId] = useState('');
+  const [productName, setProductName] = useState('');
+  const [opponentName, setOpponentName] = useState('');
 
   const loadMoreMessageRef = useRef(null);
   const endOfMessageRef = useRef(null);
@@ -28,7 +30,7 @@ const ChatPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { sellerId, buyerId, productId, opponentName } = location.state || {};
+  const { sellerId, buyerId, productId } = location.state || {};
   const { userInfo } = useAuth();
   const { isConnected, publishToChannel, subscribeChannel, unsubscribeChannel } = useStompClient();
 
@@ -133,6 +135,8 @@ const ChatPage = () => {
         buyerId: buyerId,
       })
       .then((data) => {
+        setOpponentName(data.data.opponentName);
+        setProductName(data.data.productName);
         setChatroomId(data.data.chatroomId);
       })
       .catch((err) => {
@@ -246,7 +250,11 @@ const ChatPage = () => {
 
   return (
     <Container className='chat-container mt-0 mb-0 pt-0 pb-0 gap-0 h-100 flex-column'>
-      <ChatPageHeader otherNickname={opponentName} exitButtonHandler={onExitChatroom} />
+      <ChatPageHeader
+        productName={productName}
+        otherNickname={opponentName}
+        exitButtonHandler={onExitChatroom}
+      />
 
       <div ref={messageContainerRef} className='messages-container flex-grow-1 mt-0 mb-0'>
         <div ref={endOfMessageRef} className='chat-bottom' style={{ height: '1px' }} />

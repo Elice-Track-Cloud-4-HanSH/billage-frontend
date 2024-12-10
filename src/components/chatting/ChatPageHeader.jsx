@@ -6,7 +6,7 @@ import { Button, Col, Row } from 'react-bootstrap';
 import '@/styles/chatting/ChatPageHeader.css';
 import ChatExitModal from './ChatExitModal';
 
-const ChatPageHeader = ({ otherNickname, exitButtonHandler }) => {
+const ChatPageHeader = ({ productName, otherNickname, exitButtonHandler }) => {
   const [showExitModal, setShowExitModal] = useState(false);
   const navigate = useNavigate();
 
@@ -40,7 +40,10 @@ const ChatPageHeader = ({ otherNickname, exitButtonHandler }) => {
           >
             <i className='bi bi-arrow-left'></i>
           </Button>
-          <h6 className='mb-0 text-start w-100'>{otherNickname}</h6>
+          <div className='text-center flex-grow-1'>
+            <h6 className='mb-1 font-weight-bold'>{productName}</h6>
+            <p className='text-muted mb-0'>{otherNickname}</p>
+          </div>
           <button
             className='btn d-inline-flex align-items-center justify-content-end me-2'
             style={{ backgroundColor: '#F16366', color: 'white' }}
@@ -61,6 +64,7 @@ const ChatPageHeader = ({ otherNickname, exitButtonHandler }) => {
   );
 };
 ChatPageHeader.propTypes = {
+  productName: PropTypes.string.isRequired,
   otherNickname: PropTypes.string.isRequired,
   exitButtonHandler: PropTypes.func,
 };
