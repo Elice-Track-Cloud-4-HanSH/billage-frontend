@@ -5,11 +5,16 @@ import { useNavigate } from 'react-router-dom';
 const ProfileForm = ({ profile, mypage }) => {
   const nav = useNavigate();
 
+  // 이미지 URL이 '/images'로 시작하면 defaultImage를 사용
+  const imageUrl = profile.imageUrl && profile.imageUrl.startsWith('/images')
+      ? `${import.meta.env.VITE_AXIOS_BASE_URL}${profile.imageUrl}`
+      : profile.imageUrl;
+
   return (
     <div className='mt-4 px-5'>
       <div className='d-flex align-items-center mb-4 gap-4'>
         <img
-          src={profile.imageUrl}
+          src={imageUrl}
           alt='프로필 이미지'
           className='rounded-circle border'
           style={{ width: '180px', height: '180px' }}

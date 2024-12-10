@@ -234,7 +234,7 @@ const ProductList = () => {
             style={{ cursor: 'pointer' }}
           >
             <img
-              src={product.thumbnailUrl || 'https://via.placeholder.com/60'}
+              src={product.thumbnailUrl || 'https://elice-billage.duckdns.org/images/default-product.png'}
               alt={product.title}
               className='product-img rounded'
             />
