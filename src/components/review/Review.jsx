@@ -1,6 +1,11 @@
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
+import { useTab } from '../../hooks/userTab';
 
-const Review = ({ review }) => {
+const Review = ({ review, reviewType }) => {
+  const nav = useNavigate();
+  const { activeTab, setActiveTab } = useTab();
+
   const renderStars = (rating) => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
@@ -17,7 +22,16 @@ const Review = ({ review }) => {
 
   return (
     <div className='row align-items-center my-3'>
-      <div className='col-auto'>
+      <div
+        className='col-auto'
+        onClick={() =>
+          nav(
+            reviewType || activeTab == 'product-review'
+              ? `/products/${review.id}`
+              : `/profile/${review.id}`
+          )
+        }
+      >
         <img
           src={review.imageUrl}
           alt='이미지'
@@ -45,6 +59,7 @@ Review.propTypes = {
     score: PropTypes.number.isRequired,
     content: PropTypes.string.isRequired,
   }).isRequired,
+  reviewType: PropTypes.bool,
 };
 
 export default Review;

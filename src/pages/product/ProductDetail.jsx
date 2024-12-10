@@ -11,6 +11,9 @@ import 'slick-carousel/slick/slick-theme.css';
 import useAuth from '@/hooks/useAuth';
 import defaultProfileImage from '@/styles/default_profile.png';
 import ReviewCount from '../../components/user/ReviewCount';
+import { FaStar } from 'react-icons/fa';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import axios from 'axios';
 
 const ProductDetail = () => {
   const { productId } = useParams(); // URL에서 productId 가져오기
@@ -24,6 +27,8 @@ const ProductDetail = () => {
   const sliderRef = useRef(null);
   const mapRef = useRef(null); // mapRef 정의 추가
   const { userInfo } = useAuth();
+  const [hasMore, setHasMore] = useState(true);
+  const [lastStandard, setLastStandard] = useState(null);
 
   // 상품 상세 정보를 가져오는 함수
   useEffect(() => {
@@ -43,9 +48,14 @@ const ProductDetail = () => {
     const fetchReviews = async () => {
       try {
         const response = await axiosCredential.get(
-          `/api/product-review/product-details/${productId}`
+          `/api/product-review/product-details/${productId}`,
+          {
+            params: { size: 20 },
+          }
         );
-        setReviews(response.data); // 리뷰 데이터 설정
+        setReviews(response.data.content);
+        setHasMore(response.data.hasNext);
+        setLastStandard(response.data.lastStandard);
       } catch (err) {
         console.error('리뷰 정보를 가져오는 중 오류 발생:', err);
         setError('리뷰 정보를 불러오지 못했습니다.');
@@ -181,6 +191,23 @@ const ProductDetail = () => {
     },
   };
 
+  const fetchMoreData = async () => {
+    if (!hasMore) {
+      return;
+    }
+
+    try {
+      const response = await axios.get(`/api/product-review/product-details/${productId}`, {
+        params: { lastStandard: lastStandard, size: 20 },
+      });
+      setReviews((prevReviews) => [...prevReviews, ...response.data.content]);
+      setHasMore(response.data.hasNext);
+      setLastStandard(response.data.lastStandard);
+    } catch (error) {
+      console.error('데이터를 가져오는 데 실패했습니다.', error);
+    }
+  };
+
   return (
     <>
       <div className='layout-container'>
@@ -258,9 +285,6 @@ const ProductDetail = () => {
                 <p className='product-views'>조회수: {product.viewCount}</p>
               </div>
 
-              {/*<h2>리뷰</h2>*/}
-              <ReviewCount profile={product} />
-              <ReviewList reviews={reviews} />
               <h2 style={{ marginTop: '20px', fontSize: '1.2em', fontWeight: 'bold' }}>
                 거래 희망 장소
               </h2>
@@ -269,6 +293,31 @@ const ProductDetail = () => {
                 ref={mapRef}
                 style={{ width: '100%', height: '400px', marginTop: '20px' }}
               ></div>
+
+              {/*<h2>리뷰</h2>*/}
+              <div className='gap-2'>
+                <ReviewCount profile={product} />
+                <div className='position-relative'>
+                  <span className='fs-1 text-warning'>
+                    <FaStar size={50} />
+                    <span
+                      className='position-absolute top-50 start-50 translate-middle fs-1 text-dark fw-bold'
+                      style={{ fontSize: '10px' }}
+                    >
+                      {product.avgScore.toFixed(1)}
+                    </span>{' '}
+                  </span>
+                </div>
+              </div>
+              <InfiniteScroll
+                dataLength={reviews.length}
+                next={fetchMoreData}
+                hasMore={hasMore}
+                loader={<h4>Loading...</h4>}
+                endMessage={<p>마지막 기록입니다.</p>}
+              >
+                <ReviewList reviews={reviews} reviewType={true} />
+              </InfiniteScroll>
             </div>
           </div>
 
