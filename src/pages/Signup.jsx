@@ -10,7 +10,7 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [isEmailVerified, setIsEmailVerified] = useState(false);
-  
+
   const navigate = useNavigate();
 
   const handleSendVerification = async () => {
@@ -44,7 +44,7 @@ const Signup = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    
+
     if (!isEmailVerified) {
       alert('이메일 인증을 완료해주세요.');
       return;
@@ -60,13 +60,13 @@ const Signup = () => {
       nickname,
       password,
       provider: 'LOCAL',
-      userRole: 'USER'
+      userRole: 'USER',
     };
 
     try {
       const response = await axios.post('/api/users/signup', signupData);
       alert('회원가입 성공! 로그인 페이지로 이동합니다.');
-      navigate('/login');
+      navigate('/signin');
     } catch (error) {
       alert('회원가입에 실패했습니다. 다시 시도해주세요.');
     }
@@ -74,33 +74,29 @@ const Signup = () => {
 
   return (
     <>
-      <Header title="회원가입" />
+      <Header title='회원가입' />
       <form onSubmit={handleSignup} style={styles.form}>
         <div style={styles.inputGroup}>
           <label>닉네임</label>
-          <input 
-            type="text" 
-            value={nickname} 
-            onChange={(e) => setNickname(e.target.value)} 
-            required 
+          <input
+            type='text'
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+            required
           />
         </div>
 
         <div style={styles.inputGroup}>
           <label>이메일</label>
           <div style={styles.rowGroup}>
-            <input 
-              type="email" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-              required 
+            <input
+              type='email'
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
               style={styles.flexInput}
             />
-            <button 
-              type="button" 
-              onClick={handleSendVerification}
-              style={styles.button}
-            >
+            <button type='button' onClick={handleSendVerification} style={styles.button}>
               전송
             </button>
           </div>
@@ -109,18 +105,14 @@ const Signup = () => {
         <div style={styles.inputGroup}>
           <label>인증 코드</label>
           <div style={styles.rowGroup}>
-            <input 
-              type="text"
+            <input
+              type='text'
               value={verificationCode}
               onChange={(e) => setVerificationCode(e.target.value)}
               required
               style={styles.flexInput}
             />
-            <button 
-              type="button" 
-              onClick={handleVerifyEmail}
-              style={styles.button}
-            >
+            <button type='button' onClick={handleVerifyEmail} style={styles.button}>
               인증
             </button>
           </div>
@@ -128,25 +120,27 @@ const Signup = () => {
 
         <div style={styles.inputGroup}>
           <label>비밀번호</label>
-          <input 
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            required 
+          <input
+            type='password'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
           />
         </div>
 
         <div style={styles.inputGroup}>
           <label>비밀번호 확인</label>
-          <input 
-            type="password" 
-            value={passwordConfirm} 
-            onChange={(e) => setPasswordConfirm(e.target.value)} 
-            required 
+          <input
+            type='password'
+            value={passwordConfirm}
+            onChange={(e) => setPasswordConfirm(e.target.value)}
+            required
           />
         </div>
 
-        <button type="submit" style={styles.submitButton}>회원가입</button>
+        <button type='submit' style={styles.submitButton}>
+          회원가입
+        </button>
       </form>
     </>
   );
@@ -185,7 +179,7 @@ const styles = {
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-  }
+  },
 };
 
 export default Signup;

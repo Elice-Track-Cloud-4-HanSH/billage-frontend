@@ -20,10 +20,10 @@ const Logout = () => {
         logout();
         disconnectClient();
         resetUnreadChatCounts();
-        navigate('/login', { replace: true });
+        navigate('/signin', { replace: true });
       } catch (error) {
         console.error('로그아웃 중 오류 발생:', error);
-        navigate('/login');
+        navigate('/signin', { replace: true });
       }
     };
 

@@ -23,7 +23,7 @@ const AfterLogin = () => {
 
         navigate('/products', { replace: true });
       } catch (_) {
-        navigate('/login', { replace: true });
+        navigate('/signin', { replace: true });
       }
     };
 
