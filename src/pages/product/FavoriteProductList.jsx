@@ -112,7 +112,7 @@ const FavoriteProductList = () => {
 
                 {!isLoading && !isLast && <div ref={observerRef} style={{ margin: '1px' }} />}
                 <Loading isLoading={isLoading} />
-                {isLast && <p>마지막 상품입니다</p>}
+                {isLast && <p className='mx-auto'>마지막 상품입니다</p>}
             </div>
         </div>
     );
