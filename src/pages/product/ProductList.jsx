@@ -20,7 +20,7 @@ const ProductList = () => {
     const observerRef = useRef(null);
     const navigate = useNavigate();
 
-    const fetchProducts = async () => {
+    const fetchProducts = async (reset = false) => {
         if (isLast || isLoading) return;
 
         setIsLoading(true);
@@ -45,13 +45,14 @@ const ProductList = () => {
             if (data.length < pageSize) setIsLast(true);
 
             setProducts((prev) => {
+                if (reset) return data; // 초기화 요청이면 새 데이터로 덮어씌움
                 const existingIds = prev.map((product) => product.productId);
                 const newProducts = data.filter((product) => !existingIds.includes(product.productId));
                 return [...prev, ...newProducts];
             });
 
             setLogin(response.data.login);
-            setPage((prev) => prev + 1); // 페이지 증가
+            if(!reset) setPage((prev) => prev + 1); // 초기화가 아니면 페이지 증가
 
         } catch (error) {
             console.error('Error fetching products:', error);
@@ -102,7 +103,7 @@ const ProductList = () => {
         setProducts([]); // 기존 데이터 초기화
         setPage(0);      // 페이지 번호 초기화
         setIsLast(false); // 마지막 여부 초기화
-        fetchProducts();
+        fetchProducts(true); // 초기화된 상태로 데이터 로드
         fetchActivityArea(); // 활동 지역 정보 가져오기
     }, [selectedCategory, rentalStatus, debouncedSearch]); // 필터 상태 변경 시만 작동(디바운스된 검색어 기준)
 
