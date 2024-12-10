@@ -80,9 +80,9 @@ const ProfileEdit = () => {
         },
         withCredentials: true,
       });
-      alert('성공했습니다');
+      alert('프로필이 수정되었습니다.');
 
-      navigate('/easter-egg');
+      navigate('/mypage');
     } catch (error) {
       console.error('프로필 수정 실패:', error);
       alert('프로필 수정에 실패했습니다.');
