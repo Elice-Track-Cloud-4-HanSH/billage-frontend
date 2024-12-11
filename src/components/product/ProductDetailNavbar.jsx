@@ -2,12 +2,17 @@ import { useNavigate } from 'react-router-dom';
 import '@/styles/product/ProductDetailNavbar.css';
 import useAuth from "@/hooks/useAuth";
 
-const ProductDetailNavbar = ({ isFavorite, dayPrice, weekPrice, onToggleFavorite, product }) => {
+const ProductDetailNavbar = ({ isFavorite, dayPrice, weekPrice, onToggleFavorite, product, isPressed }) => {
     const navigate = useNavigate();
     const { userInfo } = useAuth();
     const isOwner = userInfo?.userId === product?.seller?.sellerId;
 
     const handleFavoriteClick = () => {
+        if (isPressed) {
+            alert("처리 중입니다. 잠시만 기다려주세요.");
+            return;
+        }
+
         const newFavoriteStatus = !isFavorite;
         if (onToggleFavorite) {
             onToggleFavorite(newFavoriteStatus);
@@ -22,6 +27,7 @@ const ProductDetailNavbar = ({ isFavorite, dayPrice, weekPrice, onToggleFavorite
                         <button
                             className='btn btn-link favorite-button'
                             onClick={handleFavoriteClick}
+                            disabled={isPressed}
                         >
                             {isFavorite ? (
                                 <i className='bi bi-heart-fill text-danger favorite-icon'></i>
