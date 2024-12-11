@@ -125,7 +125,12 @@ const ActivityArea = () => {
       alert('활동 지역이 설정되었습니다.');
     } catch (error) {
       console.error('활동 지역 설정 실패:', error);
-      alert('활동 지역 설정 중 오류가 발생했습니다.');
+      if (error.response && error.response.status === 500) {
+        alert('활동지역 설정은 로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+        window.location.href = '/signin'; // 로그인 페이지 경로로 리다이렉트
+      } else {
+        alert('활동 지역 설정 중 오류가 발생했습니다.');
+      }
     }
   };
 
