@@ -16,8 +16,11 @@ const WriteUserReview = () => {
       nav('/myreview', { replace: true });
       console.log('응답 성공:', response.data);
     } catch (error) {
-      console.error('리뷰 제출 중 오류 발생:', error);
-      alert('리뷰 제출에 실패했습니다. 다시 시도해주세요.');
+      if (error.response && error.response.status === 409) {
+        alert('이미 해당 거래에 대한 상대방 후기가 존재합니다.\n작성한 리뷰에서 확인해주세요.');
+      } else {
+        alert('리뷰 제출에 실패했습니다. 다시 시도해주세요.');
+      }
     }
   };
 
@@ -45,7 +48,7 @@ const WriteUserReview = () => {
           comment='거래 상대방의 매너 점수를 평가해주세요.'
         />
       ) : (
-        <div>정보를 불러오는 중입니다...</div> // 로딩 상태
+        <div>정보를 불러오는 중입니다...</div>
       )}
       <WriteReviewForm onSubmit={handleReviewSubmit} />
     </>

@@ -295,14 +295,14 @@ const ProductDetail = () => {
               ></div>
 
               {/*<h2>리뷰</h2>*/}
-              <div className='gap-2'>
+              <div className='d-flex justify-content-between gap-2 mt-4'>
                 <ReviewCount profile={product} />
                 <div className='position-relative'>
                   <span className='fs-1 text-warning'>
-                    <FaStar size={50} />
+                    <FaStar size={70} />
                     <span
-                      className='position-absolute top-50 start-50 translate-middle fs-1 text-dark fw-bold'
-                      style={{ fontSize: '10px' }}
+                      className='position-absolute top-50 start-50 translate-middle text-dark fw-bold'
+                      style={{ fontSize: '25px' }}
                     >
                       {product.avgScore.toFixed(1)}
                     </span>{' '}
