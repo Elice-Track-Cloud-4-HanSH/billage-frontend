@@ -23,6 +23,7 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true); // 로딩 상태 관리
   const [error, setError] = useState(null); // 에러 상태 관리
   const [isFavorite, setIsFavorite] = useState(false); // 좋아요 상태 관리
+  const [isPressed, setIsPressed] = useState(false);
   const [checkAuthor, setCheckAuthor] = useState(false); // 작성자 확인 상태 관리
   const sliderRef = useRef(null);
   const mapRef = useRef(null); // mapRef 정의 추가
@@ -102,6 +103,13 @@ const ProductDetail = () => {
   }, [product]);
 
   const handleToggleFavorite = async (newFavoriteStatus) => {
+    setIsPressed(true); // 버튼 비활성화
+
+    const timeout = setTimeout(() => {
+      setIsPressed(false); // 타임아웃 발생 시 버튼 활성화
+      alert('요청 시간이 초과되었습니다. 다시 시도해주세요.');
+    }, 10000); // 10초 타임아웃 설정
+
     try {
       if (newFavoriteStatus) {
         await axiosCredential.post(`/api/favorites/${productId}`);
@@ -111,6 +119,14 @@ const ProductDetail = () => {
       setIsFavorite(newFavoriteStatus); // 상태 업데이트
     } catch (err) {
       console.error('좋아요 상태 변경 중 오류 발생:', err);
+      if(error.response && error.response.status === 409) {
+        alert('이미 좋아요 한 상품입니다.');
+      } else {
+        alert('좋아요 상태 변경에 실패했습니다.');
+      }
+    } finally {
+      clearTimeout(timeout); // 요청이 안료되면 타임아웃 클리어
+      setIsPressed(false); // 버튼 활성화
     }
   };
 
@@ -335,6 +351,7 @@ const ProductDetail = () => {
               weekPrice={product.weekPrice}
               onToggleFavorite={handleToggleFavorite}
               product={product}
+              isPressed={isPressed}
             />
           )}
         </div>
