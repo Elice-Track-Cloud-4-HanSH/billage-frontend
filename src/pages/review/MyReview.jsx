@@ -63,15 +63,18 @@ const MyReview = () => {
       <TabProvider value={{ activeTab, setActiveTab }}>
         <Header title='작성한 리뷰' />
         <Tab tabs={tabs} onChangeTab={handleTabChange} defaultTab={defaultTab} />
-        <InfiniteScroll
-          dataLength={reviews.length}
-          next={fetchMoreData}
-          hasMore={hasMore}
-          loader={<h4>Loading...</h4>}
-          endMessage={<p>마지막 기록입니다.</p>}
-        >
-          <ReviewList reviews={reviews} />
-        </InfiniteScroll>
+        <div id='scrollableDiv' style={{ overflow: 'auto', height: '100%' }}>
+          <InfiniteScroll
+            dataLength={reviews.length}
+            next={fetchMoreData}
+            hasMore={hasMore}
+            loader={<h4>Loading...</h4>}
+            endMessage={<p>마지막 기록입니다.</p>}
+            scrollableTarget='scrollableDiv'
+          >
+            <ReviewList reviews={reviews} />
+          </InfiniteScroll>
+        </div>
       </TabProvider>
     </>
   );
