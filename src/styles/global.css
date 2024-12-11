@@ -10,8 +10,9 @@ body {
 }
 
 #root {
-  padding: 0;
   height: 100%;
+  margin: 0 auto;
+  text-align: center;
 }
 
 :root {
