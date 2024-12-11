@@ -55,6 +55,7 @@ const ProductList = () => {
       if (!reset) setPage((prev) => prev + 1); // 초기화가 아니면 페이지 증가
     } catch (error) {
       console.error('Error fetching products:', error);
+      setIsLast(true);
     } finally {
       setIsLoading(false);
     }

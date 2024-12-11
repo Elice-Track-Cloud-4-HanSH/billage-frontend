@@ -243,9 +243,15 @@ const ProductDetail = () => {
                     }
                     alt={`${product.seller.sellerNickname}'의 프로필 이미지`}
                     className='seller-profile-image'
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => navigate(`/profile/${product.seller.sellerId}`)}
                   />
                   <div className='seller-text'>
-                    <p className='seller-nickname'>{product.seller.sellerNickname}</p>
+                    <p className='seller-nickname'
+                       style={{ cursor: 'pointer' }}
+                       onClick={() => navigate(`/profile/${product.seller.sellerId}`)}>
+                      {product.seller.sellerNickname}
+                    </p>
                   </div>
                 </div>
                 {checkAuthor && (
