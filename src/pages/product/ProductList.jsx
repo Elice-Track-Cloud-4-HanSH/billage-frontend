@@ -66,7 +66,8 @@ const ProductList = () => {
       setActivityArea(response.data); // 활동 지역 정보 저장
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        console.warn('활동 지역이 설정되지 않았습니다.');
+        setActivityArea(null); // 활동 지역을 null로 설정
+      } else if (error.response && error.response.status === 401) {
         setActivityArea(null); // 활동 지역을 null로 설정
       } else {
         console.error('Error fetching activity area:', error);
