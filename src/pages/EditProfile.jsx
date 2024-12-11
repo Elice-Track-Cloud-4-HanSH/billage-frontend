@@ -102,7 +102,7 @@ const ProfileEdit = () => {
       });
 
       if (response.data.deleted) {
-        window.location.href = `${import.meta.env.VITE_AXIOS_BASE_URL}/signin`;
+        navigate('/signin');
       }
     } catch (error) {
       console.error('회원 탈퇴 실패:', error);
