@@ -33,6 +33,7 @@ const FavoriteProductList = () => {
             setPage((prev) => prev + 1); // 다음 페이지로 증가
         } catch (error) {
             console.error('Error fetching favorite products:', error);
+            setIsLast(true);
         } finally {
             setIsLoading(false);
         }
