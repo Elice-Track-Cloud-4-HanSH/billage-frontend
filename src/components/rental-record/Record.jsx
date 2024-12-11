@@ -10,7 +10,10 @@ const Record = ({ record }) => {
       <div className='row align-items-center my-3 px-4'>
         <div className='col-auto' onClick={() => nav(`/products/${record.productId}`)}>
           <img
-            src={record.productImageUrl}
+            src={
+              record.productImageUrl ||
+              `https://elice-billage.duckdns.org/images/default-product.png`
+            }
             alt='상품 이미지'
             className='img-fluid rounded'
             style={{ width: '150px', height: '150px', objectFit: 'cover' }}
