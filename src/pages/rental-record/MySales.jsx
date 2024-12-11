@@ -68,15 +68,18 @@ const MySales = () => {
       <TabProvider value={{ activeTab, setActiveTab }}>
         <Header title='내가 빌려주는 물건' />
         <Tab tabs={tabs} onChangeTab={handleTabChange} defaultTab={defaultTab} />
-        <InfiniteScroll
-          dataLength={records.length}
-          next={fetchMoreData}
-          hasMore={hasMore}
-          loader={<h4>Loading...</h4>}
-          endMessage={<p>마지막 기록입니다.</p>}
-        >
-          <RecordList records={records} />
-        </InfiniteScroll>
+        <div id='scrollableDiv' style={{ overflow: 'auto', height: '100%' }}>
+          <InfiniteScroll
+            dataLength={records.length}
+            next={fetchMoreData}
+            hasMore={hasMore}
+            loader={<h4>Loading...</h4>}
+            endMessage={<p>마지막 기록입니다.</p>}
+            scrollableTarget='scrollableDiv'
+          >
+            <RecordList records={records} />
+          </InfiniteScroll>
+        </div>
       </TabProvider>
     </>
   );

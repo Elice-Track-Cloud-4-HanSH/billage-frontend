@@ -72,15 +72,18 @@ const TargetProfile = () => {
       ) : (
         <div>정보를 불러오는 중입니다.</div>
       )}
-      <InfiniteScroll
-        dataLength={reviews.length}
-        next={fetchMoreData}
-        hasMore={hasMore}
-        loader={<h4>Loading...</h4>}
-        endMessage={<p>마지막 기록입니다.</p>}
-      >
-        <ReviewList reviews={reviews} reviewType={false} />
-      </InfiniteScroll>
+      <div id='scrollableDiv' style={{ overflow: 'auto', height: '100%' }}>
+        <InfiniteScroll
+          dataLength={reviews.length}
+          next={fetchMoreData}
+          hasMore={hasMore}
+          loader={<h4>Loading...</h4>}
+          endMessage={<p>마지막 기록입니다.</p>}
+          scrollableTarget='scrollableDiv'
+        >
+          <ReviewList reviews={reviews} reviewType={false} />
+        </InfiniteScroll>
+      </div>
     </>
   );
 };

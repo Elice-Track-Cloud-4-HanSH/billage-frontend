@@ -309,15 +309,18 @@ const ProductDetail = () => {
                   </span>
                 </div>
               </div>
-              <InfiniteScroll
-                dataLength={reviews.length}
-                next={fetchMoreData}
-                hasMore={hasMore}
-                loader={<h4>Loading...</h4>}
-                endMessage={<p>마지막 기록입니다.</p>}
-              >
-                <ReviewList reviews={reviews} reviewType={true} />
-              </InfiniteScroll>
+              <div id='scrollableDiv' style={{ overflow: 'auto', height: '100%' }}>
+                <InfiniteScroll
+                  dataLength={reviews.length}
+                  next={fetchMoreData}
+                  hasMore={hasMore}
+                  loader={<h4>Loading...</h4>}
+                  endMessage={<p>마지막 기록입니다.</p>}
+                  scrollableTarget='scrollableDiv'
+                >
+                  <ReviewList reviews={reviews} reviewType={true} />
+                </InfiniteScroll>
+              </div>
             </div>
           </div>
 
