@@ -7,7 +7,7 @@ const Record = ({ record }) => {
 
   return (
     <>
-      <div className='row align-items-center my-3'>
+      <div className='row align-items-center my-3 px-4'>
         <div className='col-auto' onClick={() => nav(`/products/${record.productId}`)}>
           <img
             src={record.productImageUrl}
