@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '@/styles/user/ForgotPassword.css';
 
@@ -9,6 +10,8 @@ const ForgotPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [isEmailVerified, setIsEmailVerified] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSendEmail = async () => {
     if (!email) {
@@ -71,7 +74,7 @@ const ForgotPassword = () => {
       );
 
       alert('비밀번호가 성공적으로 변경되었습니다.');
-      window.location.href = '/signin';
+      navigate('/signin');
     } catch (error) {
       console.error('Error details:', error.response || error);
       setError('비밀번호 변경에 실패했습니다.');
