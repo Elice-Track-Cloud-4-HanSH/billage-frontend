@@ -81,10 +81,7 @@ const ProductList = () => {
       alert('활동 지역이 삭제되었습니다.');
 
       // 상품 리스트를 초기화하고 새로 로드
-      setProducts([]);
-      setPage(0);
-      setIsLast(false);
-      fetchProducts(true); // 초기화된 상태로 상품 리스트 다시 로드
+      handleFilterChange();
     } catch (error) {
       console.error('활동 지역 삭제 실패:', error);
       alert('활동 지역 삭제 중 오류가 발생했습니다.');
@@ -145,7 +142,10 @@ const ProductList = () => {
     setProducts([]);
     setPage(0);
     setIsLast(false);
-    fetchProducts(true);
+
+    setTimeout(() => {
+      fetchProducts(true); // 상태가 업데이트된 이후 데이터를 로드
+    }, 100); // 100ms의 딜레이
   }
 
   const handleSelectCategory = (categoryId, categoryName) => {
