@@ -81,10 +81,7 @@ const ProductList = () => {
       alert('활동 지역이 삭제되었습니다.');
 
       // 상품 리스트를 초기화하고 새로 로드
-      setProducts([]);
-      setPage(0);
-      setIsLast(false);
-      fetchProducts(true); // 초기화된 상태로 상품 리스트 다시 로드
+      handleFilterChange();
     } catch (error) {
       console.error('활동 지역 삭제 실패:', error);
       alert('활동 지역 삭제 중 오류가 발생했습니다.');
@@ -121,12 +118,13 @@ const ProductList = () => {
 
   // 필터 변경 시 초기화 및 데이터 로드
   useEffect(() => {
-    setProducts([]); // 기존 데이터 초기화
-    setPage(0); // 페이지 번호 초기화
-    setIsLast(false); // 마지막 여부 초기화
-    fetchProducts(true); // 초기화된 상태로 데이터 로드
+    // setProducts([]); // 기존 데이터 초기화
+    // setPage(0); // 페이지 번호 초기화
+    // setIsLast(false); // 마지막 여부 초기화
+    // fetchProducts(true); // 초기화된 상태로 데이터 로드
     fetchActivityArea(); // 활동 지역 정보 가져오기
-  }, [selectedCategory, rentalStatus, debouncedSearch]); // 필터 상태 변경 시만 작동(디바운스된 검색어 기준)
+  // }, [selectedCategory, rentalStatus, debouncedSearch]); // 필터 상태 변경 시만 작동(디바운스된 검색어 기준)
+  }, []); // 필터 상태 변경 시만 작동(디바운스된 검색어 기준)
 
   const handleProductClick = (productId) => {
     navigate(`/products/${productId}`);
@@ -140,19 +138,25 @@ const ProductList = () => {
     setIsCategoryPopupOpen(false);
   };
 
-  const handleSelectCategory = (categoryId, categoryName) => {
-    setSelectedCategory({ id: categoryId, name: categoryName });
+  const handleFilterChange = () => {
     setProducts([]);
     setPage(0);
     setIsLast(false);
+
+    setTimeout(() => {
+      fetchProducts(true); // 상태가 업데이트된 이후 데이터를 로드
+    }, 100); // 100ms의 딜레이
+  }
+
+  const handleSelectCategory = (categoryId, categoryName) => {
+    setSelectedCategory({ id: categoryId, name: categoryName });
+    handleFilterChange();
   };
 
   const handleRentalStatusChange = (event) => {
     const value = event.target.value;
     setRentalStatus(value);
-    setProducts([]);
-    setPage(0);
-    setIsLast(false);
+    handleFilterChange();
   };
 
   const handleActivityAreaClick = () => {
@@ -161,18 +165,14 @@ const ProductList = () => {
 
   const handleSearchInputChange = (event) => {
     setSearch(event.target.value);
-    setProducts([]);
-    setPage(0);
-    setIsLast(false);
+    handleFilterChange();
   };
 
   const handleSearch = () => {
     if (search.trim() === '') {
       setSearch('ALL'); // 검색어가 없으면 'ALL'로 설정
     }
-    setProducts([]);
-    setPage(0);
-    setIsLast(false);
+    handleFilterChange();
   };
 
   const handleKeyPress = (event) => {
