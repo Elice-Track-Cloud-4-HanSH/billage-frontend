@@ -12,7 +12,6 @@ const ActivityArea = () => {
   const [neighborGeoJsons, setNeighborGeoJsons] = useState([]); // NeighborArea GeoJSON 데이터
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(5);
-  const [depth, setDepth] = useState(1); // depth 기본값
 
   useEffect(() => {
     if (geoJson) {
@@ -85,19 +84,15 @@ const ActivityArea = () => {
       setGeoJson(geoResponse.data);
 
       // NeighborArea GeoJSON 가져오기
-      if (depth === 1) {
-        const neighborResponse = await axiosCredential.get(`/api/neighbor-area/${area.id}`, {
-          params: { depth },
-        });
+      const neighborResponse = await axiosCredential.get(`/api/neighbor-area/${area.id}`, {
+        params: { depth: 1 }, // 항상 좁은 범위 사용
+      });
 
-        // 응답이 단일 객체일 경우 배열로 변환
-        const neighborData = Array.isArray(neighborResponse.data)
-          ? neighborResponse.data
-          : [neighborResponse.data];
-        setNeighborGeoJsons(neighborData);
-      } else {
-        setNeighborGeoJsons([]); // Depth가 2일 때 NeighborArea를 그리지 않음
-      }
+      // 응답이 단일 객체일 경우 배열로 변환
+      const neighborData = Array.isArray(neighborResponse.data)
+        ? neighborResponse.data
+        : [neighborResponse.data];
+      setNeighborGeoJsons(neighborData);
     } catch (error) {
       console.error('GeoJSON 데이터 가져오기 실패:', error);
       alert('GeoJSON 데이터를 가져오는 중 오류가 발생했습니다.');
@@ -114,7 +109,7 @@ const ActivityArea = () => {
       const token = ''; // 사용자 인증 토큰 필요 시 설정
       await axiosCredential.post(
         '/api/activity-area',
-        { emdCd: selectedArea.id, depth },
+        { emdCd: selectedArea.id, depth: 1 }, // 항상 좁은 범위 사용
         {
           headers: {
             'Content-Type': 'application/json',
@@ -143,11 +138,6 @@ const ActivityArea = () => {
     }
   }, [page]);
 
-  const handleDepthChange = (e) => {
-    setDepth(Number(e.target.value));
-    setNeighborGeoJsons([]); // Depth 변경 시 Neighbor 데이터를 초기화
-  };
-
   return (
     <>
       <Header title='활동 지역 설정' />
@@ -170,16 +160,6 @@ const ActivityArea = () => {
           <button onClick={handleSearch} className='searchButton'>
             검색
           </button>
-        </div>
-
-        <div className='depthContainer'>
-          <label htmlFor='depth' className='depthLabel'>
-            범위 선택:
-          </label>
-          <select id='depth' value={depth} onChange={handleDepthChange} className='depthSelect'>
-            <option value={1}>좁은 범위</option>
-            <option value={2}>넓은 범위</option>
-          </select>
         </div>
 
         {searchResults.length > 0 && (
