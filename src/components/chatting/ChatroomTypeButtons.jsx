@@ -26,7 +26,7 @@ const ChatroomTypeButtons = () => {
   };
 
   const handleWheel = (e) => {
-    e.preventDefault(); // 기본 수직 스크롤을 방지
+    // e.preventDefault(); // 기본 수직 스크롤을 방지
     scrollContainerRef.current.scrollLeft += e.deltaY; // 휠 이동에 따라 가로 스크롤 이동
   };
 
