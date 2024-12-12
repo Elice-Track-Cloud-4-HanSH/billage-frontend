@@ -26,7 +26,6 @@ const ProductList = () => {
     setIsLoading(true);
     const pageSize = 10;
 
-    console.log(`Fetching page: ${page}`); // 페이지 번호 확인
     try {
       const response = await axiosCredential.get('/api/products', {
         params: {
@@ -39,8 +38,6 @@ const ProductList = () => {
       });
 
       const data = response.data.products;
-
-      console.log(`Fetched data length: ${data.length}`); // 반환된 데이터 크기 확인
 
       if (data.length < pageSize) setIsLast(true);
 
@@ -119,12 +116,7 @@ const ProductList = () => {
 
   // 필터 변경 시 초기화 및 데이터 로드
   useEffect(() => {
-    // setProducts([]); // 기존 데이터 초기화
-    // setPage(0); // 페이지 번호 초기화
-    // setIsLast(false); // 마지막 여부 초기화
-    // fetchProducts(true); // 초기화된 상태로 데이터 로드
     fetchActivityArea(); // 활동 지역 정보 가져오기
-  // }, [selectedCategory, rentalStatus, debouncedSearch]); // 필터 상태 변경 시만 작동(디바운스된 검색어 기준)
   }, []); // 필터 상태 변경 시만 작동(디바운스된 검색어 기준)
 
   const handleProductClick = (productId) => {
@@ -143,10 +135,6 @@ const ProductList = () => {
     setProducts([]);
     setPage(0);
     setIsLast(false);
-
-    setTimeout(() => {
-      fetchProducts(true); // 상태가 업데이트된 이후 데이터를 로드
-    }, 100); // 100ms의 딜레이
   }
 
   const handleSelectCategory = (categoryId, categoryName) => {
