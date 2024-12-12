@@ -300,10 +300,10 @@ const ProductDetail = () => {
                 <span style={{ paddingLeft: '20px' }}>
                   {new Date(product.updatedAt).toLocaleString()}
                 </span>
-                <p className='product-description'>{product.description}</p>
-                <p className='product-location'>
-                  위치: {product.latitude}, {product.longitude}
-                </p>
+                <p className='product-description' style={{whiteSpace: 'break-spaces'}}>{product.description}</p>
+                {/*<p className='product-location'>*/}
+                {/*  위치: {product.latitude}, {product.longitude}*/}
+                {/*</p>*/}
                 <p className='product-views'>조회수: {product.viewCount}</p>
               </div>
 

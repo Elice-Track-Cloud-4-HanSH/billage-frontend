@@ -106,6 +106,7 @@
     padding-top: 50px;
     padding-bottom: 50px;
     overflow: visible;
+    white-space: break-spaces;
 }
 
 .seller-info {
