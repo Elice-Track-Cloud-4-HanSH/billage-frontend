@@ -143,10 +143,6 @@ const ProductList = () => {
     setProducts([]);
     setPage(0);
     setIsLast(false);
-
-    setTimeout(() => {
-      fetchProducts(true); // 상태가 업데이트된 이후 데이터를 로드
-    }, 100); // 100ms의 딜레이
   }
 
   const handleSelectCategory = (categoryId, categoryName) => {
