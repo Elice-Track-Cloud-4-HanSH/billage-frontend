@@ -105,6 +105,7 @@
     font-size: larger;
     padding-top: 50px;
     padding-bottom: 50px;
+    overflow: visible;
 }
 
 .seller-info {
