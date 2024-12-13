@@ -64,8 +64,8 @@ const ForgotPassword = () => {
 
     try {
       await axios.post(
-        '/api/users/check-password',
-        { password },
+        '/api/users/reset-password',
+        { email, password },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
