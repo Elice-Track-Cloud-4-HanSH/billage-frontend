@@ -1,6 +1,7 @@
 /*
   스크롤바가 필요하다면 body와 그 밑의 -webkit-scrollbar 를 없애면 됩니다!
 */
+
 body {
   -ms-overflow-style: none;
 }
@@ -9,23 +10,30 @@ body {
   display: none;
 }
 
+#root {
+  height: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
 :root {
   --mobile-max-width: 500px;
 }
 
 .layout-container {
   width: 100%;
-  min-height: 90vh;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0;
+  padding: 0rem;
+  margin: 0rem;
 }
 
 .layout-wrapper {
   display: flex;
   flex-direction: column;
-  height: 90vh;
+  height: 100%;
   background-color: #ffffff;
   position: relative;
 }

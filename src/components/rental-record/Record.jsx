@@ -1,13 +1,19 @@
 import PropTypes from 'prop-types';
 import ButtonSection from './ButtonSection';
+import { useNavigate } from 'react-router-dom';
 
 const Record = ({ record }) => {
+  const nav = useNavigate();
+
   return (
     <>
-      <div className='row align-items-center my-3'>
-        <div className='col-auto'>
+      <div className='row align-items-center my-3 px-4'>
+        <div className='col-auto' onClick={() => nav(`/products/${record.productId}`)}>
           <img
-            src={record.productImageUrl}
+            src={
+              record.productImageUrl ||
+              `https://elice-billage.duckdns.org/images/default-product.png`
+            }
             alt='상품 이미지'
             className='img-fluid rounded'
             style={{ width: '150px', height: '150px', objectFit: 'cover' }}
@@ -22,7 +28,10 @@ const Record = ({ record }) => {
 
           {record.startDate && (
             <>
-              <div className='col-auto d-flex align-items-center'>
+              <div
+                className='col-auto d-flex align-items-center'
+                onClick={() => nav(`/profile/${record.counterpartyId}`)}
+              >
                 <img
                   src={record.userImageUrl}
                   alt='거래자 이미지'
@@ -50,9 +59,12 @@ Record.propTypes = {
     startDate: PropTypes.string,
     expectedReturnDate: PropTypes.string,
     returnDate: PropTypes.string,
+    sellerId: PropTypes.number,
+    buyerId: PropTypes.number,
     productId: PropTypes.number.isRequired,
-    productImageUrl: PropTypes.string.isRequired,
+    productImageUrl: PropTypes.string,
     title: PropTypes.string.isRequired,
+    counterpartyId: PropTypes.number,
     userImageUrl: PropTypes.string,
     nickname: PropTypes.string,
   }).isRequired,
