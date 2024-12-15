@@ -6,7 +6,7 @@ import { Button, Col, Row } from 'react-bootstrap';
 import '@/styles/chatting/ChatPageHeader.css';
 import ChatExitModal from './ChatExitModal';
 
-const ChatPageHeader = ({ otherNickname, exitButtonHandler }) => {
+const ChatPageHeader = ({ productName, otherNickname, exitButtonHandler }) => {
   const [showExitModal, setShowExitModal] = useState(false);
   const navigate = useNavigate();
 
@@ -31,24 +31,29 @@ const ChatPageHeader = ({ otherNickname, exitButtonHandler }) => {
 
   return (
     <>
-      <Row className='header py-1'>
-        <Col xs={2}>
-          <Button variant='link' onClick={handleGoBackFromChatRoom}>
+      <div className='chatpage-header'>
+        <div className='d-flex align-items-center justify-content-between py-2 p-12'>
+          <Button
+            className='justify-content-start'
+            variant='link'
+            onClick={handleGoBackFromChatRoom}
+          >
             <i className='bi bi-arrow-left'></i>
           </Button>
-        </Col>
-        <Col xs={8} className='d-flex align-items-center text-start ps-0'>
-          <div className='w-100'>
-            <h6 className='mb-0'>{otherNickname}</h6>
+          <div className='text-center flex-grow-1'>
+            <h6 className='mb-1 font-weight-bold'>{productName}</h6>
+            <p className='text-muted mb-0'>{otherNickname}</p>
           </div>
-        </Col>
-        <Col xs={2} className='text-end'>
-          <Button onClick={handleExitButtonClick}>
-            나가기
+          <button
+            className='btn d-inline-flex align-items-center justify-content-end me-2'
+            style={{ backgroundColor: '#F16366', color: 'white' }}
+            onClick={handleExitButtonClick}
+          >
+            <span className='me-2 text-nowrap'>나가기</span>
             <i className='bi bi-door-open'></i>
-          </Button>
-        </Col>
-      </Row>
+          </button>
+        </div>
+      </div>
       <ChatExitModal
         showExitModal={showExitModal}
         handleCloseModal={handleCloseModal}
@@ -59,6 +64,7 @@ const ChatPageHeader = ({ otherNickname, exitButtonHandler }) => {
   );
 };
 ChatPageHeader.propTypes = {
+  productName: PropTypes.string.isRequired,
   otherNickname: PropTypes.string.isRequired,
   exitButtonHandler: PropTypes.func,
 };

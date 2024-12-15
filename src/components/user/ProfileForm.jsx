@@ -1,17 +1,34 @@
 import PropTypes from 'prop-types';
 import { FaStar } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
-const ProfileForm = ({ profile }) => {
+const ProfileForm = ({ profile, mypage }) => {
+  const nav = useNavigate();
+
+  // 이미지 URL이 '/images'로 시작하면 defaultImage를 사용
+  const imageUrl = profile.imageUrl && profile.imageUrl.startsWith('/images')
+      ? `${import.meta.env.VITE_AXIOS_BASE_URL}${profile.imageUrl}`
+      : profile.imageUrl;
+
   return (
     <div className='mt-4 px-5'>
       <div className='d-flex align-items-center mb-4 gap-4'>
         <img
-          src={profile.imageUrl}
+          src={imageUrl}
           alt='프로필 이미지'
           className='rounded-circle border'
           style={{ width: '180px', height: '180px' }}
         />
         <h2 className='ms-3 mb-0'>{profile.nickname}</h2>
+        {mypage ? (
+          <button
+            className='btn'
+            onClick={() => nav('/edit-profile')}
+            style={{ backgroundColor: '#F9BD24', color: 'white' }}
+          >
+            프로필 수정
+          </button>
+        ) : null}
       </div>
 
       <div className='d-flex justify-content-between mb-5 text-start'>
@@ -53,6 +70,7 @@ ProfileForm.propTypes = {
     avgScore: PropTypes.number,
     reviewCount: PropTypes.number,
   }),
+  mypage: PropTypes.bool,
 };
 
 export default ProfileForm;

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '@/styles/user/ForgotPassword.css';
 
@@ -9,6 +10,8 @@ const ForgotPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [isEmailVerified, setIsEmailVerified] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSendEmail = async () => {
     if (!email) {
@@ -31,9 +34,9 @@ const ForgotPassword = () => {
       return;
     }
     try {
-      await axios.post('/api/users/verify-email', { 
-        email, 
-        code: verificationCode 
+      await axios.post('/api/users/verify-email', {
+        email,
+        code: verificationCode,
       });
       setIsEmailVerified(true);
       alert('이메일 인증이 완료되었습니다.');
@@ -60,17 +63,18 @@ const ForgotPassword = () => {
     }
 
     try {
-      await axios.post('/api/users/check-password', 
-        { password },
+      await axios.post(
+        '/api/users/reset-password',
+        { email, password },
         {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
         }
       );
-      
+
       alert('비밀번호가 성공적으로 변경되었습니다.');
-      window.location.href = '/login';
+      navigate('/signin');
     } catch (error) {
       console.error('Error details:', error.response || error);
       setError('비밀번호 변경에 실패했습니다.');
@@ -78,76 +82,66 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="forgot-password-container">
-      <div className="forgot-password-card">
-        <h1 className="page-title">비밀번호 재설정</h1>
-        
-        {error && <div className="error-message">{error}</div>}
-        
-        <div className="input-group">
-          <label className="input-label">이메일</label>
-          <div className="input-container">
+    <div className='forgot-password-container'>
+      <div className='forgot-password-card'>
+        <h1 className='page-title'>BILLAGE</h1>
+        <h1 className='page-title' style={{ fontSize: 'larger' }}>
+          비밀번호 재설정
+        </h1>
+
+        {error && <div className='error-message'>{error}</div>}
+
+        <div>
+          <div className='input-container'>
             <input
-              type="email"
+              type='email'
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="text-input"
-              placeholder="이메일을 입력하세요"
+              className='text-input'
+              placeholder='이메일을 입력하세요'
             />
-            <button
-              onClick={handleSendEmail}
-              className="action-button"
-            >
+            <button onClick={handleSendEmail} className='action-button'>
               전송
             </button>
           </div>
         </div>
 
-        <div className="input-group">
-          <label className="input-label">인증코드</label>
-          <div className="input-container">
+        <div>
+          <div className='input-container'>
             <input
-              type="text"
+              type='text'
               value={verificationCode}
               onChange={(e) => setVerificationCode(e.target.value)}
-              className="text-input"
-              placeholder="인증코드를 입력하세요"
+              className='text-input'
+              placeholder='인증코드를 입력하세요'
             />
-            <button
-              onClick={handleVerifyEmail}
-              className="action-button"
-            >
+            <button onClick={handleVerifyEmail} className='action-button'>
               확인
             </button>
           </div>
         </div>
 
-        <div className="input-group">
-          <label className="input-label">비밀번호</label>
+        <div>
           <input
-            type="password"
+            type='password'
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="text-input"
-            placeholder="새 비밀번호를 입력하세요"
+            className='full-width-input'
+            placeholder='새 비밀번호를 입력하세요'
           />
         </div>
 
-        <div className="input-group">
-          <label className="input-label">비밀번호 확인</label>
+        <div>
           <input
-            type="password"
+            type='password'
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="text-input"
-            placeholder="비밀번호를 다시 입력하세요"
+            className='full-width-input'
+            placeholder='비밀번호를 다시 입력하세요'
           />
         </div>
 
-        <button 
-          className="submit-button"
-          onClick={handleChangePassword}
-        >
+        <button className='submit-button' onClick={handleChangePassword}>
           변경
         </button>
       </div>

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import useUnreadChatCount from './useUnreadChatCount';
+import useNewChats from './useNewChats';
 
 const useStompClient = create((set, get) => ({
   stompClient: null,
@@ -11,16 +12,18 @@ const useStompClient = create((set, get) => ({
   connectClient: (userId) => {
     const { increaseUnreadChatCounts, decreaeUnreadChatCounts, resetUnreadChatCounts } =
       useUnreadChatCount.getState();
+    const { appendNewChats } = useNewChats.getState();
     if (!get().isConnected) {
       const client = new Client({
         webSocketFactory: () =>
           new SockJS(`${import.meta.env.VITE_AXIOS_BASE_URL}/connect`, null, {
             withCredentials: true,
           }),
-        debug: (str) => console.log(str),
+        // debug: (str) => console.log(str),
         onConnect: () => {
           const destination = `/sub/chat/unread/${userId}`;
-          client.subscribe(destination, (message) => {
+          if (get().subscriptions[destination]) return;
+          const subscription = client.subscribe(destination, (message) => {
             const msg = JSON.parse(message.body);
             if (msg.operation === '+') {
               increaseUnreadChatCounts(msg.value);
@@ -28,9 +31,10 @@ const useStompClient = create((set, get) => ({
               decreaeUnreadChatCounts(msg.value);
             }
           });
-          set({
+          set((prev) => ({
+            subscriptions: { ...prev.subscriptions, [destination]: subscription },
             isConnected: true,
-          });
+          }));
         },
         onDisconnect: () => {
           resetUnreadChatCounts();
@@ -60,6 +64,8 @@ const useStompClient = create((set, get) => ({
       console.error('WebSocket client is not connected.');
       return;
     }
+
+    if (get().subscriptions[destination]) return;
 
     const subscription = client.subscribe(destination, (message) => {
       const parsedMessage = JSON.parse(message.body);
