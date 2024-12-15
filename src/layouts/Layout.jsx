@@ -1,9 +1,13 @@
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/common/Navbar.jsx';
 
 const Layout = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+
+  useEffect(() => {
+    navigate('/after-login', { replace: true });
+  }, []);
 
   return (
     <div className='layout-container'>

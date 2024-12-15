@@ -12,7 +12,6 @@ const ActivityArea = () => {
   const [neighborGeoJsons, setNeighborGeoJsons] = useState([]); // NeighborArea GeoJSON 데이터
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(5);
-  const [depth, setDepth] = useState(1); // depth 기본값
 
   useEffect(() => {
     if (geoJson) {
@@ -20,7 +19,7 @@ const ActivityArea = () => {
       const map = new naver.maps.Map(mapDiv, { zoom: 15 });
 
       // 행정구역 폴리곤 그리기
-      const geoJsonData = JSON.parse(geoJson.geomGeoJson);
+      const geoJsonData = geoJson.geomGeoJson;
       const polygonPaths = geoJsonData.coordinates[0][0].map(([lng, lat]) => {
         return new naver.maps.LatLng(lat, lng);
       });
@@ -40,7 +39,7 @@ const ActivityArea = () => {
 
       // NeighborArea 폴리곤 그리기
       neighborGeoJsons.forEach((neighborGeoJson) => {
-        const neighborData = JSON.parse(neighborGeoJson.geomGeoJson);
+        const neighborData = neighborGeoJson.geomGeoJson;
         const neighborPaths = neighborData.coordinates[0][0].map(([lng, lat]) => {
           return new naver.maps.LatLng(lat, lng);
         });
@@ -85,19 +84,15 @@ const ActivityArea = () => {
       setGeoJson(geoResponse.data);
 
       // NeighborArea GeoJSON 가져오기
-      if (depth === 1) {
-        const neighborResponse = await axiosCredential.get(`/api/neighbor-area/${area.id}`, {
-          params: { depth },
-        });
+      const neighborResponse = await axiosCredential.get(`/api/neighbor-area/${area.id}`, {
+        params: { depth: 1 }, // 항상 좁은 범위 사용
+      });
 
-        // 응답이 단일 객체일 경우 배열로 변환
-        const neighborData = Array.isArray(neighborResponse.data)
-          ? neighborResponse.data
-          : [neighborResponse.data];
-        setNeighborGeoJsons(neighborData);
-      } else {
-        setNeighborGeoJsons([]); // Depth가 2일 때 NeighborArea를 그리지 않음
-      }
+      // 응답이 단일 객체일 경우 배열로 변환
+      const neighborData = Array.isArray(neighborResponse.data)
+        ? neighborResponse.data
+        : [neighborResponse.data];
+      setNeighborGeoJsons(neighborData);
     } catch (error) {
       console.error('GeoJSON 데이터 가져오기 실패:', error);
       alert('GeoJSON 데이터를 가져오는 중 오류가 발생했습니다.');
@@ -114,7 +109,7 @@ const ActivityArea = () => {
       const token = ''; // 사용자 인증 토큰 필요 시 설정
       await axiosCredential.post(
         '/api/activity-area',
-        { emdCd: selectedArea.id, depth },
+        { emdCd: selectedArea.id, depth: 1 }, // 항상 좁은 범위 사용
         {
           headers: {
             'Content-Type': 'application/json',
@@ -125,7 +120,12 @@ const ActivityArea = () => {
       alert('활동 지역이 설정되었습니다.');
     } catch (error) {
       console.error('활동 지역 설정 실패:', error);
-      alert('활동 지역 설정 중 오류가 발생했습니다.');
+      if (error.response && error.response.status === 500) {
+        alert('활동지역 설정은 로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+        window.location.href = '/signin'; // 로그인 페이지 경로로 리다이렉트
+      } else {
+        alert('활동 지역 설정 중 오류가 발생했습니다.');
+      }
     }
   };
 
@@ -137,11 +137,6 @@ const ActivityArea = () => {
       handleSearch();
     }
   }, [page]);
-
-  const handleDepthChange = (e) => {
-    setDepth(Number(e.target.value));
-    setNeighborGeoJsons([]); // Depth 변경 시 Neighbor 데이터를 초기화
-  };
 
   return (
     <>
@@ -167,16 +162,6 @@ const ActivityArea = () => {
           </button>
         </div>
 
-        <div className='depthContainer'>
-          <label htmlFor='depth' className='depthLabel'>
-            범위 선택:
-          </label>
-          <select id='depth' value={depth} onChange={handleDepthChange} className='depthSelect'>
-            <option value={1}>좁은 범위</option>
-            <option value={2}>넓은 범위</option>
-          </select>
-        </div>
-
         {searchResults.length > 0 && (
           <ul className='resultsList'>
             {searchResults.map((area) => (
@@ -195,6 +180,22 @@ const ActivityArea = () => {
         )}
 
         <div id='map' className='map'></div>
+
+        {/* 페이지네이션 버튼 추가 */}
+        <div className='paginationContainer'>
+          <button className='paginationButton' onClick={handlePrevPage} disabled={page === 0}>
+            이전
+          </button>
+          <span className='pageInfo'>페이지 {page + 1}</span>
+          <button
+            className='paginationButton'
+            onClick={handleNextPage}
+            disabled={searchResults.length < size}
+          >
+            다음
+          </button>
+        </div>
+
         <button onClick={handleSubmit} className='submitButton'>
           설정 완료
         </button>
