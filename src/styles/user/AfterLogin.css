@@ -1,0 +1,18 @@
+.after-login-container {
+  background-color: #f8f9fa; /* 부드러운 배경색 */
+  height: 100vh; /* 화면 전체 높이 */
+  display: flex;
+  justify-content: center; /* 수평 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  padding: 20px; /* 주변 여백 */
+}
+
+.after-login-text {
+  font-size: 1.5rem; /* 글자 크기 */
+  color: #333; /* 글자 색상 */
+  background-color: #ffffff; /* 배경색 */
+  padding: 20px; /* 내부 여백 */
+  border-radius: 8px; /* 둥근 모서리 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  text-align: center; /* 텍스트 중앙 정렬 */
+}

@@ -20,6 +20,8 @@ const ChatPage = () => {
   const [isScrollToDownBtnAvailable, setIsScrollToDownBtnAvailable] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [chatroomId, setChatroomId] = useState('');
+  const [productName, setProductName] = useState('');
+  const [opponentName, setOpponentName] = useState('');
 
   const loadMoreMessageRef = useRef(null);
   const endOfMessageRef = useRef(null);
@@ -28,7 +30,7 @@ const ChatPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { sellerId, buyerId, productId, opponentName } = location.state || {};
+  const { sellerId, buyerId, productId } = location.state || {};
   const { userInfo } = useAuth();
   const { isConnected, publishToChannel, subscribeChannel, unsubscribeChannel } = useStompClient();
 
@@ -133,6 +135,8 @@ const ChatPage = () => {
         buyerId: buyerId,
       })
       .then((data) => {
+        setOpponentName(data.data.opponentName);
+        setProductName(data.data.productName);
         setChatroomId(data.data.chatroomId);
       })
       .catch((err) => {
@@ -162,11 +166,13 @@ const ChatPage = () => {
 
   const fetchChatData = () => {
     if (isLastPage) return;
+    const pageSize = 50;
     setIsLoading(true);
     axiosCredential
       .get(`/api/chatroom/${chatroomId}`, {
         params: {
           page: page,
+          pageSize: pageSize,
           lastLoadChatId: page === 0 ? Number.MAX_SAFE_INTEGER : chats[0].chatId,
         },
       })
@@ -236,18 +242,21 @@ const ChatPage = () => {
 
   const onExitChatroom = async () => {
     try {
-      const response = await axiosCredential.delete(`/api/chatroom/${chatroomId}`);
-      console.log(response);
+      await axiosCredential.delete(`/api/chatroom/${chatroomId}`);
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <Container>
-      <ChatPageHeader otherNickname={opponentName} exitButtonHandler={onExitChatroom} />
+    <Container className='chat-container mt-0 mb-0 pt-0 pb-0 gap-0 h-100 flex-column'>
+      <ChatPageHeader
+        productName={productName}
+        otherNickname={opponentName}
+        exitButtonHandler={onExitChatroom}
+      />
 
-      <div ref={messageContainerRef} className='messages-container flex-grow-1'>
+      <div ref={messageContainerRef} className='messages-container flex-grow-1 mt-0 mb-0'>
         <div ref={endOfMessageRef} className='chat-bottom' style={{ height: '1px' }} />
 
         {chats.map((message, key) => {
@@ -263,11 +272,9 @@ const ChatPage = () => {
             />
           );
         })}
-        {isLastPage && <p>첫 채팅입니다</p>}
+        {isLastPage && <p className='mx-auto'>첫 채팅입니다</p>}
 
-        {!isLastPage && !isLoading && (
-          <div ref={loadMoreMessageRef} className='load-more-chats' style={{ margin: '1px' }} />
-        )}
+        {!isLastPage && !isLoading && <div ref={loadMoreMessageRef} style={{ margin: '1px' }} />}
       </div>
 
       {isNewMessageAvailable && (

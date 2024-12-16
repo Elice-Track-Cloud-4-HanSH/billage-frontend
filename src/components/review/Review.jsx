@@ -1,17 +1,37 @@
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
+import { useTab } from '../../hooks/userTab';
 
-const Review = ({ review }) => {
+const Review = ({ review, reviewType }) => {
+  const nav = useNavigate();
+  const { activeTab, setActiveTab } = useTab();
+
   const renderStars = (rating) => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
-      stars.push(<span key={i} className={`fa fa-star${i <= rating ? ' checked' : ''}`}></span>);
+      stars.push(
+        <span
+          key={i}
+          className={`fa fa-star${i <= rating ? ' checked' : ''}`}
+          style={{ color: i <= rating ? 'gold' : 'gray' }}
+        ></span>
+      );
     }
     return stars;
   };
 
   return (
-    <div className='row align-items-center my-3'>
-      <div className='col-auto'>
+    <div className='row align-items-center my-3 px-4'>
+      <div
+        className='col-auto'
+        onClick={() =>
+          nav(
+            reviewType || activeTab == 'product-review'
+              ? `/products/${review.id}`
+              : `/profile/${review.id}`
+          )
+        }
+      >
         <img
           src={review.imageUrl}
           alt='이미지'
@@ -24,7 +44,7 @@ const Review = ({ review }) => {
           <h5>{review.subject}</h5>
           <div>{renderStars(review.score)}</div>
         </div>
-        <p className='mt-3'>{review.content}</p>
+        <p className='mt-3 text-start'>{review.content}</p>
       </div>
     </div>
   );
@@ -39,6 +59,7 @@ Review.propTypes = {
     score: PropTypes.number.isRequired,
     content: PropTypes.string.isRequired,
   }).isRequired,
+  reviewType: PropTypes.bool,
 };
 
 export default Review;

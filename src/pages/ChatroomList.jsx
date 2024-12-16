@@ -32,29 +32,32 @@ const ChatroomList = () => {
 
     observer.observe(observerRef.current);
 
-    return () => observer.disconnect(); // 컴포넌트 언마운트 시 해제
+    return () => {
+      observer.disconnect(); // 컴포넌트 언마운트 시 해제
+    };
   }, [chatType, page]);
 
   const loadMoreChatroom = () => {
     if (isLast) return;
+    const pageSize = 10;
     setIsLoading(true);
     axiosCredential
       .get('/api/chatroom', {
         params: {
           type: chatType,
           page: page,
+          pageSize: pageSize,
         },
       })
       .then((response) => {
         const data = response.data;
-        if (data.length < 20) setIsLast(true);
+        if (data.length < pageSize) setIsLast(true);
         setPage((prev) => prev + 1);
         setChatroomList((prev) => [...prev, ...data]);
         setIsLoading(false);
       })
       .catch((err) => {
         setErrMsg('로그인을 먼저 해주세요!');
-        console.log('로그인을 먼저 해주세요!');
         setIsLoading(false);
       });
     setCurrentTime(Date.now());
@@ -94,9 +97,9 @@ const ChatroomList = () => {
             );
           })}
 
+          {!isLoading && !isLast && <div ref={observerRef} style={{ margin: '1px' }} />}
           <Loading isLoading={isLoading} />
-          {!isLoading && <div ref={observerRef} style={{ height: '1px' }} />}
-          {isLast && <p> 마지막 채팅입니다 </p>}
+          {isLast && <p className='m-auto'> 마지막 채팅입니다 </p>}
         </div>
       )}
     </div>
